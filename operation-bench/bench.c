@@ -7,7 +7,7 @@
 #include <math.h>
 #include "tsc_x86.h"
 
-#define N 1e7
+#define ARRAY_SIZE 1e7
 #define CYCLES_REQUIRED 1e7
 #define NUM_RUNS 1
 
@@ -16,8 +16,8 @@ double randf() {
 }
 
 double* build() {
-    double* x = (double*)malloc(N * sizeof(double));
-    for(size_t i = 0; i < N; ++i) {
+    double* x = (double*)malloc(ARRAY_SIZE * sizeof(double));
+    for(size_t i = 0; i < ARRAY_SIZE; ++i) {
         x[i] = randf();
     }
     return x;

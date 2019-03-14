@@ -37,3 +37,6 @@
 
 # OSX
 .DS_Store
+
+# list of executables
+/operation-bench/bench
