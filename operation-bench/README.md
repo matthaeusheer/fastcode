@@ -22,6 +22,9 @@ Simply compile `bench.c` with the desired flags. For instance:
 gcc-8 -O3 -fno-tree-vectorize bench.c -o bench
 ```
 
+On some versions on `gcc` the math library needs to be linked. This can be
+performed using the `-lm` flag.
+
 ## Seg Faults
 
 If running the code gives a segmentation fault, try increasing `N` in the code. This variable
