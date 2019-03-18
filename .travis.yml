@@ -2,12 +2,9 @@ dist: trusty
 language: c
 compiler: gcc
 sudo: required
-before_script:
+before_install:
   - sudo add-apt-repository --yes ppa:snaipewastaken/ppa
   - sudo apt-get update
   - sudo apt-get install criterion-dev -y
-  - cd sample-algo && make && cd ..
 script:
-  - cd tests
-  - make
-  - make test
+  - ./test_all.sh

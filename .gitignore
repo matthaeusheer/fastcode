@@ -43,5 +43,5 @@
 
 # list of executables
 /operation-bench/bench
-/sample-algo/sample-algo
 /tests/tests
+/penguin/tests

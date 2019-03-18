@@ -17,6 +17,28 @@ make test
 inside the `tests` directory. Please also list your main object file in the `ALGOS` argument
 in `tests/Makefile`.
 
+The same can be performed in the project directories as well to only run the unit tests for said
+project.
+
+
+### Running All Tests
+
+The command:
+
+```
+./test_all.sh
+```
+
+can be used to compile all registered projects and test the registered tests (both unit and
+integration).
+
+In order to register a project, add the directory name in the shell script and ensure the main
+file of the project is called `main.c`. Moreover, the main object file `main.o` might have to
+be imported in `ALGOS` in the `tests/Makefile`.
+
+In order to implement integration tests, register the project as explained above and simply
+import your header file in `integration.c` and write your tests.
+
 
 ### Installation
 
