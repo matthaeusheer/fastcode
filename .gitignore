@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Assembly files
+*.s
+
 # Transitory files
 .#*
 *.swp
@@ -40,3 +43,5 @@
 
 # list of executables
 /operation-bench/bench
+/tests/tests
+/penguin/tests

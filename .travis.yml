@@ -1,0 +1,10 @@
+dist: trusty
+language: c
+compiler: gcc
+sudo: required
+before_install:
+  - sudo add-apt-repository --yes ppa:snaipewastaken/ppa
+  - sudo apt-get update
+  - sudo apt-get install criterion-dev -y
+script:
+  - ./test_all.sh
