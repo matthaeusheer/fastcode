@@ -20,10 +20,10 @@
 double sum_of_squares(const double* const args, size_t dim);
 double sum(const double* const args, size_t dim);
 double rastigrin(const double* const args, size_t dim);
-double rosenbrock(const double* const args, size_t dim){
-double sphere(const double* const args, size_t dim){
-double egghol2d(const double* const args, size_t dim){
-double schaf2d(const double* const args, size_t dim){
+double rosenbrock(const double* const args, size_t dim);
+double sphere(const double* const args, size_t dim);
+double egghol2d(const double* const args, size_t dim);
+double schaf2d(const double* const args, size_t dim);
 
 
 /*******************************************************************************
@@ -79,7 +79,7 @@ double rastigrin(const double* const args, size_t dim) {
 double rosenbrock(const double* const args, size_t dim){
   double rNd =0.;
   for (size_t idx=0; idx<dim-1;idx++)
-      rNd += ( 100*(pow( x[idx+1] - pow(x[idx],2),2)) + pow(1-x[idx],2) );
+      rNd += ( 100*(pow( args[idx+1] - pow(args[idx],2),2)) + pow(1-args[idx],2) );
 return rNd;
 }
 
@@ -88,25 +88,24 @@ return rNd;
 double sphere(const double* const args, size_t dim){
   double sph = 0;
   for (size_t idx=0; idx<dim ; idx++)
-      sph +=  pow(x[idx],2);
+      sph +=  pow(args[idx],2);
 return sph;
 }
 
 /**2D Eggholder Function
 	global minima at f(x,y) = -959.6407 at (x,y) = (512,404.2319)*/
 double egghol2d(const double* const args, size_t dim){
-  assert(dim == 2);
-  assert( fabs(x[0])<=512 && fabs(x[1])<=512 );
-  double eggh = -1*(x[1]+47)*sin(sqrt(fabs(x[0]+(x[1]+47))))
-                  		- x[0]*sin(sqrt(fabs(x[0]-(x[1]+47))));
+  //assert(dim == 2);
+  //assert( fabs(args[0])<=512 && fabs(args[1])<=512 );
+  double eggh = -1*(args[1]+47)*sin(sqrt(fabs(args[0]+(args[1]+47))))
+                  		- args[0]*sin(sqrt(fabs(args[0]-(args[1]+47))));
 return eggh;
 }
 
 /** 2D Schaffer Function */
 double schaf2d(const double* const args, size_t dim){
-  assert(dim==2);
-  double sch = 0.5 + (pow(cos(pow(sin(fabs(x[0]*x[0]-x[1]*x[1])),2)),2) -0.5)/
-  										pow( (1+0.001*((x[0]*x[0]) + (x[1]*x[1]))), 2 );
+  double sch = 0.5 + (pow(cos(pow(sin(fabs(args[0]*args[0]-args[1]*args[1])),2)),2) -0.5)/
+  										pow( (1+0.001*((args[0]*args[0]) + (args[1]*args[1]))), 2 );
 return sch;
 }
 
