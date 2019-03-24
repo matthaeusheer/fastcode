@@ -113,10 +113,10 @@ static double get_wolf_pos_update_dim_leader(size_t dimension, double a,
                                              const double* const leader_pos) {
   double r1 = random1();
   double r2 = random1();
-  double A = 2 * a * r1 - a;
-  double C = 2 * r2;
-  double D = (C * leader_pos[dimension] - wolf[dimension]);
-  return leader_pos[dimension] - A * D;
+  double A = 2 * a * r1 - a;                // see equation 3.3
+  double C = 2 * r2;                        // see equation 3.4
+  double D = (C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
+  return leader_pos[dimension] - A * D;     // see equation 3.2
 }
 
 
