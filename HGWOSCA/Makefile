@@ -26,17 +26,14 @@ SRCS=$(wildcard *.c)
 
 OBJS=$(SRCS:.c=.o)
 
-ASMS=$(SRCS:.c=.s)
-
-ALGOS  = "../penguin/main.o"
-ALGOS += "../HGWOSCA/main.o"
-
 # ==================================================================================== #
 # = Targets
 # ==================================================================================== #
 
+ASMS=$(SRCS:.c=.s)
+
 all: $(OBJS) $(ASMS)
-	$(CC) $(OBJS) $(ALGOS) -o $(BIN) $(LIBS)
+	$(CC) $(OBJS) -o $(BIN) $(LIBS)
 
 test:
 	./tests
