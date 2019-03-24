@@ -50,6 +50,7 @@ Test(hgwosca_integration, sum_of_squares) {
     cr_assert(fabs(solution[idx]) < 0.01, "each dimension should be reasonably close to zero");
   }
   cr_assert(fabs(sum_of_squares(solution, dim)) < 0.1, "objective should be minimised at 0");
+  free(solution);
 }
 
 
@@ -66,6 +67,7 @@ Test(hgwosca_integration, sum) {
   }
   cr_assert(fabs(sum(solution, dim) + 100 * dim) < 0.2 * dim, "objective should be "
             "minimised at -100*dim");
+  free(solution);
 }
 
 
@@ -81,6 +83,7 @@ Test(hgwosca_integration, rastigrin) {
               "to 0");
   }
   cr_assert(fabs(rastigrin(solution, dim)) < 0.1, "objective should be minimised at 0");
+  free(solution);
 }
 
 
@@ -97,6 +100,7 @@ Test(hgwosca_integration, rastigrin) {
 /*     cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close " */
 /*               "to 1"); */
 /*   } */
+/*   free(solution); */
 /* } */
 
 
@@ -112,27 +116,29 @@ Test(hgwosca_integration, sphere) {
               "to 0");
   }
   cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0");
+  free(solution);
 }
 
 
-// Currently broken; TODO: check implementation of egghol2d
+// Function is too noisy
 /* Test(hgwosca_integration, egghol2d) { */
-/*   size_t wolf_count = 20; */
+/*   size_t wolf_count = 400; */
 /*   size_t dim = 2; */
-/*   size_t max_iter = 2000; */
-/*   const double* const mins = filled_array(dim, -100); */
-/*   const double* const maxs = filled_array(dim, 100); */
+/*   size_t max_iter = 4000; */
+/*   const double* const mins = filled_array(dim, -512); */
+/*   const double* const maxs = filled_array(dim, 512); */
 /*   double* solution = hgwosca(egghol2d, wolf_count, dim, max_iter, mins, maxs); */
 /*   print_solution(dim, solution); */
 /*   printf("Objective=%f\n", egghol2d(solution, dim)); */
 /*   cr_assert(fabs(solution[0] - 512) < 0.1, "x should be 512"); */
 /*   cr_assert(fabs(solution[1] - 404.2319) < 0.1, "y should be 404.2319"); */
 /*   cr_assert(fabs(egghol2d(solution, dim) + 959.6407) < 1, "objective should be " */
-/*             "minimised at 959.6407"); */
+/*             "minimised at -959.6407"); */
+/*   free(solution); */
 /* } */
 
 
-// Converges to 0, 1.253; TODO: check implementation of schaf2d
+// Function is too noisy
 /* Test(hgwosca_integration, schaf2d) { */
 /*   size_t wolf_count = 10; */
 /*   size_t dim = 2; */
@@ -147,6 +153,7 @@ Test(hgwosca_integration, sphere) {
 /*               "to 0"); */
 /*   } */
 /*   cr_assert(fabs(schaf2d(solution, dim)) < 0.5, "objective should be minimised at 0"); */
+/*   free(solution); */
 /* } */
 
 /*******************************************************************************
