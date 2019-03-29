@@ -26,6 +26,7 @@ double rosenbrock(const double* const args, size_t dim);
 double sphere(const double* const args, size_t dim);
 double egghol2d(const double* const args, size_t dim);
 double schaf2d(const double* const args, size_t dim);
+double griewank(const double* const args, size_t dim);
 
 /*******************************************************************************
   UTILITIES
@@ -42,74 +43,80 @@ double* filled_array(size_t length, double val);
 Test(hgwosca_integration, sum_of_squares) {
   size_t wolf_count = 30;
   size_t dim = 10;
-  size_t max_iter = 500;
-  const double* const mins = filled_array(dim, -100);
-  const double* const maxs = filled_array(dim, 100);
+  size_t max_iter = 120;
+  double* mins = filled_array(dim, -100);
+  double* maxs = filled_array(dim, 100);
   double* solution = hgwosca(sum_of_squares, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx]) < 0.01, "each dimension should be reasonably close to zero");
+    cr_assert(fabs(solution[idx]) < 0.00001, "each dimension should be zero");
   }
   cr_assert(fabs(sum_of_squares(solution, dim)) < 0.1, "objective should be minimised at 0");
   free(solution);
+  free(mins);
+  free(maxs);
 }
 
 
 Test(hgwosca_integration, sum) {
   size_t wolf_count = 30;
   size_t dim = 10;
-  size_t max_iter = 800;
-  const double* const mins = filled_array(dim, -100);
-  const double* const maxs = filled_array(dim, 100);
+  size_t max_iter = 100;
+  double* mins = filled_array(dim, -100);
+  double* maxs = filled_array(dim, 100);
   double* solution = hgwosca(sum, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx] + 100) < 0.5, "each dimension should be reasonably close "
-              "to -100");
+    cr_assert(fabs(solution[idx] + 100) < 0.00001, "each dimension should be -100");
   }
   cr_assert(fabs(sum(solution, dim) + 100 * dim) < 0.2 * dim, "objective should be "
             "minimised at -100*dim");
   free(solution);
+  free(mins);
+  free(maxs);
 }
 
 
-Test(hgwosca_integration, rastigrin) {
-  size_t wolf_count = 30;
-  size_t dim = 10;
-  size_t max_iter = 800;
-  const double* const mins = filled_array(dim, -100);
-  const double* const maxs = filled_array(dim, 100);
-  double* solution = hgwosca(rastigrin, wolf_count, dim, max_iter, mins, maxs);
-  for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
-              "to 0");
-  }
-  cr_assert(fabs(rastigrin(solution, dim)) < 0.1, "objective should be minimised at 0");
-  free(solution);
-}
-
-
-// The following takes very long, hence commented out.
-/* Test(hgwosca_integration, rosenbrock) { */
-/*   size_t wolf_count = 500; */
-/*   size_t dim = 5; */
-/*   size_t max_iter = 200000; */
-/*   const double* const mins = filled_array(dim, -100); */
-/*   const double* const maxs = filled_array(dim, 100); */
-/*   double* solution = hgwosca(rosenbrock, wolf_count, dim, max_iter, mins, maxs); */
+/* Test(hgwosca_integration, rastigrin) { */
+/*   size_t wolf_count = 40; */
+/*   size_t dim = 10; */
+/*   size_t max_iter = 100; */
+/*   double* mins = filled_array(dim, -100); */
+/*   double* maxs = filled_array(dim, 100); */
+/*   double* solution = hgwosca(rastigrin, wolf_count, dim, max_iter, mins, maxs); */
 /*   print_solution(dim, solution); */
 /*   for(size_t idx = 0; idx < dim; idx++) { */
-/*     cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close " */
-/*               "to 1"); */
+/*     cr_assert(fabs(solution[idx]) < 0.001, "each dimension should be reasonably close " */
+/*               "to 0"); */
 /*   } */
+/*   cr_assert(fabs(rastigrin(solution, dim)) < 0.1, "objective should be minimised at 0"); */
 /*   free(solution); */
+/*   free(mins); */
+/*   free(maxs); */
 /* } */
+
+
+Test(hgwosca_integration, rosenbrock) {
+  size_t wolf_count = 40;
+  size_t dim = 3;
+  size_t max_iter = 1500;
+  double* mins = filled_array(dim, -100);
+  double* maxs = filled_array(dim, 100);
+  double* solution = hgwosca(rosenbrock, wolf_count, dim, max_iter, mins, maxs);
+  for(size_t idx = 0; idx < dim; idx++) {
+    cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
+              "to 1");
+  }
+  free(solution);
+  free(mins);
+  free(maxs);
+}
 
 
 Test(hgwosca_integration, sphere) {
   size_t wolf_count = 30;
   size_t dim = 10;
   size_t max_iter = 800;
-  const double* const mins = filled_array(dim, -100);
-  const double* const maxs = filled_array(dim, 100);
+  double* mins = filled_array(dim, -100);
+  double* maxs = filled_array(dim, 100);
   double* solution = hgwosca(sphere, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
@@ -117,14 +124,16 @@ Test(hgwosca_integration, sphere) {
   }
   cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0");
   free(solution);
+  free(mins);
+  free(maxs);
 }
 
 
 // Function is too noisy
 /* Test(hgwosca_integration, egghol2d) { */
-/*   size_t wolf_count = 400; */
+/*   size_t wolf_count = 80; */
 /*   size_t dim = 2; */
-/*   size_t max_iter = 4000; */
+/*   size_t max_iter = 9000; */
 /*   const double* const mins = filled_array(dim, -512); */
 /*   const double* const maxs = filled_array(dim, 512); */
 /*   double* solution = hgwosca(egghol2d, wolf_count, dim, max_iter, mins, maxs); */
@@ -140,9 +149,9 @@ Test(hgwosca_integration, sphere) {
 
 // Function is too noisy
 /* Test(hgwosca_integration, schaf2d) { */
-/*   size_t wolf_count = 10; */
+/*   size_t wolf_count = 40; */
 /*   size_t dim = 2; */
-/*   size_t max_iter = 5000; */
+/*   size_t max_iter = 9000; */
 /*   const double* const mins = filled_array(dim, -100); */
 /*   const double* const maxs = filled_array(dim, 100); */
 /*   double* solution = hgwosca(schaf2d, wolf_count, dim, max_iter, mins, maxs); */
@@ -154,6 +163,26 @@ Test(hgwosca_integration, sphere) {
 /*   } */
 /*   cr_assert(fabs(schaf2d(solution, dim)) < 0.5, "objective should be minimised at 0"); */
 /*   free(solution); */
+/* } */
+
+
+/* Test(hgwosca_integration, griewank) { */
+/*   size_t wolf_count = 30; */
+/*   size_t dim = 5; */
+/*   size_t max_iter = 800; */
+/*   double* mins = filled_array(dim, -600); */
+/*   double* maxs = filled_array(dim, 600); */
+/*   double* solution = hgwosca(griewank, wolf_count, dim, max_iter, mins, maxs); */
+/*   print_solution(dim, solution); */
+/*   printf("Objective=%f\n", schaf2d(solution, dim)); */
+/*   for(size_t idx = 0; idx < dim; idx++) { */
+/*     cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close " */
+/*               "to 0"); */
+/*   } */
+/*   cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0"); */
+/*   free(solution); */
+/*   free(mins); */
+/*   free(maxs); */
 /* } */
 
 /*******************************************************************************
@@ -234,6 +263,17 @@ double schaf2d(const double* const args, size_t dim){
   double sch = 0.5 + (pow(cos(pow(sin(fabs(args[0]*args[0]-args[1]*args[1])),2)),2) -0.5)/
   										pow( (1+0.001*((args[0]*args[0]) + (args[1]*args[1]))), 2 );
 return sch;
+}
+
+
+// Griewank function
+double griewank(const double* const args, size_t dim) {
+  double sum = 0, prod = 1;
+  for(size_t idx = 0; idx < dim; idx++) {
+    sum += pow(args[idx], 2) / 4000;
+    prod *= cos(args[idx] / sqrt(idx));
+  }
+  return sum - prod + 1;
 }
 
 

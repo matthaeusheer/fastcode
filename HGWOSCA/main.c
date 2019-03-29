@@ -108,15 +108,37 @@ static double* const init_fitness(size_t wolf_count, size_t dim,
    value of `a`.
    TODO: test
  */
-static double get_wolf_pos_update_dim_leader(size_t dimension, double a,
+static double get_wolf_pos_update_dim_leader(const size_t dimension, const double a,
                                              const double* const wolf,
                                              const double* const leader_pos) {
   double r1 = random1();
   double r2 = random1();
   double A = 2 * a * r1 - a;                // see equation 3.3
   double C = 2 * r2;                        // see equation 3.4
-  double D = (C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
+  double D = fabs(C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
   return leader_pos[dimension] - A * D;     // see equation 3.2
+}
+
+
+/**
+   Get recommended position of `dimension` for `wolf` with respect to the alpha, for a given
+   value of `a`. See equ (12) on the Hybrid paper.
+   TODO: test
+ */
+static double get_wolf_pos_update_dim_alpha(const size_t dimension, const double a,
+                                            const double* const wolf,
+                                            const double* const alpha_pos) {
+  double r1 = random1();
+  double r2 = random1();
+  double A = 2 * a * r1 - a;                // see equation 3.3
+  double C = 2 * r2;                        // see equation 3.4
+  double D;
+  if(random1() < 0.5) {
+    D = random1() * sin(random1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
+  } else {
+    D = random1() * cos(random1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
+  }
+  return alpha_pos[dimension] - A * D;
 }
 
 
@@ -125,13 +147,14 @@ static double get_wolf_pos_update_dim_leader(size_t dimension, double a,
    given value of `a`.
    TODO: test
  */
-static void update_wolf_position(size_t dim, double a, double* const wolf,
+static void update_wolf_position(const size_t dim, const double a,
+                                 double* const wolf,
                                  const double* const alpha_pos,
                                  const double* const beta_pos,
                                  const double* const delta_pos) {
   for(size_t idx = 0; idx < dim; idx++) {
     double new_pos = 0.0;
-    new_pos += get_wolf_pos_update_dim_leader(idx, a, wolf, alpha_pos);
+    new_pos += get_wolf_pos_update_dim_alpha(idx, a, wolf, alpha_pos);
     new_pos += get_wolf_pos_update_dim_leader(idx, a, wolf, beta_pos);
     new_pos += get_wolf_pos_update_dim_leader(idx, a, wolf, delta_pos);
     wolf[idx] = new_pos / 3;
@@ -143,13 +166,16 @@ static void update_wolf_position(size_t dim, double a, double* const wolf,
    Update the positions of all wolves.
    TODO: test
  */
-static void update_all_positions(size_t wolf_count, size_t dim, double a,
-                                 double* const population,
+static void update_all_positions(const size_t wolf_count, const size_t dim,
+                                 const double a, double* const population,
                                  size_t alpha, size_t beta, size_t delta) {
   const double* const alpha_pos = &population[alpha * dim];
   const double* const beta_pos = &population[beta * dim];
   const double* const delta_pos = &population[delta * dim];
   for(size_t wolf = 0; wolf < wolf_count; wolf++) {
+    if(wolf == alpha || wolf == beta || wolf == delta) {
+      continue;
+    }
     update_wolf_position(dim, a, &population[wolf * dim], alpha_pos, beta_pos, delta_pos);
   }
 }
@@ -158,7 +184,7 @@ static void update_all_positions(size_t wolf_count, size_t dim, double a,
 /**
    Clamp `val` between `min` and `max`.
  */
-static double clamp(double val, double min, double max) {
+static double clamp(const double val, const double min, const double max) {
   return val < min ? min : (val > max ? max : val);
 }
 
@@ -166,7 +192,7 @@ static double clamp(double val, double min, double max) {
 /**
    Clamp solutions into feasible space.
  */
-static void clamp_all_positions(size_t wolf_count, size_t dim,
+static void clamp_all_positions(const size_t wolf_count, const size_t dim,
                                 double* const population,
                                 const double* const min_positions,
                                 const double* const max_positions) {
@@ -194,9 +220,9 @@ static void clamp_all_positions(size_t wolf_count, size_t dim,
      The position minimising the objective function. This array has size `dim`.
  */
 double* const hgwosca(double(*obj)(const double* const, size_t),
-                            size_t wolf_count,
-                            size_t dim,
-                            size_t max_iterations,
+                            const size_t wolf_count,
+                            const size_t dim,
+                            const size_t max_iterations,
                             const double* const min_positions,
                             const double* const max_positions) {
   double* const population = init_population(wolf_count, dim, min_positions, max_positions);
