@@ -59,7 +59,6 @@ data/*
 /HGWOSCA/tests
 /benchmark/benchmark
 
-
 # fastpy stuff
 **/.python-version
 **/.ipynb_checkpoints
