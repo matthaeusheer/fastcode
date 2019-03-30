@@ -47,8 +47,15 @@
 # VS Code
 .vscode
 
+# data directory
+data/*
+!data/data_readme.txt
+
 # list of executables
 /operation-bench/bench
 /tests/tests
 /penguin/tests
 /HGWOSCA/tests
+/benchmark/benchmark
+
+
