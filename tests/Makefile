@@ -22,14 +22,16 @@ LIBS   += -lm -lcriterion
 %.s : %.c
 	$(CC) $(CFLAGS) -S $< -o $@
 
-SRCS=$(wildcard *.c ../objectives/objectives.c)
+SRCS=$(wildcard *.c \
+../objectives/objectives.c \
+../penguin/main.c \
+../HGWOSCA/main.c \
+)
 
 OBJS=$(SRCS:.c=.o)
 
 ASMS=$(SRCS:.c=.s)
 
-ALGOS  = "../penguin/main.o"
-ALGOS += "../HGWOSCA/main.o"
 
 # ==================================================================================== #
 # = Targets
