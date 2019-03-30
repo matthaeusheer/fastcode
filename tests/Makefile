@@ -22,7 +22,7 @@ LIBS   += -lm -lcriterion
 %.s : %.c
 	$(CC) $(CFLAGS) -S $< -o $@
 
-SRCS=$(wildcard *.c)
+SRCS=$(wildcard *.c ../objectives/objectives.c)
 
 OBJS=$(SRCS:.c=.o)
 
@@ -42,5 +42,5 @@ test:
 	./tests
 
 clean:
-	rm -rf *.o *.txt *.s
+	rm -rf *.txt $(OBJS) $(ASMS)
 	rm -rf $(BIN)
