@@ -44,6 +44,9 @@
 # IntelliJ
 .idea
 
+# VS Code
+.vscode
+
 # list of executables
 /operation-bench/bench
 /tests/tests
