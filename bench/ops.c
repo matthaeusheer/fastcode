@@ -49,12 +49,12 @@ void operation_benchmark() {
 
   // Define benchmarks here
   BENCH_OP(addition, x[i] + y[i])
-    BENCH_OP(multiplication, x[i] * y[i])
-    BENCH_OP(division, x[i] / y[i])
-    BENCH_OP(three_oper, x[i] + y[i] + z[i])
-    BENCH_OP(square_root, sqrt(x[i]))
+  BENCH_OP(multiplication, x[i] * y[i])
+  BENCH_OP(division, x[i] / y[i])
+  BENCH_OP(three_oper, x[i] + y[i] + z[i])
+  BENCH_OP(square_root, sqrt(x[i]))
 
-    free(x);
+  free(x);
   free(y);
   free(z);
 }

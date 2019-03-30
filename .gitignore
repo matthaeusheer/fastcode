@@ -42,8 +42,8 @@
 .DS_Store
 
 # list of executables
-/operation-bench/bench
-/operation-bench/*.test
+/bench/bench
+/bench/*.test
 /tests/tests
 /penguin/tests
 /HGWOSCA/tests
