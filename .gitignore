@@ -41,6 +41,9 @@
 # OSX
 .DS_Store
 
+# IntelliJ
+.idea
+
 # list of executables
 /operation-bench/bench
 /tests/tests
