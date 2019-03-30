@@ -8,7 +8,7 @@
 
 #include <criterion/criterion.h>
 
-#include "objectives.h"
+#include "../objectives/objectives.h"
 #include "../penguin/main.h"
 #include "../HGWOSCA/main.h"
 
