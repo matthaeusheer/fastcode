@@ -1,3 +1,4 @@
+#pragma once
 /* ==================== GNU C and possibly other UNIX compilers ===================== */
 	#ifndef WIN32
 
@@ -8,7 +9,7 @@
 		/* if we're neither compiling with gcc or under linux, we can hope
 		 * the following lines work, they probably won't */
 		#define ASM asm
-		#define VOLATILE 
+		#define VOLATILE
 	#endif
 
 	#define myInt64 unsigned long long
@@ -91,5 +92,3 @@ myInt64 stop_tsc(myInt64 start) {
 	CPUID();
 	return COUNTER_VAL(end) - start;
 }
-
-

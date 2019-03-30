@@ -43,6 +43,7 @@
 
 # list of executables
 /operation-bench/bench
+/operation-bench/*.test
 /tests/tests
 /penguin/tests
 /HGWOSCA/tests
