@@ -5,29 +5,36 @@
 #include <fstream>
 
 #include "run_algos.h"
+#include "utils.h"
+#include "benchmark.h"
 #include "../objectives/objectives.h"
-#include "../operation-bench/tsc_x86.h"
-#include "utils.hpp"
+#include "../HGWOSCA/main.h"
 
 
-int main() {
+int main(int argc, const char** argv) {
 
+    if (argc != 2) {
+        std::cout << "Usage: config file name." << std::endl;
+        exit(1);
+    }
+
+    printf("GIT VERSION - %s\n", GIT_VERSION);
+    printf("GIT COMMIT  - %s\n", GIT_COMMIT);
+    printf("GIT DATE    - %s\n", GIT_DATE);
+
+
+    auto config = parse_config(std::string(argv[1]));
+
+    time_algorithm(config);
+
+    exit(0);
     /*******************************************************************************
         RUN HGOWOSCA ALGORITHM
     *******************************************************************************/
-
-    // TODO: All parameters should be configurable either from cmd or with a json file.
-    // Even better: make algorithm and objective function parameters as well.
-    // Such we have a tool to always benchmark a certain
-    // algo with a certain objective function (or multiple) and a parameter set for the algo.
-    // The tool should should validate params with checks and an evaluation tool should
-    // then automatically plot this data.
-    // The timing data file should hold all this metadata as well as additional code
-    // metadata such as branch and last git commit ID.
-
-    int min_dim = 100;
-    int max_dim = 1000;
-    int step_dim = 100;
+    /*
+    constexpr int min_dim = 100;
+    constexpr int max_dim = 1000;
+    constexpr int step_dim = 100;
 
     std::vector<int> timed_cycles;
     std::vector<int> input_sizes;
@@ -54,7 +61,7 @@ int main() {
     }
 
     outfile.close();
-
+    */
     /*******************************************************************************
         RUN PINGU ALGORITHM
     *******************************************************************************/

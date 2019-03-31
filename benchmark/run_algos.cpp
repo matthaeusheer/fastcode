@@ -1,5 +1,6 @@
 #include <cstdlib>
 
+#include "utils.h"
 #include "run_algos.h"
 #include "../objectives/objectives.h"
 #include "../HGWOSCA/main.h"
@@ -17,8 +18,8 @@ void run_hgwosca(double(*obj_func)(const double* const, size_t),
 
     double* solution = hgwosca(obj_func, wolf_count, dim, max_iter, mins, maxs);
 
-    if (print_out)
-        print_solution(dim, solution);
+    //if (print_out)
+     //   print_solution(dim, solution);
 
     free(solution);
     free(mins);
