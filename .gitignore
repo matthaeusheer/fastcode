@@ -52,7 +52,8 @@ data/*
 !data/data_readme.txt
 
 # list of executables
-/operation-bench/bench
+/bench/bench
+/bench/*.test
 /tests/tests
 /penguin/tests
 /HGWOSCA/tests

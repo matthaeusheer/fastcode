@@ -7,21 +7,10 @@
 #include <math.h>
 #include "tsc_x86.h"
 
-#define ARRAY_SIZE 1e7
+#include "utils.h"
+
 #define CYCLES_REQUIRED 1e7
 #define NUM_RUNS 1
-
-double randf() {
-    return (double)rand() / (double)RAND_MAX;
-}
-
-double* build() {
-    double* x = (double*)malloc(ARRAY_SIZE * sizeof(double));
-    for(size_t i = 0; i < ARRAY_SIZE; ++i) {
-        x[i] = randf();
-    }
-    return x;
-}
 
 #define BENCH_OP(name, expr)                    \
     num_runs = NUM_RUNS;                        \
@@ -46,23 +35,26 @@ double* build() {
     printf("%.5f \tcycles\n", cycles);
 
 
-int main(char* argv) {
-    srand(0);
-    double* x = build();
-    double* y = build();
-    double* z = build();
-    long i, num_runs;
-    double cycles, multiplier;
-    myInt64 start, end;
+/**
+   Perform benchmarks on predefined operations.
+*/
+void operation_benchmark() {
+  srand(0);
+  double* x = build();
+  double* y = build();
+  double* z = build();
+  long i, num_runs;
+  double cycles, multiplier;
+  myInt64 start, end;
 
-    // Define benchmarks here
-    BENCH_OP(addition, x[i] + y[i])
-    BENCH_OP(multiplication, x[i] * y[i])
-    BENCH_OP(division, x[i] / y[i])
-    BENCH_OP(three_oper, x[i] + y[i] + z[i])
-    BENCH_OP(square_root, sqrt(x[i]))
+  // Define benchmarks here
+  BENCH_OP(addition, x[i] + y[i])
+  BENCH_OP(multiplication, x[i] * y[i])
+  BENCH_OP(division, x[i] / y[i])
+  BENCH_OP(three_oper, x[i] + y[i] + z[i])
+  BENCH_OP(square_root, sqrt(x[i]))
 
-    free(x);
-    free(y);
-    free(z);
+  free(x);
+  free(y);
+  free(z);
 }
