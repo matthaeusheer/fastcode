@@ -1,6 +1,4 @@
-//
-// Created by Matthaus Heer on 2019-03-30.
-//
+
 
 #ifndef FASTCODE_OBJECTIVES_H
 #define FASTCODE_OBJECTIVES_H
@@ -26,3 +24,4 @@ void print_solution(size_t dim, const double* const solution);
 double* filled_array(size_t length, double val);
 
 #endif //FASTCODE_OBJECTIVES_H
+

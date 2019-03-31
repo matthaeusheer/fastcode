@@ -8,8 +8,8 @@ BIN = benchmark
 # = Compiler settings
 # ==================================================================================== #
 
-CC      = gcc
-CFLAGS += -O3 -fno-tree-vectorize -std=c11
+CC      = g++
+CPPFLAGS += -O3 -fno-tree-vectorize -std=c++11
 LIBS   += -lm -lcriterion
 
 # ==================================================================================== #
@@ -17,20 +17,28 @@ LIBS   += -lm -lcriterion
 # ==================================================================================== #
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
 %.s : %.c
-	$(CC) $(CFLAGS) -S $< -o $@
+	$(CC) $(CPPFLAGS) -S $< -o $@
 
-SRCS=$(wildcard *.c \
-../objectives/objectives.c \
+%.o : %.cpp
+	$(CC) $(CPPFLAGS) -c $< -o $@
+
+%.s : %.cpp
+	$(CC) $(CPPFLAGS) -S $< -o $@
+
+C_SRCS=$(wildcard *.c \
 ../penguin/main.c \
 ../HGWOSCA/main.c \
+../objectives/objectives.c \
 )
 
-OBJS=$(SRCS:.c=.o)
+CPP_SRCS=$(wildcard *.cpp)
 
-ASMS=$(SRCS:.c=.s)
+OBJS=$(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)
+
+ASMS=$(C_SRCS:.c=.s) $(CPP_SRCS:.cpp=.s)
 
 
 # ==================================================================================== #
