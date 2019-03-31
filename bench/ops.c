@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "tsc_x86.h"
 
-#include "utils.h"
+#include "../benchmark/tsc_x86.h"
+#include "../benchmark/utils.h"
 
 #define CYCLES_REQUIRED 1e7
 #define NUM_RUNS 1
