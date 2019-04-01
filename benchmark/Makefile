@@ -61,7 +61,7 @@ ASMS=$(C_SRCS:.c=.s) $(CPP_SRCS:.cpp=.s)
 all: $(OBJS) $(ASMS)
 	$(CC) $(OBJS) -o $(BIN) $(LIBS)
 
-test_utils: utils.o
+test: utils.o
 	$(CC) utils.o -o $(BIN_UTILS_TEST) $(LIBS)
 	./$(BIN_UTILS_TEST)
 
