@@ -74,20 +74,20 @@ Test(hgwosca_integration, rosenbrock) {
 
 
 Test(hgwosca_integration, sphere) {
-size_t wolf_count = 30;
-size_t dim = 10;
-size_t max_iter = 800;
-double* mins = filled_array(dim, -100);
-double* maxs = filled_array(dim, 100);
-double* solution = hgwosca(sphere, wolf_count, dim, max_iter, mins, maxs);
-for(size_t idx = 0; idx < dim; idx++) {
-cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
-"to 0");
-}
-cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0");
-free(solution);
-free(mins);
-free(maxs);
+  size_t wolf_count = 30;
+  size_t dim = 10;
+  size_t max_iter = 800;
+  double* mins = filled_array(dim, -100);
+  double* maxs = filled_array(dim, 100);
+  double* solution = hgwosca(sphere, wolf_count, dim, max_iter, mins, maxs);
+  for(size_t idx = 0; idx < dim; idx++) {
+  cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
+  "to 0");
+  }
+  cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0");
+  free(solution);
+  free(mins);
+  free(maxs);
 }
 
 
