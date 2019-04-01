@@ -18,7 +18,7 @@ Usage: benchmark [-vaofsnpyz]
    -z    maximum values                            
                                                
    Example:                                        
-     ./benchmark -a "hgwosca" -o "sum" -n 3 -d 10 -p 30 -y -120 -z 100 -s "solution.txt" -f "timings.txt"                            \
+     ./benchmark -a "hgwosca" -o "sum" -n 3 -d 10 -p 30 -y -120 -z 100 -s "solution.txt" -f "timings.txt"
 ```
 \-f and \-o parameters take absolute/relative paths as well.
 
