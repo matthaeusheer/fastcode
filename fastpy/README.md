@@ -23,7 +23,9 @@ which it detects automatically inside the encompassing _fastcode_ C package.
     This runs the benchmark wrapper script using the config.json configuration.
 
 ### Output
-Output files will be written to the ```data``` folder by default.  
+
+![Alt text](output.png?raw=true)  
+Output files will be written to the ```fastpy/data``` folder by default.  
 For the complete benchmark run one output folder will be created tagged by datetime holding
 - config.json
 - binary executable
