@@ -1,12 +1,5 @@
 #pragma once
 
-#include <functional>
-#include <map>
-#include <string>
-
-typedef double (*obj_func_t) (const double* const, size_t);
-typedef std::map<std::string, obj_func_t> obj_map_t;
-
 
 /*******************************************************************************
   OBJECTIVE FUNCTIONS PROTOTYPES
@@ -28,4 +21,3 @@ double griewank         (const double* const args, size_t dim);
 
 void print_solution(size_t dim, const double* const solution);
 double* filled_array(size_t length, double val);
-obj_map_t create_obj_map();

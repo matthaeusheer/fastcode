@@ -4,11 +4,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include <stdbool.h>
 
-
-std::map<std::string, std::string> parse_config(const std::string& file_name);
 
 /**
    Generate a random number between 0 and 1.
@@ -21,16 +20,30 @@ double randf();
 double* build();
 
 /**
-   Command line arguments.
-   Currently not really needed but could become more useful in the future.
+   Command line arguments container.
 */
 typedef struct {
+    std::string algorithm;
+    std::string obj_func;
+    std::string out_file;
+    std::string solution_file;
+    int dimension;
+    int population;
+    int n_iterations;
+    int min_position;
+    int max_position;
     bool verbose;
-    char* algorithm;
-    int n;
-} Clargs;
+} Config;
 
-/**
- * Open a file and print its content line by line.
- */
+
+void parse_args(Config* args, int argc, char* argv[]);
+
 void print_file(std::string file_path);
+
+void print_git_version();
+
+void print_config(Config config);
+
+void store_timings(const std::vector<unsigned long long>& cycles_vec, std::string file_path);
+
+void store_solutions(double* solution, int dimension, std::string file_path);
