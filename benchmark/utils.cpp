@@ -15,7 +15,7 @@
 
 #define ARRAY_SIZE 1e7
 
-// TODO: Update
+
 #define USAGE (                                                         \
                "Usage: %s [-vaofsnpyz]\n"                               \
                "  -v    verbose\n"                                      \
@@ -29,10 +29,9 @@
                "  -z    maximum values\n"                               \
                "\n"                                                     \
                "\n"                                                     \
+               "Currently all parameters are required.\n"               \
                "  Example:\n"                                           \
-               "    %s -a \"hgwosca\" -o \"sum\" -n 3 -d 10 -p 30 -y -120 -z 100 -s \"../data/solution.txt\" -f \"../data/timings.txt\"\n"                            \
-               "    will run the HGWOSCA algorithm for 4048\n"          \
-               "    iterations. No verbose output will be provided.\n")
+               "    ./benchmark -a \"hgwosca\" -o \"sum\" -n 3 -d 10 -p 30 -y -120 -z 100 -s \"../data/solution.txt\" -f \"../data/timings.txt\"\n")
 
 
 /**
