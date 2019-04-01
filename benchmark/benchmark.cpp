@@ -1,77 +1,84 @@
 #include <vector>
 #include <iostream>
 #include <utility>
+#include <string>
+#include <cstdlib>
 
 #include "utils.h"
-#include "run_algos.h"
-#include "tsc_x86.h"
 #include "benchmark.h"
 #include "range.h"
+#include "tsc_x86.h"
+#include "../objectives/objectives.h"
+#include "../HGWOSCA/main.h"
 
 
-std::pair<std::vector<int>, std::vector<int>> time_algorithm(config_t config) {
+std::vector<timeInt64> time_algorithm(Config cfg) {
 
+    // First creating function name to function pointer maps
     auto obj_func_map = create_obj_map();
+    auto algo_func_map = create_algo_map();
 
-    int min_dim = std::stoi(config["min_dim"]);
-    int max_dim = std::stoi(config["max_dim"]);
-    int step_dim = std::stoi(config["step_dim"]);
+    double* mins = filled_array((size_t)cfg.dimension, cfg.min_position);
+    double* maxs = filled_array((size_t)cfg.dimension, cfg.max_position);
 
-    std::vector<int> timed_cycles;
-    std::vector<int> input_sizes;
+    // Bind the parameters such that we have one generic algorithm function to run and benchmark
+    auto algo_func = std::bind(algo_func_map[cfg.algorithm],
+                               obj_func_map[cfg.obj_func],
+                               cfg.population,
+                               cfg.dimension,
+                               cfg.n_iterations,
+                               mins,
+                               maxs);
 
-    for (auto input_size : whoshuu::range(min_dim, max_dim + step_dim, step_dim)) {
+    std::vector<timeInt64> cycles_vec;
+    double* solution;
 
-        // std::cout << "running for size " << input_size << std::endl;
+    // Run the actual algorithm and time it for n_iterations
+    for (int iter = 0; iter < cfg.n_iterations; ++iter) {
+        timeInt64 start_time = start_tsc();
 
-        auto algo_func = get_algo_func(config, input_size, obj_func_map);
+        solution = algo_func();
 
-        myInt64 start_time = start_tsc();
+        timeInt64 cycles = stop_tsc(start_time);
 
-        /*************************************
-            Running algorithm
-        *************************************/
+        cycles_vec.emplace_back(cycles);
 
-        algo_func();
-
-        /*************************************
-
-        *************************************/
-
-        myInt64 cycles = stop_tsc(start_time);
-
-        timed_cycles.emplace_back(cycles);
-        input_sizes.emplace_back(input_size);
+        // TODO: Add DEBUG flag to print solutions and timings.
+        // print_solution((size_t)cfg.dimension, solution);
+        // std::cout << " Cycles: " << cycles << std::endl;
     }
 
-    return std::pair<std::vector<int>, std::vector<int>> (input_sizes, timed_cycles);
+    // TODO: We might want to be able to store all solutions over all runs to see whether they are consistent.
 
+    store_solutions(solution, cfg.dimension, cfg.solution_file);  // Store solution of last run
 
+    free(solution);
+    free(mins);
+    free(maxs);
+
+    return cycles_vec;
 }
 
 
-algo_func_t get_algo_func(config_t cfg, size_t input_size, obj_map_t& obj_map) {
+obj_map_t create_obj_map() {
 
-    algo_func_t algo_func;
-
-    if (cfg["algorithm"] == "GWO") {
-        return std::bind(run_hgwosca,
-                         obj_map[cfg["obj_func"]],
-                         std::stoi(cfg["wolf_count"]),
-                         input_size,
-                         std::stoi(cfg["max_iterations"]),
-                         std::stoi(cfg["min_position"]),
-                         std::stoi(cfg["max_position"]),
-                         false);
-
-    } else if (cfg["algorithm"] == "pingu") {
-        std::cout << "Pingu algorithm (" << cfg["algorithm"] << ") not yet implemented." << std::endl;
-        exit(EXIT_FAILURE);
-    } else {
-        std::cout << "Configured algorithm (" << cfg["algorithm"] << ") unknown." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    return algo_func;
+    // Register more objective functions here as they get implemented.
+    obj_map_t obj_map = {{"sum_of_squares",  &sum_of_squares},
+                         {"sum",             &sum},
+                         {"rastigrin",       &rastigrin},
+                         {"rosenbrock",      &rosenbrock},
+                         {"sphere",          &sphere},
+                         {"egghol2d",        &egghol2d},
+                         {"schaf2d",         &schaf2d},
+                         {"griewank",        &griewank}};
+    return obj_map;
 }
 
+
+algo_map_t create_algo_map() {
+
+    // Register more algorithms here as they get implemented.
+    algo_map_t algo_map = {{"hgwosca", &hgwosca}};
+
+    return algo_map;
+}

@@ -125,20 +125,3 @@ double* filled_array(size_t length, double val) {
     }
     return res;
 }
-
-/**
- * Creates an objective function map with string key identifier and objective function
- * pointer values.
- */
-obj_map_t create_obj_map()  {
-    obj_map_t obj_map = {{"sum_of_squares", &sum_of_squares},
-                         {"sum",             &sum},
-                         {"rastigrin",       &rastigrin},
-                         {"rosenbrock",      &rosenbrock},
-                         {"sphere",          &sphere},
-                         {"egghol2d",        &egghol2d},
-                         {"schaf2d",         &schaf2d},
-                         {"griewank",        &griewank}};
-
-    return obj_map;
-}

@@ -13,16 +13,16 @@
 		#define VOLATILE
 	#endif
 
-	#define myInt64 unsigned long long
+	#define timeInt64 unsigned long long
 	#define INT32 unsigned int
 
 /* ======================== WIN32 ======================= */
 #else
 
-	#define myInt64 signed __int64
+	#define timeInt64 signed __int64
 	#define INT32 unsigned __int32
 
-#endif
+#endif 
 
 /* This is the RDTSC timer.
  * RDTSC is an instruction on several Intel and compatible CPUs that Reads the
@@ -44,7 +44,7 @@
 #ifndef WIN32
 
 	typedef union
-	{       myInt64 int64;
+	{       timeInt64 int64;
 		    struct {INT32 lo, hi;} int32;
 	} tsc_counter;
 
@@ -57,7 +57,7 @@
 #else
 
 	typedef union
-	{       myInt64 int64;
+	{       timeInt64 int64;
 			struct {INT32 lo, hi;} int32;
 	} tsc_counter;
 
@@ -80,14 +80,14 @@ void init_tsc() {
 	; // no need to initialize anything for x86
 }
 
-myInt64 start_tsc(void) {
+timeInt64 start_tsc(void) {
     tsc_counter start;
     CPUID();
     RDTSC(start);
     return COUNTER_VAL(start);
 }
 
-myInt64 stop_tsc(myInt64 start) {
+timeInt64 stop_tsc(timeInt64 start) {
 	tsc_counter end;
 	RDTSC(end);
 	CPUID();
