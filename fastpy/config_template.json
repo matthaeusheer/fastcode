@@ -1,0 +1,9 @@
+{
+  "algorithm":  ["hgwosca"],
+  "obj_func":   ["sum_of_squares", "sum"],
+  "dimension":  [100],
+  "n_iter":     [10],
+  "population": [20],
+  "min_val":    [-100],
+  "max_val":    [100]
+}
