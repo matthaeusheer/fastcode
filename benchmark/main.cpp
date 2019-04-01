@@ -13,6 +13,7 @@
 
 #define FILE_NAME "output.txt"
 
+
 int main(int argc, const char** argv) {
 
     if (argc != 2) {
