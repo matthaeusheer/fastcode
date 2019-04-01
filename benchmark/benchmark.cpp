@@ -3,6 +3,7 @@
 #include <utility>
 #include <string>
 #include <cstdlib>
+#include <functional>
 
 #include "utils.h"
 #include "benchmark.h"
