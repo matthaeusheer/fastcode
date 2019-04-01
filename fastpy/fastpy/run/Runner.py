@@ -22,6 +22,9 @@ BENCHMARK_BIN = 'benchmark'
 
 TIMING_OUT_FILE = 'timings.csv'
 SOLUTION_OUT_FILE = 'solution.csv'
+CONFIG_FILE_NAME = 'config.json'
+RUN_CONFIG_FILE_NAME = 'run_config.json'
+SUB_DIR_PATTERN = 'run_{run_idx}'
 
 
 class BenchmarkRunner:
@@ -36,14 +39,14 @@ class BenchmarkRunner:
 
         os.mkdir(self._output_dir)  # main output dir for this whole run
         shutil.copy(os.path.join(BENCHMARK_BIN_DIR, BENCHMARK_BIN), self._output_dir)
-        store_json_config(self.config, self._output_dir, 'config.json')
+        store_json_config(self.config, self._output_dir, CONFIG_FILE_NAME)
 
         for run_idx, run_config in enumerate(self._build_param_sets()):
 
-            sub_dir = os.path.join(self._output_dir, f'run_{run_idx}')  # sub output dir for one param combo
+            sub_dir = os.path.join(self._output_dir, SUB_DIR_PATTERN.format(run_idx=run_idx))  # sub output dir one param combo
             os.mkdir(sub_dir)
 
-            store_json_config(run_config, sub_dir, 'run_config.json')
+            store_json_config(run_config, sub_dir, RUN_CONFIG_FILE_NAME)
 
             self._run_algorithm(run_config, sub_dir)
 
