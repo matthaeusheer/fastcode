@@ -1,4 +1,5 @@
 import os
+import shutil
 import itertools
 from subprocess import call
 
@@ -33,6 +34,8 @@ class BenchmarkRunner:
         """Main wrapper function to loop over all possible parameter combinations."""
 
         os.mkdir(self._output_dir)  # main output dir for this whole run
+        shutil.copy(os.path.join(BENCHMARK_BIN_DIR, BENCHMARK_BIN), self._output_dir)
+        store_json_config(self.config, self._output_dir, 'config.json')
 
         for run_idx, run_config in enumerate(self._build_param_sets()):
 
