@@ -14,10 +14,11 @@
 #include "utils.h"
 
 #define ARRAY_SIZE 1e7
+#define ARGC_REQUIRED 18
 
 
 #define USAGE (                                                         \
-               "Usage: %s [-vaofsnpyz]\n"                               \
+               "\nUsage:  [-vaofsnpyz]\n"                                 \
                "  -v    verbose\n"                                      \
                "  -a    algorithm name\n"                               \
                "  -o    objective function name\n"                      \
@@ -27,10 +28,9 @@
                "  -p    population size\n"                              \
                "  -y    minimum values\n"                               \
                "  -z    maximum values\n"                               \
-               "\n"                                                     \
-               "\n"                                                     \
-               "Currently all parameters are required.\n"               \
-               "  Example:\n"                                           \
+               "  \n"                                                   \
+               "Currently all parameters are required.\n\n"             \
+               "Example:\n"                                             \
                "    ./benchmark -a \"hgwosca\" -o \"sum\" -n 3 -d 10 -p 30 -y -120 -z 100 -s \"../data/solution.txt\" -f \"../data/timings.txt\"\n")
 
 
@@ -39,7 +39,7 @@
 */
 void parse_args(Config* config, int argc, char* argv[]) {
 
-    if (argc < 18) {
+    if (argc < ARGC_REQUIRED) {
         std::cout << USAGE << std::endl;
         exit(1);
     }
@@ -118,23 +118,7 @@ void parse_args(Config* config, int argc, char* argv[]) {
     }
 }
 
-/**
-   Generate a random number between 0 and 1.
-*/
-double randf() {
-    return (double)rand() / (double)RAND_MAX;
-}
 
-/**
-   Build an array of size `ARRAY_SIZE` and fill it with random numbers.
-*/
-double* build() {
-    double* x = (double*)malloc(ARRAY_SIZE * sizeof(double));
-    for(size_t i = 0; i < ARRAY_SIZE; ++i) {
-        x[i] = randf();
-    }
-    return x;
-}
 
 
 void print_file(std::string file_path) {
@@ -210,6 +194,14 @@ void store_solutions(double* solution, int dimension, std::string file_path) {
     } else {
         std::cout << "Solution output file parameter is default. No storage of timings." << std::endl;
     }
+}
+
+double* filled_array(size_t length, double val) {
+    double * res = (double*)malloc(length * sizeof(double));
+    for(size_t idx = 0; idx < length; idx++) {
+        res[idx] = val;
+    }
+    return res;
 }
 
 

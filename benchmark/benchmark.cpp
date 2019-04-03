@@ -7,7 +7,6 @@
 
 #include "utils.h"
 #include "benchmark.h"
-#include "range.h"
 #include "tsc_x86.h"
 #include "../objectives/objectives.h"
 #include "../HGWOSCA/main.h"
@@ -49,7 +48,7 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
         // std::cout << " Cycles: " << cycles << std::endl;
     }
 
-    // TODO: We might want to be able to store all solutions over all runs to see whether they are consistent.
+    // TODO: We might want to be able to stor   e all solutions over all runs to see whether they are consistent.
 
     store_solutions(solution, cfg.dimension, cfg.solution_file);  // Store solution of last run
 

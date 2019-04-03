@@ -57,14 +57,16 @@ ASMS=$(C_SRCS:.c=.s) $(CPP_SRCS:.cpp=.s)
 # = Targets
 # ==================================================================================== #
 
+all: benchmark test_utils
 
-all: $(OBJS) $(ASMS)
+benchmark: $(OBJS) $(ASMS)
 	$(CC) $(OBJS) -o $(BIN) $(LIBS)
 
-test: utils.o
+test_utils: utils.o
 	$(CC) utils.o -o $(BIN_UTILS_TEST) $(LIBS)
-	./$(BIN_UTILS_TEST)
 
+test:
+	./$(BIN_UTILS_TEST)
 
 clean:
 	rm -rf  $(OBJS) $(ASMS)

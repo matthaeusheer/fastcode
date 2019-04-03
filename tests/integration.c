@@ -11,6 +11,7 @@
 #include "../objectives/objectives.h"
 #include "../penguin/main.h"
 #include "../HGWOSCA/main.h"
+#include "../benchmark/utils.h"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -20,6 +21,8 @@
 /*******************************************************************************
   INTEGRATION TESTS
 ******************************************************************************/
+
+// TODO: (jakob) Quite some code duplication. Maybe setup and teardown actions and common code can be collected.
 
 Test(hgwosca_integration, sum_of_squares) {
   size_t wolf_count = 30;
@@ -165,13 +168,3 @@ Test(hgwosca_integration, sphere) {
 /*   free(mins); */
 /*   free(maxs); */
 /* } */
-
-
-/*******************************************************************************
-  IMPLEMENTATION UNIT TESTS (used once objective functions get optimized)
-******************************************************************************/
-
-Test(obj_unit, sum) {
-  double args[] = {0, 1, 2, 3, 4, 5};
-  cr_assert(abs(sum(args, 6) - 15.0) < DBL_EPSILON, "sum function works as expected.");
-}
