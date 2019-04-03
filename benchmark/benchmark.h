@@ -2,6 +2,7 @@
 
 #include <string>
 #include <utility>
+#include <map>
 
 #include "utils.h"
 #include "../objectives/objectives.h"
@@ -23,11 +24,6 @@ typedef std::map<std::string, algo_func_t > algo_map_t;
  * Main function to run an algorithm on a function and time it.
  */
 std::vector<unsigned long long> time_algorithm(Config cfg);
-
-/**
- * Based on the configuration, get a function pointer for algorithm.
- */
-algo_func_t get_algo_func(Config cfg, size_t input_size, obj_map_t& obj_map);
 
 /**
  * Builds up the mapping of identifier (used in config) to objective function pointer.

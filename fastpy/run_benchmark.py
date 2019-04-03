@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import os
-import sys
 import argparse
 
-from pprint import pprint
 
 from fastpy.run.Runner import BenchmarkRunner
 

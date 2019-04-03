@@ -1,6 +1,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
+
+#include <criterion/criterion.h>
 
 #include "objectives.h"
 
@@ -91,7 +94,6 @@ double schaf2d(const double* const args, size_t dim){
     return sch;
 }
 
-
 /**
  * Griewank function
  */
@@ -106,22 +108,11 @@ double griewank(const double* const args, size_t dim) {
 
 
 /*******************************************************************************
-  UTILITY FUNCTIONS
+  IMPLEMENTATION UNIT TESTS
 ******************************************************************************/
 
-void print_solution(size_t dim, const double* const solution) {
-    for(size_t idx = 0; idx < dim; idx++) {
-        printf("Item %ld:\t%f\n", idx, solution[idx]);
-    }
-}
 
-/**
- * Fills an double array with a given length and unique value for all entries.
- */
-double* filled_array(size_t length, double val) {
-    double * res = (double*)malloc(length * sizeof(double));
-    for(size_t idx = 0; idx < length; idx++) {
-        res[idx] = val;
-    }
-    return res;
+Test(obj_unit, sum) {
+    double args[] = {0, 1, 2, 3, 4, 5};
+    cr_assert(abs(sum(args, 6) - 15.0) < DBL_EPSILON, "sum function works as expected.");
 }
