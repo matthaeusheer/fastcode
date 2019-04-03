@@ -1,7 +1,8 @@
 import os
 import shutil
 import itertools
-from subprocess import call
+import subprocess
+from pprint import pprint
 
 from fastpy.io.config import load_json_config, store_json_config
 from fastpy.utils import get_date_time_tag
@@ -53,7 +54,15 @@ class BenchmarkRunner:
         call_str += ' -f ' + os.path.join(sub_dir, TIMING_OUT_FILE)
         call_str += ' -s ' + os.path.join(sub_dir, SOLUTION_OUT_FILE)
 
-        call(call_str, shell=True)
+        try:
+            subprocess.check_call(call_str, shell=True)
+        except subprocess.CalledProcessError as exception:
+            # TODO: This is a first step, better would be using a proper logging system.
+            print(exception)
+            print(f'\nThe call to the binary executable failed. Tried parameters: \n')
+            pprint(run_config)
+            print('\nAbort.')
+            exit(1)
 
     def _build_param_sets(self):
         """Returns a list of dictionaries, where the dictionaries are a set of parameters for a single run."""
