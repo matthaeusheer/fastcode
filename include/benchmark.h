@@ -5,7 +5,7 @@
 #include <map>
 
 #include "utils.h"
-#include "../objectives/objectives.h"
+#include "objectives.h"
 
 
 // Objective function type

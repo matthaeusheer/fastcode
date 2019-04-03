@@ -2,8 +2,14 @@
 # = Executable
 # ==================================================================================== #
 
+BIN_RUN_BENCHMARK = run_benchmark
 BIN_INTEGRATION_TEST = test_integration
-BIN_OBJECTIVES_TEST = test_objectives
+
+OBJ_DIR = obj/
+SRC_DIR = src/
+BIN_DIR = bin/
+
+INCLUDES = -I./include
 
 # ==================================================================================== #
 # = GIT RECORD
@@ -17,13 +23,13 @@ GIT_DATE    := $(firstword $(shell git --no-pager show --date=iso-strict --forma
 # = Compiler settings
 # ==================================================================================== #
 
-CC      = g++
+CC        = g++
 CPPFLAGS += -O3 -fno-tree-vectorize -std=c++11 \
 			-DGIT_VERSION=\"$(GIT_VERSION)\" \
 			-DGIT_COMMIT=\"$(GIT_COMMIT)\" \
 			-DGIT_DATE=\"$(GIT_DATE)\" \
 
-LIBS   += -lm -lcriterion
+LIBS     += -lm -lcriterion
 
 # ==================================================================================== #
 # = Object / Assembly Files
@@ -41,18 +47,18 @@ LIBS   += -lm -lcriterion
 %.s : %.cpp
 	$(CC) $(CPPFLAGS) -S $< -o $@
 
-C_SRCS=$(wildcard *.c \
-../objectives/objectives.c \
-../penguin/main.c \
-../HGWOSCA/main.c \
-)
 
 # TODO: Does not work for some reason. Doesn't get included.
-CPP_SRCS=$(../benchmark/utils.cpp)
+
+SRCS=$($(SRC_DIR)/wildcard *.c) $($(SRC_DIR)/wildcard *.cpp)
+
 
 OBJS=$(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)
-
 ASMS=$(C_SRCS:.c=.s) $(CPP_SRCS:.cpp=.s)
+
+SRCS=$(addprefix $(SourceDir),$(Sources))
+CObjects=$(addprefix $(ObjectDir),$(Objects))
+CExecutable=$(addprefix $(BinDir),$(Executable))
 
 
 # ==================================================================================== #
