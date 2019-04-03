@@ -2,7 +2,7 @@
 
 #include <criterion/criterion.h>
 
-#include "main.h"
+#include "penguin.h"
 
 double algo_returns_1() {
   return 1.0;

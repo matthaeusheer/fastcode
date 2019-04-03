@@ -6,10 +6,10 @@
 #include <functional>
 
 #include "utils.h"
-#include "benchmark.h"
 #include "tsc_x86.h"
-#include "../objectives/objectives.h"
-#include "../HGWOSCA/main.h"
+#include "objectives.h"
+#include "benchmark.h"
+#include "hgwosca.h"
 
 
 std::vector<timeInt64> time_algorithm(Config cfg) {
