@@ -1,83 +1,119 @@
 # ==================================================================================== #
-# = Executable
+# BINARY NAMES
 # ==================================================================================== #
 
-BIN_RUN_BENCHMARK = run_benchmark
-BIN_INTEGRATION_TEST = test_integration
+BIN_BENCHMARK 		 = benchmark
+BIN_TEST_INTEGRATION = test_integration
 
-OBJ_DIR = obj/
-SRC_DIR = src/
-BIN_DIR = bin/
+# ==================================================================================== #
+# CONFIG
+# ==================================================================================== #
 
+CC       = g++
+CPPEXT   = cpp
+CEXT     = c
+
+SRCDIR   = src
+TESTDIR  = tests
+OBJDIR   = obj
+BINDIR   = bin
+
+DEBUG    = -g
 INCLUDES = -I./include
+LIBS     = -lm -lcriterion
+CFLAGS   = -Wall -std=c++11 -c $(GIT_HASH) $(DEBUG) $(INCLUDES) $(LIBS)
+
+# Filter out files which have a main function from test dependencies
+FILTER_MAINS = run_benchmark.o
 
 # ==================================================================================== #
-# = GIT RECORD
+# OBJECTS HANDLING
 # ==================================================================================== #
 
-GIT_VERSION := $(shell git --no-pager describe --tags --always)
-GIT_COMMIT  := $(shell git rev-parse --verify HEAD)
-GIT_DATE    := $(firstword $(shell git --no-pager show --date=iso-strict --format="%ad" --name-only))
+# FOLDERS HOLDING SRC FILES
+SRCDIRS = $(SRCDIR) $(TESTDIR)
+
+# SOURCES
+C_SRCS         = $(wildcard $(SRCDIR)/*.c)
+CPP_SRCS       = $(wildcard $(SRCDIR)/*.cpp)
+C_OBJS        := $(patsubst %.$(CEXT),   $(OBJDIR)/%.o, $(C_SRCS))
+CPP_OBJS      := $(patsubst %.$(CPPEXT), $(OBJDIR)/%.o, $(CPP_SRCS))
+OBJS           = $(C_OBJS) $(CPP_OBJS)
+
+# TEST SOURCES
+TEST_C_SRCS    = $(wildcard $(TESTDIR)/*.c)
+TEST_CPP_SRCS  = $(wildcard $(TESTDIR)/*.cpp)
+TEST_C_OBJS   := $(patsubst %.$(CEXT),   $(OBJDIR)/%.o, $(TEST_C_SRCS))
+TEST_CPP_OBJS := $(patsubst %.$(CPPEXT), $(OBJDIR)/%.o, $(TEST_CPP_SRCS))
+FILTER_MAIN_OBJS = $(addprefix $(OBJDIR)/$(SRCDIR)/, $(FILTER_MAINS))
+TEST_OBJS      = $(filter-out $(FILTER_MAIN_OBJS), $(OBJS)) $(TEST_C_OBJS) $(TEST_CPP_OBJS)
+
+GIT_HASH       = -DGIT_VERSION=\"$(GIT_VERSION)\" \
+			     -DGIT_COMMIT=\"$(GIT_COMMIT)\"   \
+			     -DGIT_DATE=\"$(GIT_DATE)\"       \
 
 # ==================================================================================== #
-# = Compiler settings
+# TARGETS
 # ==================================================================================== #
 
-CC        = g++
-CPPFLAGS += -O3 -fno-tree-vectorize -std=c++11 \
-			-DGIT_VERSION=\"$(GIT_VERSION)\" \
-			-DGIT_COMMIT=\"$(GIT_COMMIT)\" \
-			-DGIT_DATE=\"$(GIT_DATE)\" \
+# Compiles all tests and runs them
+test: $(BINDIR)/$(BIN_TEST_INTEGRATION)
+	$(BINDIR)/$(BIN_TEST_INTEGRATION)
 
-LIBS     += -lm -lcriterion
+# Compiles the benchmark executable based of run_benchmark.cpp
+benchmark: $(BINDIR)/$(BIN_BENCHMARK)
 
-# ==================================================================================== #
-# = Object / Assembly Files
-# ==================================================================================== #
+$(BINDIR)/$(BIN_BENCHMARK): buildrepo $(OBJS)
+	@mkdir -p `dirname $@`
+	@echo "Linking $@..."
+	@$(CC) $(OBJS) $(LIBS) -o $@
 
-%.o : %.c
-	$(CC) $(CPPFLAGS) -c $< -o $@
+$(BINDIR)/$(BIN_TEST_INTEGRATION): buildrepo $(TEST_OBJS)
+	@mkdir -p `dirname $@`
+	@echo "Linking $@..."
+	@$(CC) $(TEST_OBJS) $(LIBS) -o $@
 
-%.s : %.c
-	$(CC) $(CPPFLAGS) -S $< -o $@
+$(OBJDIR)/%.o: %.$(CEXT)
+	@echo "Generating dependencies for $<..."
+	@$(call make-depend,$<,$@,$(subst .o,.d,$@))
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) $< -o $@
 
-%.o : %.cpp
-	$(CC) $(CPPFLAGS) -c $< -o $@
-
-%.s : %.cpp
-	$(CC) $(CPPFLAGS) -S $< -o $@
-
-
-# TODO: Does not work for some reason. Doesn't get included.
-
-SRCS=$($(SRC_DIR)/wildcard *.c) $($(SRC_DIR)/wildcard *.cpp)
-
-
-OBJS=$(C_SRCS:.c=.o) $(CPP_SRCS:.cpp=.o)
-ASMS=$(C_SRCS:.c=.s) $(CPP_SRCS:.cpp=.s)
-
-SRCS=$(addprefix $(SourceDir),$(Sources))
-CObjects=$(addprefix $(ObjectDir),$(Objects))
-CExecutable=$(addprefix $(BinDir),$(Executable))
-
-
-# ==================================================================================== #
-# = Targets
-# ==================================================================================== #
-
-all: test_integration test_objectives
-
-# TODO: Super ugly but I was fighting hard with it idk why it does not include it using the CPP_SRCS...
-test_integration: $(OBJS) $(ASMS) ../benchmark/utils.o
-	$(CC) $(OBJS) ../benchmark/utils.o -o $(BIN_INTEGRATION_TEST) $(LIBS)
-
-test_objectives: ../objectives/objectives.o
-	$(CC) ../objectives/objectives.o -o $(BIN_OBJECTIVES_TEST) $(LIBS)
-
-test:
-	./$(BIN_OBJECTIVES_TEST)
-	./$(BIN_INTEGRATION_TEST)
+$(OBJDIR)/%.o: %.$(CPPEXT)
+	@echo "Generating dependencies for $<..."
+	@$(call make-depend,$<,$@,$(subst .o,.d,$@))
+	@echo "Compiling $<..."
+	@$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf  $(OBJS) $(ASMS)
-	rm -rf $(BIN_INTEGRATION_TEST) $(BIN_OBJECTIVES_TEST)
+	$(RM) -r $(OBJDIR)
+
+distclean: clean
+	$(RM) -r $(BINDIR)
+
+cleanall: clean distclean
+
+buildrepo:
+	@$(call make-repo)
+
+define make-repo
+   for dir in $(SRCDIRS); \
+   do \
+	mkdir -p $(OBJDIR)/$$dir; \
+   done
+endef
+
+# usage: $(call make-depend,source-file,object-file,depend-file)
+define make-depend
+  $(CC) -MM       \
+        -MF $3    \
+        -MP       \
+        -MT $2    \
+        $(CFLAGS) \
+        $1
+endef
+
+.PHONY: all clean distclean
+
+# For debugging the Makefile, prints variables, use on command line like: make print-GIT-HASH
+print-%  : ; @echo $* = $($*)

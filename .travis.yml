@@ -7,4 +7,4 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install criterion-dev -y
 script:
-  - ./test_all.sh
+  - make test

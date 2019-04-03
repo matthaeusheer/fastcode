@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <float.h>
 
-#include <criterion/criterion.h>
 
 #include "objectives.h"
 
@@ -104,15 +103,4 @@ double griewank(const double* const args, size_t dim) {
         prod *= cos(args[idx] / sqrt(idx));
     }
     return sum - prod + 1;
-}
-
-
-/*******************************************************************************
-  IMPLEMENTATION UNIT TESTS
-******************************************************************************/
-
-
-Test(obj_unit, sum) {
-    double args[] = {0, 1, 2, 3, 4, 5};
-    cr_assert(abs(sum(args, 6) - 15.0) < DBL_EPSILON, "sum function works as expected.");
 }
