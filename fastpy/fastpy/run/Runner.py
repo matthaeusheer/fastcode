@@ -17,7 +17,7 @@ PARAM_TO_C_MAP = {'algorithm':  '-a',
                   'min_val':    '-y',
                   'max_val':    '-z'}
 
-BENCHMARK_BIN_DIR = os.path.join(PROJECT_ROOT_PATH, '../benchmark')
+BENCHMARK_BIN_DIR = os.path.join(PROJECT_ROOT_PATH, '../bin')
 BENCHMARK_BIN = 'benchmark'
 
 TIMING_OUT_FILE = 'timings.csv'

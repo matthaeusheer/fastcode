@@ -204,6 +204,15 @@ double* filled_array(size_t length, double val) {
     return res;
 }
 
+double randomd(const double min, const double max) {
+    double x = (double)rand() / RAND_MAX;
+    return min + x * (max - min);
+}
+
+double random1() {
+    return (double)rand() / RAND_MAX;
+}
+
 
 /*******************************************************************************
   UNIT TESTS

@@ -8,10 +8,10 @@
 
 #include <criterion/criterion.h>
 
-#include "../objectives/objectives.h"
-#include "../penguin/main.h"
-#include "../HGWOSCA/main.h"
-#include "../benchmark/utils.h"
+#include "objectives.h"
+#include "penguin.h"
+#include "hgwosca.h"
+#include "utils.h"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -84,8 +84,8 @@ Test(hgwosca_integration, sphere) {
   double* maxs = filled_array(dim, 100);
   double* solution = hgwosca(sphere, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
-  cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
-  "to 0");
+      cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
+      "to 0");
   }
   cr_assert(fabs(sphere(solution, dim)) < 0.5, "objective should be minimised at 0");
   free(solution);

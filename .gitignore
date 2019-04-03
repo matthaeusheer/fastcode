@@ -51,13 +51,9 @@
 data/*
 !data/data_readme.txt
 
-# list of executables
-/bench/bench
-/bench/*.test
-/tests/tests
-/penguin/tests
-/HGWOSCA/tests
-/benchmark/benchmark
+# build and binary folders
+bin/
+obj/
 
 # fastpy stuff
 **/.python-version
