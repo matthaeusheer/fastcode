@@ -22,6 +22,11 @@ which it detects automatically inside the encompassing _fastcode_ C package.
     ```
     This runs the benchmark wrapper script using the config.json configuration.
 
+3) Manage output.
+   ```bash
+    ./clean_output_folder.py config.json
+    ```
+    Run this script if you want to clean up your data/ folder. It will guide you.
 ### Output
 
 ![Alt text](output_struct.png?raw=true)  
