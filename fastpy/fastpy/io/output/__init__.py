@@ -22,13 +22,11 @@ class OutputParser:
     @property
     def config(self):
         """Config dictionary holding information about all runs performed."""
-
         return load_json_config(os.path.join(self.out_dir, CONFIG_FILE_NAME))
 
     @property
     def sub_configs(self):
         """Dictionary with sub_run_name keys (e.g. run_1) and run_config values (dict)."""
-
         sub_configs = {}
         for sub_dir_name in self._get_sub_folders_list():
             sub_configs[sub_dir_name] = load_json_config(os.path.join(self.out_dir, sub_dir_name, RUN_CONFIG_FILE_NAME))
@@ -43,7 +41,6 @@ class OutputParser:
         timings: dict of pandas data frames if return_lists=False, else same dict with lists values
 
         """
-
         timings = {}
 
         for sub_dir_name in self._get_sub_folders_list():
@@ -62,7 +59,6 @@ class OutputParser:
         -------
         solutions: dict of pandas data frames if return_lists=False, else same dict with lists values
         """
-
         solutions = {}
 
         for sub_dir_name in self._get_sub_folders_list():

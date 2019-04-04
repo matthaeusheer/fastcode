@@ -82,7 +82,8 @@ class BenchmarkRunner:
 
     @staticmethod
     def _create_params_str(run_config):
-
+        """Given a run_config, dict-type configuration for one single execution of the benchmark executable, build
+        a string which represents the parameters on the command line ready to be passed to the executable."""
         param_str = ''
         for param, value in run_config.items():
             param_str += PARAM_TO_C_MAP[param]
