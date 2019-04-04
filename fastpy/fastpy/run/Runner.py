@@ -22,6 +22,7 @@ BENCHMARK_BIN = 'benchmark'
 
 TIMING_OUT_FILE = 'timings.csv'
 SOLUTION_OUT_FILE = 'solution.csv'
+
 CONFIG_FILE_NAME = 'config.json'
 RUN_CONFIG_FILE_NAME = 'run_config.json'
 SUB_DIR_PATTERN = 'run_{run_idx}'
@@ -36,7 +37,6 @@ class BenchmarkRunner:
 
     def run_benchmarks(self):
         """Main wrapper function to loop over all possible parameter combinations."""
-
         os.mkdir(self._output_dir)  # main output dir for this whole run
         shutil.copy(os.path.join(BENCHMARK_BIN_DIR, BENCHMARK_BIN), self._output_dir)
         store_json_config(self.config, self._output_dir, CONFIG_FILE_NAME)
@@ -48,11 +48,11 @@ class BenchmarkRunner:
 
             store_json_config(run_config, sub_dir, RUN_CONFIG_FILE_NAME)
 
+
             self._run_algorithm(run_config, sub_dir)
 
     def _run_algorithm(self, run_config, sub_dir):
         """Subprocess call to run a single algorithm."""
-
         call_str = ' '.join([self._benchmark_bin, self._create_params_str(run_config)])
         call_str += ' -f ' + os.path.join(sub_dir, TIMING_OUT_FILE)
         call_str += ' -s ' + os.path.join(sub_dir, SOLUTION_OUT_FILE)
@@ -84,6 +84,7 @@ class BenchmarkRunner:
     def _create_params_str(run_config):
         """Given a run_config, dict-type configuration for one single execution of the benchmark executable, build
         a string which represents the parameters on the command line ready to be passed to the executable."""
+
         param_str = ''
         for param, value in run_config.items():
             param_str += PARAM_TO_C_MAP[param]
