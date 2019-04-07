@@ -7,4 +7,9 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install criterion-dev -y
 script:
-  - make test
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - ./test_integration
+  - ./test_units

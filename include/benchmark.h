@@ -9,16 +9,16 @@
 
 
 // Objective function type
-typedef double (*obj_func_t) (const double* const, size_t);
+typedef double (*obj_func_t)(const double *const, size_t);
 
 // Algorithm function type
-typedef double* const (*algo_func_t) (obj_func_t, size_t, size_t, size_t, const double* const, const double* const);
+typedef double *const (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *const, const double *const);
 
 // String to objective function pointer type
 typedef std::map<std::string, obj_func_t> obj_map_t;
 
 // String to algorithm function pointer type
-typedef std::map<std::string, algo_func_t > algo_map_t;
+typedef std::map<std::string, algo_func_t> algo_map_t;
 
 /**
  * Main function to run an algorithm on a function and time it.

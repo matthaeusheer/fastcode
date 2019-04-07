@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 
 def load_json_config(config_path):
@@ -10,5 +10,3 @@ def load_json_config(config_path):
 def store_json_config(config, dir_path, file_name):
     with open(os.path.join(dir_path, file_name), 'w') as outfile:
         json.dump(config, outfile, indent=4)
-
-
