@@ -1,11 +1,12 @@
 import os
 from glob import glob
+
 import pandas as pd
 
-from fastpy.io.config import load_json_config
-from fastpy.run.Runner import CONFIG_FILE_NAME, SUB_DIR_PATTERN, \
-    TIMING_OUT_FILE, SOLUTION_OUT_FILE, RUN_CONFIG_FILE_NAME
 from common import DATA_DIR_PATH
+from fastpy.io.config import load_json_config
+from fastpy.run.Runner import SUB_DIR_PATTERN, CONFIG_FILE_NAME, RUN_CONFIG_FILE_NAME, TIMING_OUT_FILE, \
+    SOLUTION_OUT_FILE
 
 
 class OutputParser:
@@ -69,4 +70,3 @@ class OutputParser:
             return {sub_run: list(time_df.loc[:, 'value']) for sub_run, time_df in solutions.items()}
 
         return solutions
-

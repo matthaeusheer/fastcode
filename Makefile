@@ -18,7 +18,7 @@ TESTDIR  = tests
 OBJDIR   = obj
 BINDIR   = bin
 
-DEBUG    = -g
+DEBUG    = -g -DDEBUG
 INCLUDES = -I./include
 LIBS     = -lm -lcriterion
 CFLAGS   = -Wall -std=c++11 -c $(GIT_HASH) $(DEBUG) $(INCLUDES) $(LIBS)

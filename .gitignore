@@ -54,6 +54,9 @@ data/*
 # build and binary folders
 bin/
 obj/
+build/
+cmake-build-debug/
+cmake-build-release/
 
 # fastpy stuff
 **/.python-version
