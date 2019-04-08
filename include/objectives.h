@@ -14,7 +14,7 @@ double sphere           (const double* const args, size_t dim);
 double egghol2d         (const double* const args, size_t dim);
 double schaf2d          (const double* const args, size_t dim);
 double griewank         (const double* const args, size_t dim);
-
+double schwefel01       (const double* const args, size_t dim);
 
 /*******************************************************************************
   UTILITIES
