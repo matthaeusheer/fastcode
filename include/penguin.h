@@ -30,12 +30,12 @@ extern "C" {
 
 
 // helper utilities
-#define pen_max(a, b)                               \
+#define pen_max(a, b)                           \
   ({__typeof__ (a) _a = (a);                    \
     __typeof__ (b) _b = (b);                    \
     _a > _b ? _a : _b;})
 
-#define pen_min(a, b)                               \
+#define pen_min(a, b)                           \
   ({__typeof__ (a) _a = (a);                    \
     __typeof__ (b) _b = (b);                    \
     _a < _b ? _a : _b;})

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.9.2)
 
 project(fastcode)
 
@@ -8,6 +8,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_DEFAULT} -std=c11 -Wall -Wextra")
 
 ##### Using FindCriterion.cmake we find the package ######
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules/")
+
 find_package(Criterion REQUIRED)
 
 ##### Include header files #####
@@ -28,20 +29,20 @@ add_executable(benchmark
 ##### Integration test executable ######
 add_executable(test_integration
         tests/test_integration.cpp
+        src/cpp_utils.cpp
         src/hgwosca.c
         src/objectives.c
-        src/utils.c
-        src/cpp_utils.cpp)
+        src/utils.c)
 target_include_directories(test_integration PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_integration PRIVATE ${CRITERION_LIBRARIES})
 
 ##### penguin unit test ######
 add_executable(test_hgwosca
         tests/test_hgwosca.cpp
+        src/cpp_utils.cpp
         src/hgwosca.c
         src/utils.c
-        src/objectives.c
-        src/cpp_utils.cpp)
+        src/objectives.c)
 target_include_directories(test_hgwosca PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_hgwosca PRIVATE ${CRITERION_LIBRARIES})
 
@@ -49,18 +50,18 @@ target_link_libraries(test_hgwosca PRIVATE ${CRITERION_LIBRARIES})
 ##### penguin unit test ######
 add_executable(test_penguin
         tests/test_penguin.cpp
+        src/cpp_utils.cpp
         src/penguin.c
-        src/utils.c
-        src/cpp_utils.cpp)
+        src/utils.c)
 target_include_directories(test_penguin PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_penguin PRIVATE ${CRITERION_LIBRARIES} m)
 
 ##### objectives unit test ######
 add_executable(test_objectives
         tests/test_objectives.cpp
+        src/cpp_utils.cpp
         src/objectives.c
-        src/utils.c
-        src/cpp_utils.cpp)
+        src/utils.c)
 target_include_directories(test_objectives PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_objectives PRIVATE ${CRITERION_LIBRARIES})
 
@@ -71,10 +72,10 @@ add_executable(test_units
         tests/test_hgwosca.cpp
         tests/test_penguin.cpp
         tests/test_utils.cpp
+        src/cpp_utils.cpp
         src/hgwosca.c
         src/penguin.c
         src/objectives.c
-        src/utils.c
-        src/cpp_utils.cpp)
+        src/utils.c)
 target_include_directories(test_units PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_units PRIVATE ${CRITERION_LIBRARIES})
