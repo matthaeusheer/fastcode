@@ -9,10 +9,10 @@
 
 
 // Objective function type
-typedef double (*obj_func_t)(const double *const, size_t);
+typedef double (*obj_func_t)(const double *, size_t);
 
 // Algorithm function type
-typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *const, const double *const);
+typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *, const double *);
 
 // String to objective function pointer type
 typedef std::map<std::string, obj_func_t> obj_map_t;
