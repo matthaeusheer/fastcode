@@ -20,9 +20,10 @@
    Initialise population of `wolf_count` wolves, each with `dim` dimensions, where
    each dimension is bound by `min_positions` and `max_positions`.
  */
-double *const init_population(size_t wolf_count, size_t dim,
-                              const double *const min_positions,
-                              const double *const max_positions) {
+double *init_population(size_t wolf_count,
+                        size_t dim,
+                        const double *const min_positions,
+                        const double *const max_positions) {
   double *population = (double *) malloc(wolf_count * dim * sizeof(double));
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
@@ -37,7 +38,8 @@ double *const init_population(size_t wolf_count, size_t dim,
 /**
    Update the fitness of all wolves.
  */
-void update_fitness(size_t wolf_count, size_t dim,
+void update_fitness(size_t wolf_count,
+                    size_t dim,
                     double(*obj)(const double *const, size_t),
                     double *const population, double *const fitness) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
@@ -49,7 +51,8 @@ void update_fitness(size_t wolf_count, size_t dim,
 /**
    Find the new wolf leaders.
  */
-void update_leaders(size_t wolf_count, double *const fitness,
+void update_leaders(size_t wolf_count,
+                    double *const fitness,
                     size_t *const alpha,
                     size_t *const beta,
                     size_t *const delta) {
@@ -74,9 +77,10 @@ void update_leaders(size_t wolf_count, double *const fitness,
 /**
    Initialise the fitness for all wolves.
  */
-double *const init_fitness(size_t wolf_count, size_t dim,
-                           double(*obj)(const double *const, size_t),
-                           double *const population) {
+double *init_fitness(size_t wolf_count,
+                     size_t dim,
+                     double(*obj)(const double *const, size_t),
+                     double *const population) {
   double *const fitness = (double *const) malloc(wolf_count * sizeof(double));
   update_fitness(wolf_count, dim, obj, population, fitness);
   return fitness;
@@ -88,7 +92,8 @@ double *const init_fitness(size_t wolf_count, size_t dim,
    value of `a`.
    TODO: test
  */
-double get_wolf_pos_update_dim_leader(const size_t dimension, const double a,
+double get_wolf_pos_update_dim_leader(size_t dimension,
+                                      double a,
                                       const double *const wolf,
                                       const double *const leader_pos) {
   double r1 = random1();
@@ -105,7 +110,8 @@ double get_wolf_pos_update_dim_leader(const size_t dimension, const double a,
    value of `a`. See equ (12) on the Hybrid paper.
    TODO: test
  */
-double get_wolf_pos_update_dim_alpha(const size_t dimension, const double a,
+double get_wolf_pos_update_dim_alpha(size_t dimension,
+                                     double a,
                                      const double *const wolf,
                                      const double *const alpha_pos) {
   double r1 = random1();
@@ -127,7 +133,8 @@ double get_wolf_pos_update_dim_alpha(const size_t dimension, const double a,
    given value of `a`.
    TODO: test
  */
-void update_wolf_position(const size_t dim, const double a,
+void update_wolf_position(size_t dim,
+                          double a,
                           double *const wolf,
                           const double *const alpha_pos,
                           const double *const beta_pos,
@@ -146,8 +153,10 @@ void update_wolf_position(const size_t dim, const double a,
    Update the positions of all wolves.
    TODO: test
  */
-void update_all_positions(const size_t wolf_count, const size_t dim,
-                          const double a, double *const population,
+void update_all_positions(size_t wolf_count,
+                          size_t dim,
+                          double a,
+                          double *const population,
                           size_t alpha, size_t beta, size_t delta) {
   const double *const alpha_pos = &population[alpha * dim];
   const double *const beta_pos = &population[beta * dim];
@@ -164,7 +173,7 @@ void update_all_positions(const size_t wolf_count, const size_t dim,
 /**
    Clamp `val` between `min` and `max`.
  */
-double clamp(const double val, const double min, const double max) {
+double clamp(double val, double min, double max) {
   return val < min ? min : (val > max ? max : val);
 }
 
@@ -172,7 +181,7 @@ double clamp(const double val, const double min, const double max) {
 /**
    Clamp solutions into feasible space.
  */
-void clamp_all_positions(const size_t wolf_count, const size_t dim,
+void clamp_all_positions(size_t wolf_count, size_t dim,
                          double *const population,
                          const double *const min_positions,
                          const double *const max_positions) {
@@ -199,12 +208,12 @@ void clamp_all_positions(const size_t wolf_count, const size_t dim,
    Returns:
      The position minimising the objective function. This array has size `dim`.
  */
-double *const hgwosca(double(*obj)(const double *const, size_t),
-                      const size_t wolf_count,
-                      const size_t dim,
-                      const size_t max_iterations,
-                      const double *const min_positions,
-                      const double *const max_positions) {
+double *hgwosca(double(*obj)(const double *const, size_t),
+                size_t wolf_count,
+                size_t dim,
+                size_t max_iterations,
+                const double *const min_positions,
+                const double *const max_positions) {
   double *const population = init_population(wolf_count, dim, min_positions, max_positions);
   double *const fitness = init_fitness(wolf_count, dim, obj, population);
   size_t alpha = 0, beta = 0, delta = 0;

@@ -177,7 +177,7 @@ double *pen_get_spiral_like_movement(double attract,
    in place.
  */
 void pen_mutate(size_t dim, double *const spiral, double mutation_coef) {
-  for (size_t idx; idx < dim; idx++) {
+  for (size_t idx = 0; idx < dim; idx++) {
     spiral[idx] += randomd(-1.0, 1.0) * mutation_coef;
   }
 }
@@ -197,7 +197,10 @@ void pen_clamp_position(size_t dim, double *const position,
 
 
 /**
-   Gets the index of the fittest penguin in the population. Note that the less fit, the better.
+   Gets the index of the fittest penguin in the population.
+   The fitness (obj function value) goes into the attraction calculation. The higher the fitness the higher
+   the attraction the higher the convergence. So getting the fittest idx means getting the one where the
+   objective function value (fitness) is highest.
  */
 size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
   double max = -INFINITY;
@@ -245,12 +248,12 @@ void pen_print_fitness(size_t colony_size, double *const fitness) {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *const pen_emperor_penguin(double(*obj)(const double *const, size_t),
-                                  size_t colony_size,
-                                  size_t dim,
-                                  size_t max_iterations,
-                                  const double *const min_positions,
-                                  const double *const max_positions) {
+double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
+                            size_t colony_size,
+                            size_t dim,
+                            size_t max_iterations,
+                            const double *const min_positions,
+                            const double *const max_positions) {
   // seed rng
   srand((unsigned) time(NULL));
 
@@ -292,12 +295,12 @@ double *const pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
     size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
 
-#ifdef DEBUG
-    pen_print_pop(colony_size, dim, population);
-    pen_print_fitness(colony_size, fitness);
-    printf("\nBEST SOLUTION: %ld\n", best_solution);
-    print_solution(dim, &population[best_solution]);
-#endif
+    #ifdef DEBUG
+        pen_print_pop(colony_size, dim, population);
+        pen_print_fitness(colony_size, fitness);
+        printf("\nBEST SOLUTION: %ld\n", best_solution);
+        print_solution(dim, &population[best_solution]);
+    #endif
     heat_absorption_coef -= HAB_COEF_STEP;
     mutation_coef -= MUT_COEF_STEP;
     attenuation_coef += ATT_COEF_STEP;
@@ -307,12 +310,12 @@ double *const pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const final_solution = (double *) malloc(dim * sizeof(double));
   memcpy(final_solution, &population[best_solution], dim * sizeof(double));
 
-#ifdef DEBUG
-  pen_print_pop(colony_size, dim, population);
-  pen_print_fitness(colony_size, fitness);
-  printf("\nBEST SOLUTION: %ld\n", best_solution);
-  print_solution(dim, &population[best_solution]);
-#endif
+  #ifdef DEBUG
+    pen_print_pop(colony_size, dim, population);
+    pen_print_fitness(colony_size, fitness);
+    printf("\nBEST SOLUTION: %ld\n", best_solution);
+    print_solution(dim, &population[best_solution]);
+  #endif
 
   free(population);
   free(fitness);
