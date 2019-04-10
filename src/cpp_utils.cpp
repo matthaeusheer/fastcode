@@ -209,16 +209,25 @@ std::vector<std::string> split_str(const std::string &s, char c) {
 }
 
 std::string add_str_before_file_end(std::string file_path, std::string insert) {
+  std::size_t pos_last_slash = file_path.rfind('/');
+  std::size_t pos_last_dot = file_path.rfind('.');
+  auto file_ending = file_path.substr(pos_last_dot + 1, std::string::npos);
 
-  std::size_t pos_lat_dot = file_path.rfind('.');
-  auto path_without_file_name = file_path.substr(0, pos_lat_dot);
-  auto file_ending = file_path.substr(pos_lat_dot + 1, std::string::npos);
+  if (std::string::npos == pos_last_slash) {  // e.g. outfile.txt
+    return split_str(file_path, '.').front() + insert + "." + file_ending;
+  }
 
+  // else: e.g. /some/path/outfile.txt or ../relative/path/outfile.txt
+
+  auto path_without_file_name = file_path.substr(0, pos_last_slash);
   auto file_name = split_str(file_path, '/').back();
   long dot_count = std::count(file_name.begin(), file_name.end(), '.');
   if (dot_count != 1) {
-    throw std::invalid_argument("Input string (file_name) should contain exactly one dot.");
+    throw std::invalid_argument("Input string (file_name) should contain exactly one dot. "
+                                "E.g. out.file.txt not allowed.");
   }
 
-  return path_without_file_name + "/" + split_str(file_name, '.').front() + insert + "." + file_ending;
+  auto new_path = path_without_file_name + "/" + split_str(file_name, '.').front() + insert + "." + file_ending;
+
+  return new_path;
 }
