@@ -27,14 +27,22 @@ add_executable(benchmark
         src/utils.c)
 
 ##### Integration test executable ######
-add_executable(test_integration
-        tests/test_integration.cpp
-        src/cpp_utils.cpp
+add_executable(test_integration_hgwosca
+        tests/test_integration_hgwosca.c
         src/hgwosca.c
         src/objectives.c
         src/utils.c)
-target_include_directories(test_integration PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_integration PRIVATE ${CRITERION_LIBRARIES})
+target_include_directories(test_integration_hgwosca PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_integration_hgwosca PRIVATE ${CRITERION_LIBRARIES})
+
+##### Integration test executable ######
+add_executable(test_integration_pengu
+        tests/test_integration_pengu.c
+        src/penguin.c
+        src/objectives.c
+        src/utils.c)
+target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_integration_pengu PRIVATE ${CRITERION_LIBRARIES})
 
 ##### penguin unit test ######
 add_executable(test_hgwosca

@@ -9,7 +9,6 @@
 #include <criterion/criterion.h>
 
 #include "objectives.h"
-#include "penguin.h"
 #include "hgwosca.h"
 #include "utils.h"
 
@@ -17,10 +16,6 @@
 #define M_PI (3.14159265358979323846)
 #endif
 
-
-/*******************************************************************************
-  INTEGRATION TESTS
-******************************************************************************/
 
 // TODO: (jakob) Quite some code duplication. Maybe setup and teardown actions and common code can be collected.
 
