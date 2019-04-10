@@ -53,12 +53,12 @@ extern "C" {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *const pen_emperor_penguin(double(*obj)(const double *const, size_t),
-                                  size_t colony_size,
-                                  size_t dim,
-                                  size_t max_iterations,
-                                  const double *const min_positions,
-                                  const double *const max_positions);
+double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
+                            size_t colony_size,
+                            size_t dim,
+                            size_t max_iterations,
+                            const double * min_positions,
+                            const double * max_positions);
 
 /**
    Generate a full random penguin population of size `colony_size`,
@@ -68,14 +68,14 @@ double *const pen_emperor_penguin(double(*obj)(const double *const, size_t),
  */
 double *pen_generate_population(size_t colony_size,
                                 size_t dim,
-                                const double *const min_positions,
-                                const double *const max_positions);
+                                const double * min_positions,
+                                const double * max_positions);
 
 /**
    Generates a copy of the population array.
  */
 double *pen_copy_population(size_t colony_size, size_t dim,
-                            const double *const population);
+                            const double * population);
 
 /**
    Get the initial fitness values for each penguin in the population. This will
@@ -83,15 +83,15 @@ double *pen_copy_population(size_t colony_size, size_t dim,
  */
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
-                                const double *const population,
+                                const double * population,
                                 double(*obj)(const double *const, size_t));
 
 /**
    Compute the euclidean distance between two penguins.
  */
 double pen_eucledian_distance(size_t dim,
-                              const double *const penguin_i,
-                              const double *const penguin_j);
+                              const double * penguin_i,
+                              const double * penguin_j);
 
 /**
    Computes the heat radiation of a penguin. See equation 6 in paper.
@@ -106,8 +106,8 @@ double pen_heat_radiation(double fitness);
  */
 double pen_attractiveness(double heat_rad,
                           size_t dim,
-                          const double *const penguin_i,
-                          const double *const penguin_j,
+                          const double * penguin_i,
+                          const double * penguin_j,
                           double attenuation_coef);
 
 /**
@@ -137,37 +137,37 @@ double pen_compute_y_k(double attract, double x_i, double y_i, double x_j, doubl
    will have more than two parameters. This needs to be generalized.
  */
 double *pen_get_spiral_like_movement(double attract, size_t dim,
-                                     const double *const penguin_i, const double *const penguin_j);
+                                     const double * penguin_i, const double * penguin_j);
 
 
 /**
    Mutates the spiral according the equation 19 from the paper. This modifies the spiral
    in place.
  */
-void pen_mutate(size_t dim, double *const spiral, double mutation_coef);
+void pen_mutate(size_t dim, double * spiral, double mutation_coef);
 
 /**
    Clamps the solution in the possible range. This is done in place.
  */
-void pen_clamp_position(size_t dim, double *const position,
-                        const double *const min_positions,
-                        const double *const max_positions);
+void pen_clamp_position(size_t dim, double * position,
+                        const double * min_positions,
+                        const double * max_positions);
 
 /**
    Gets the index of the fittest penguin in the population. Note that the less fit, the better.
  */
-size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness);
+size_t pen_get_fittest_idx(size_t colony_size, const double *  fitness);
 
 
 /**
    Prints the population to standard output.
  */
-void pen_print_pop(size_t colony_size, size_t dim, const double *const population);
+void pen_print_pop(size_t colony_size, size_t dim, const double * population);
 
 /**
    Prints the fitness to standard output.
 */
-void pen_print_fitness(size_t colony_size, double *const fitness);
+void pen_print_fitness(size_t colony_size, double * fitness);
 
 #ifdef __cplusplus
 }
