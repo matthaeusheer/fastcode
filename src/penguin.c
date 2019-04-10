@@ -293,14 +293,15 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
       }
     }
 
-    size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
 
     #ifdef DEBUG
+        size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
         pen_print_pop(colony_size, dim, population);
         pen_print_fitness(colony_size, fitness);
         printf("\nBEST SOLUTION: %ld\n", best_solution);
         print_solution(dim, &population[best_solution]);
     #endif
+
     heat_absorption_coef -= HAB_COEF_STEP;
     mutation_coef -= MUT_COEF_STEP;
     attenuation_coef += ATT_COEF_STEP;
