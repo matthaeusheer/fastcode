@@ -35,6 +35,10 @@ double sum(const double *const args, size_t dim) {
   return sum;
 }
 
+double sum_negative(const double *const args, size_t dim) {
+  return -1.0 * sum(args, dim);
+}
+
 /**
  * Rastigrin function
  * optimal solution is 0s everywhere
