@@ -17,7 +17,7 @@
 
 /**
  * Returns a pointer to a double array which is of size colony_size * dim.
- * The stride over penguins is dim since every penguin is of size dim.
+ * The stride over penguins is dim since every penguin (representing possible solution) is of size dim.
  */
 double *pen_generate_population(size_t colony_size,
                                 size_t dim,
@@ -25,9 +25,9 @@ double *pen_generate_population(size_t colony_size,
                                 const double *const max_positions) {
   double *population = (double *) malloc(colony_size * dim * sizeof(double));
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
-    for (size_t dimension = 0; dimension < dim; dimension++) {
-      size_t idx = (pengu_idx * dim) + dimension;
-      population[idx] = randomd(min_positions[dimension], max_positions[dimension]);
+    for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
+      size_t idx = (pengu_idx * dim) + dim_idx;
+      population[idx] = random_min_max(min_positions[dim_idx], max_positions[dim_idx]);
     }
   }
   return population;
@@ -173,12 +173,12 @@ double *pen_get_spiral_like_movement(double attract,
 
 
 /**
-   Mutates the spiral according the equation 19 from the paper. This modifies the spiral
-   in place.
+   Mutates the spiral according the equation 19 from the paper.
+   Caution: This modifies the spiral in place!
  */
 void pen_mutate(size_t dim, double *const spiral, double mutation_coef) {
   for (size_t idx = 0; idx < dim; idx++) {
-    spiral[idx] += randomd(-1.0, 1.0) * mutation_coef;
+    spiral[idx] += random_min_max(-1.0, 1.0) * mutation_coef;
   }
 }
 
@@ -220,7 +220,7 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
  */
 void pen_print_pop(size_t colony_size, size_t dim, const double *const population) {
   for (size_t idx = 0; idx < colony_size; idx++) {
-    printf("Penguin %03ld:\t", idx);
+    printf("pengu%03ld, ", idx);
     print_solution(dim, &population[idx * dim]);
   }
 }
@@ -260,6 +260,10 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const population = pen_generate_population(colony_size, dim, min_positions, max_positions);
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
 
+  #ifdef DEBUG
+    pen_print_pop(colony_size, dim, population); // printing the initial status of the population
+  #endif
+
   // initialize coefficients
   double heat_absorption_coef = HAB_COEF_START;
   double mutation_coef = MUT_COEF_START;
@@ -270,16 +274,26 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
     for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
       for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
         if (fitness[penguin_j] < fitness[penguin_i]) {
-          double heat_rad = pen_heat_radiation(fitness[penguin_i]);
+
+          // calculate heat radiation
+          double heat_rad = heat_absorption_coef * pen_heat_radiation(fitness[penguin_i]);
+
+          // calculate attractiveness
           double attract = pen_attractiveness(heat_rad,
                                               dim,
                                               &population[penguin_i * dim],
                                               &population[penguin_j * dim],
                                               attenuation_coef);
+
+          // calculate spiral movement
           double *const spiral = pen_get_spiral_like_movement(attract, dim,
                                                               &population[penguin_j * dim],
                                                               &population[penguin_i * dim]);
+
+          // mutate movement
           pen_mutate(dim, spiral, mutation_coef);
+
+          // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
           /* TODO: check if this should really be updated in the copy of the array. Seems to me
           it can extremely be overwritten at a later point in time by another pair of penguins
@@ -295,12 +309,14 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
 
     #ifdef DEBUG
-        size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-        pen_print_pop(colony_size, dim, population);
-        pen_print_fitness(colony_size, fitness);
-        printf("\nBEST SOLUTION: %ld\n", best_solution);
-        print_solution(dim, &population[best_solution]);
+      //printf("=====\n");
+      size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
+      pen_print_pop(colony_size, dim, population);
+      //pen_print_fitness(colony_size, fitness);
+      //printf("\nBEST SOLUTION: %ld\n", best_solution);
+      //print_solution(dim, &population[best_solution]);
     #endif
+
 
     heat_absorption_coef -= HAB_COEF_STEP;
     mutation_coef -= MUT_COEF_STEP;
@@ -312,10 +328,11 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   memcpy(final_solution, &population[best_solution], dim * sizeof(double));
 
   #ifdef DEBUG
-    pen_print_pop(colony_size, dim, population);
-    pen_print_fitness(colony_size, fitness);
-    printf("\nBEST SOLUTION: %ld\n", best_solution);
-    print_solution(dim, &population[best_solution]);
+    //printf("===============================");
+    //pen_print_pop(colony_size, dim, population);
+    //pen_print_fitness(colony_size, fitness);
+    //printf("\nBEST SOLUTION: %ld\n", best_solution);
+    //  print_solution(dim, &population[best_solution]);
   #endif
 
   free(population);

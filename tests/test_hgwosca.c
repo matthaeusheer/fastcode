@@ -7,34 +7,34 @@
 
 #include <criterion/criterion.h>
 
-Test(hgwosca_unit, randomd) {
+Test(hgwosca_unit, random_min_max) {
     srand((unsigned) time(NULL));
 
-    double r = randomd(0.0, 1.0);
-    cr_assert(r <= 1.0, "randomd upper bound 1");
-    cr_assert(r >= 0.0, "randomd lower bound 1");
+    double r = random_min_max(0.0, 1.0);
+    cr_assert(r <= 1.0, "random_min_max upper bound 1");
+    cr_assert(r >= 0.0, "random_min_max lower bound 1");
 
-    r = randomd(-5.0, 0.0);
-    cr_assert(r <= 0.0, "randomd upper bound 2");
-    cr_assert(r >= -5.0, "randomd lower bound 2");
+    r = random_min_max(-5.0, 0.0);
+    cr_assert(r <= 0.0, "random_min_max upper bound 2");
+    cr_assert(r >= -5.0, "random_min_max lower bound 2");
 
-    r = randomd(-100.0, 100.0);
-    cr_assert(r <= 100.0, "randomd upper bound 3");
-    cr_assert(r >= -100.0, "randomd lower bound 3");
+    r = random_min_max(-100.0, 100.0);
+    cr_assert(r <= 100.0, "random_min_max upper bound 3");
+    cr_assert(r >= -100.0, "random_min_max lower bound 3");
 
-    r = randomd(0.0, 0.0);
-    cr_assert(r <= 0.0, "randomd upper bound 4");
-    cr_assert(r >= 0.0, "randomd lower bound 4");
+    r = random_min_max(0.0, 0.0);
+    cr_assert(r <= 0.0, "random_min_max upper bound 4");
+    cr_assert(r >= 0.0, "random_min_max lower bound 4");
 }
 
 
-Test(hgwosca_unit, random1) {
+Test(hgwosca_unit, random_0_to_1) {
     srand((unsigned) time(NULL));
 
     for(size_t iter = 0; iter < 20; iter++) {
-        double r = random1();
-        cr_assert(r <= 1, "random1 should be bound above by 1");
-        cr_assert(r >= 0, "random1 should be bound below by 0");
+        double r = random_0_to_1();
+        cr_assert(r <= 1, "random_0_to_1 should be bound above by 1");
+        cr_assert(r >= 0, "random_0_to_1 should be bound below by 0");
     }
 }
 
