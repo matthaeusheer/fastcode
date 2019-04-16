@@ -250,7 +250,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
 
   #ifdef DEBUG
-  print_population(colony_size, dim, population); // printing the initial status of the population
+    print_population(colony_size, dim, population); // printing the initial status of the population
     printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
   #endif
 
@@ -262,7 +262,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   for (size_t iter = 0; iter < max_iterations; iter++) {
     for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
       for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
-        if (fitness[penguin_j] < fitness[penguin_i]) {
+        if (fitness[penguin_j] > fitness[penguin_i]) {
 
           // calculate heat radiation
           double heat_rad = heat_absorption_coef * pen_heat_radiation(fitness[penguin_i]);
@@ -289,12 +289,20 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
           containing the same penguin_j. */
           memcpy(&population[penguin_j * dim], spiral, dim * sizeof(double));
           fitness[penguin_j] = (*obj)(&population[penguin_j * dim], dim);
-          fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
+          // fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
 
           free(spiral);
         }
       }
     }
+
+    // sort and find best solution
+
+
+    // update coefficients
+    heat_absorption_coef -= HAB_COEF_STEP;
+    mutation_coef -= MUT_COEF_STEP;
+    attenuation_coef += ATT_COEF_STEP;
 
     #ifdef DEBUG
       print_population(colony_size, dim, population);
@@ -304,11 +312,6 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
       // printf("\nBEST SOLUTION: %ld\n", best_solution);
       //print_solution(dim, &population[best_solution]);
     #endif
-
-
-    heat_absorption_coef -= HAB_COEF_STEP;
-    mutation_coef -= MUT_COEF_STEP;
-    attenuation_coef += ATT_COEF_STEP;
   }
 
   size_t best_solution = pen_get_fittest_idx(colony_size, fitness);

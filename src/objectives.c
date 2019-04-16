@@ -62,6 +62,10 @@ double rosenbrock(const double *const args, size_t dim) {
   return rNd;
 }
 
+double rosenbrock_neg(const double *const args, size_t dim) {
+  return -1.0 * rosenbrock(args, dim);
+}
+
 /**
  * Multi Dimensional Sphere Function
  * global minima at f(x1,.....,xN) = 0 at (x1,......,xN) = (0,......,0)
