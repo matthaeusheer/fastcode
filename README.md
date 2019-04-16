@@ -12,6 +12,20 @@ cd build
 cmake ..
 make
 ```
+
+---
+**Note: DEBUG mode**
+
+
+DEBUG mode: If you want to have the DEBUG preprocessor flag set to us
+```
+cmake -DDEBUG=ON ..
+```
+in the above example. (or, well, use an IDE which has Debug and Release modes, ha!)
+
+---
+
+
 This will compile all sources and link the targets for (currently, might get updated)
 - benchmark (main executable to run the algorithms on some input and time them)
 - test_units (collection of all unit tests)
