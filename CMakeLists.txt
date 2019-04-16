@@ -44,7 +44,9 @@ add_executable(test_integration_pengu
         src/objectives.c
         src/utils.c)
 target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_integration_pengu PRIVATE ${CRITERION_LIBRARIES})
+target_link_libraries(test_integration_pengu
+        PRIVATE ${CRITERION_LIBRARIES}
+        m)
 
 ##### penguin unit test ######
 add_executable(test_hgwosca
