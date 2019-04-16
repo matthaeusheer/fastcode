@@ -49,14 +49,14 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
 
     cycles_vec.emplace_back(cycles);
 
-#ifdef DEBUG
-    // Store final solution values per repetition
-    std::string file_path = add_str_before_file_end(cfg.solution_file, "_rep_" + std::to_string(rep));
-    store_solutions(solution, cfg.dimension, file_path);
+    #ifdef DEBUG
+        // Store final solution values per repetition
+        std::string file_path = add_str_before_file_end(cfg.solution_file, "_rep_" + std::to_string(rep));
+        store_solutions(solution, cfg.dimension, file_path);
 
-    // Store objective function
-    // So far no possibility to get the objective value here...
-#endif
+        // Store objective function
+        // So far no possibility to get the objective value here...
+    #endif
   }
 
   free(solution);
@@ -72,6 +72,7 @@ obj_map_t create_obj_map() {
   // Register more objective functions here as they get implemented.
   obj_map_t obj_map = {{"sum_of_squares", &sum_of_squares},
                        {"sum",            &sum},
+                       {"sum_negative",   &sum_negative},
                        {"rastigrin",      &rastigrin},
                        {"rosenbrock",     &rosenbrock},
                        {"sphere",         &sphere},

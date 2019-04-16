@@ -24,6 +24,9 @@ extern "C" {
 #define MUT_COEF_START 0.5
 #define MUT_COEF_STEP 0.001
 
+// heat radiation damping value
+#define HEAD_RAD_DAMPING 0.8
+
 // TODO validate values / see if not better to generate each round
 #define A 2       // see equ 18 from paper
 #define B 0.1     // see equ 18 from paper

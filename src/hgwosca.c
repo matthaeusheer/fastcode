@@ -28,7 +28,7 @@ double *init_population(size_t wolf_count,
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       size_t idx = wolf * dim + dimension;
-      population[idx] = randomd(min_positions[dimension], max_positions[dimension]);
+      population[idx] = random_min_max(min_positions[dimension], max_positions[dimension]);
     }
   }
   return population;
@@ -96,8 +96,8 @@ double get_wolf_pos_update_dim_leader(size_t dimension,
                                       double a,
                                       const double *const wolf,
                                       const double *const leader_pos) {
-  double r1 = random1();
-  double r2 = random1();
+  double r1 = random_0_to_1();
+  double r2 = random_0_to_1();
   double A = 2 * a * r1 - a;                // see equation 3.3
   double C = 2 * r2;                        // see equation 3.4
   double D = fabs(C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
@@ -114,15 +114,15 @@ double get_wolf_pos_update_dim_alpha(size_t dimension,
                                      double a,
                                      const double *const wolf,
                                      const double *const alpha_pos) {
-  double r1 = random1();
-  double r2 = random1();
+  double r1 = random_0_to_1();
+  double r2 = random_0_to_1();
   double A = 2 * a * r1 - a;                // see equation 3.3
   double C = 2 * r2;                        // see equation 3.4
   double D;
-  if (random1() < 0.5) {
-    D = random1() * sin(random1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
+  if (random_0_to_1() < 0.5) {
+    D = random_0_to_1() * sin(random_0_to_1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
   } else {
-    D = random1() * cos(random1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
+    D = random_0_to_1() * cos(random_0_to_1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
   }
   return alpha_pos[dimension] - A * D;
 }
@@ -194,6 +194,16 @@ void clamp_all_positions(size_t wolf_count, size_t dim,
   }
 }
 
+/**
+   Prints the population to standard output.
+ */
+void gwo_print_pop(size_t colony_size, size_t dim, const double *const population) {
+  for (size_t idx = 0; idx < colony_size; idx++) {
+    printf("wolf%03ld, ", idx);
+    print_solution(dim, &population[idx * dim]);
+  }
+}
+
 
 /**
    Run the Hybrid Grey Wolf Optimiser with Sine Cosine Algorithm.
@@ -225,10 +235,11 @@ double *hgwosca(double(*obj)(const double *const, size_t),
     clamp_all_positions(wolf_count, dim, population, min_positions, max_positions);
     update_fitness(wolf_count, dim, obj, population, fitness);
 
-#ifdef DEBUG
-    printf("\nBEST SOLUTION: %ld\n", best_solution);
-    print_solution(dim, &fitness);
-#endif
+    #ifdef DEBUG
+        gwo_print_pop(wolf_count, dim, population);
+        //printf("\nBEST SOLUTION: %ld\n", best_solution);
+        //print_solution(dim, &fitness);
+    #endif
   }
 
   update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
