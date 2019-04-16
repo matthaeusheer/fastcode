@@ -38,15 +38,15 @@ target_link_libraries(test_integration_hgwosca
         m)
 
 ##### Integration test executable ######
-add_executable(test_integration_pengu
-        tests/test_integration_pengu.c
-        src/penguin.c
-        src/objectives.c
-        src/utils.c)
-target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_integration_pengu
-        PRIVATE ${CRITERION_LIBRARIES}
-        m)
+#add_executable(test_integration_pengu
+#        tests/test_integration_pengu.c
+#        src/penguin.c
+#        src/objectives.c
+#        src/utils.c)
+#target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
+#target_link_libraries(test_integration_pengu
+#        PRIVATE ${CRITERION_LIBRARIES}
+#        m)
 
 ##### penguin unit test ######
 add_executable(test_hgwosca
