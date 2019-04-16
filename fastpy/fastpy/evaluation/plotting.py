@@ -46,24 +46,7 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser):
     return algo_times_vs_size
 
 
-def setup_figure_1ax(x_label='', y_label='', size=(13, 9), shrink_ax=True):
-    """Returns a figure and ax with legend on the right hand side, no spines."""
 
-    matplotlib.rcParams.update({'font.size': 20})
-    fig, ax = plt.subplots()
-    fig.set_size_inches(size)
-    ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    # Shrink current axis by 20%
-    if shrink_ax:
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-    return fig, ax
 
 
 def sort_two_lists_based_on_first(first, second):
