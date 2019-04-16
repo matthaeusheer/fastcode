@@ -4,7 +4,7 @@ from matplotlib import cm
 from fastpy.visualization import viz_utils
 
 
-def plot_optimization_evolution_2d(evolution_data, *args, **kwargs):
+def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwargs):
     """For a given population, plot their positions in solution space in 2d over time.
 
     Arguments
@@ -34,6 +34,18 @@ def plot_optimization_evolution_2d(evolution_data, *args, **kwargs):
     if 'ylims' in kwargs:
         ax.set_ylim(kwargs['ylims'])
 
+    return fig, ax
+
+
+def plot_objective_value_evolution(values):
+    """Plots an array of objective values vs iteration index.
+    Arguments
+    --------
+        values: a list of objective values
+    """
+    fig, ax = viz_utils.setup_figure_1ax('Iteration index', 'Average objective value', shrink_ax=False)
+
+    ax.plot(range(len(values)), values, 'c-', linewidth=2)
     return fig, ax
 
 

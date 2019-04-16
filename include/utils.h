@@ -10,6 +10,11 @@ extern "C" {
 void print_solution(size_t dim, const double * solution);
 
 /**
+   Prints the population to standard output.
+ */
+void print_population(size_t colony_size, size_t dim, const double *population);
+
+/**
  * Fills an double array with a given length and unique value for all entries.
  */
 double *filled_array(size_t length, double val);
@@ -23,6 +28,11 @@ double random_min_max(double min, double max);
    Generate a random double 0 and 1.
  */
 double random_0_to_1();
+
+/**
+ * Get average value of an array.
+ */
+double average_value(size_t arr_length, const double * arr);
 
 #ifdef __cplusplus
 }

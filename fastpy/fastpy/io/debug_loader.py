@@ -39,7 +39,6 @@ def parse_pen_print_pop_output(file_path, skiprows=10, skipfooter=1):
     -------
         evolution_data: data in the shape such that the plotting function can handle it
     """
-
     print(f'Loading printed population output...')
     # the garbage column exist since the C output puts a comma after the last value
     df = pd.read_csv(file_path, skiprows=skiprows, skipfooter=skipfooter,
@@ -63,9 +62,29 @@ def parse_pen_print_pop_output(file_path, skiprows=10, skipfooter=1):
         else:
             counter += 1
 
-    print(f'Detected population size: {population_size} and {iter_counter} iterations. Data loaded.')
+    print(f'Detected population size: {population_size}.\n'
+          f'{iter_counter} iterations plus initial population.\n'
+          f'Data loaded (hopefully you didn\'t forget to print the initial population).')
 
     return evolution_data
+
+
+def parse_lines_with_start(file_path, start_string, convert_to_float=True):
+    """Parses the values on lines which start with a particular string.
+    The value is supposed to follow the start_string, separated by a whitespace.
+    """
+    parsed_values = []
+    with open(file_path, 'r') as infile:
+        for line in infile.readlines():
+            if line.startswith(start_string):
+                value = line.split(' ')[-1].strip()
+                if convert_to_float:
+                    parsed_values.append(float(value))
+                else:
+                    parsed_values.append(value)
+    return parsed_values
+
+
 
 
 

@@ -28,3 +28,23 @@ void print_solution(size_t dim, const double *const solution) {
   }
   printf("\n");
 }
+
+
+/**
+   Prints the population to standard output.
+ */
+void print_population(size_t colony_size, size_t dim, const double *population) {
+  for (size_t idx = 0; idx < colony_size; idx++) {
+    printf("pengu%03ld, ", idx);
+    print_solution(dim, &population[idx * dim]);
+  }
+}
+
+
+double average_value(size_t arr_length, const double * arr) {
+  double sum = 0;
+  for (size_t idx = 0; idx < arr_length; ++idx) {
+    sum += arr[idx];
+  }
+  return sum / arr_length;
+}
