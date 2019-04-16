@@ -27,7 +27,7 @@ def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwarg
         x = [pos[0] for pos in step_dict.values()]
         y = [pos[1] for pos in step_dict.values()]
 
-        ax.plot(x, y, 'o', color=color, alpha=0.7, markeredgewidth=0.0)
+        ax.plot(x, y, '.', color=color, alpha=0.7, markeredgewidth=0.0)
 
     if 'xlims' in kwargs:
         ax.set_xlim(kwargs['xlims'])

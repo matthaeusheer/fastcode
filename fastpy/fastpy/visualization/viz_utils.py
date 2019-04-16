@@ -27,13 +27,17 @@ def get_color_cm_jet(cmap, vmin, vmax, value):
     return [val / 255 for val in cmap(norm(value), bytes=True)]
 
 
-def get_n_until_first_repeat(input_list):
-    """Get the number of elements until a repeat comes up. Assumes that this repeat will actually happen."""
+def get_n_until_first_repeat(input_list, exclude_start='#'):
+    """Get the number of elements until a repeat comes up. Assumes that this repeat will actually happen.
+    Lines starting with # are ignored by default.
+    """
     start = input_list[0]
 
     counter = 1
     for item in input_list[1:]:
         if item is not start:
+            if exclude_start and item.startswith(exclude_start):
+                continue
             counter += 1
         else:
             return counter

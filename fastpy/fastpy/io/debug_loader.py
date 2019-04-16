@@ -43,7 +43,13 @@ def parse_pen_print_pop_output(file_path, skiprows=10, skipfooter=1):
     # the garbage column exist since the C output puts a comma after the last value
     df = pd.read_csv(file_path, skiprows=skiprows, skipfooter=skipfooter,
                      index_col=0, names=['x', 'y', 'garbage'], engine='python')
+
+    # filter correct rows
     df = df[['x', 'y']]
+
+    # filter out rows starting with #
+    filter_row_idx = [row_idx for row_idx in df.index if row_idx.startswith('#')]
+    df.drop(filter_row_idx, inplace=True)
 
     population_size = viz_utils.get_n_until_first_repeat(df.index)
 
@@ -62,8 +68,9 @@ def parse_pen_print_pop_output(file_path, skiprows=10, skipfooter=1):
         else:
             counter += 1
 
+    # TODO: There is still a bug in iter_counter.
     print(f'Detected population size: {population_size}.\n'
-          f'{iter_counter} iterations plus initial population.\n'
+          f'{iter_counter - 1} iterations plus initial population.\n'
           f'Data loaded (hopefully you didn\'t forget to print the initial population).')
 
     return evolution_data
