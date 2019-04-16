@@ -75,6 +75,7 @@ obj_map_t create_obj_map() {
                        {"sum_negative",   &sum_negative},
                        {"rastigrin",      &rastigrin},
                        {"rosenbrock",     &rosenbrock},
+                       {"rosenbrock_neg", &rosenbrock_neg},
                        {"sphere",         &sphere},
                        {"egghol2d",       &egghol2d},
                        {"schaf2d",        &schaf2d},
