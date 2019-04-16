@@ -95,7 +95,8 @@ Example:
 For a combination of parameters / algorithms / objective functions, see the python wrapper.
 
 ### Benchmark Output
-\-f and \-o parameters specify the output files for timing and solution logging respectively.
+\-f and \-o parameters specify the output files for timing and solution logging respectively.  
+In the case of timing, all m repetitions are in one file, for solutions, there is a separate file for every repetition.
 
 The file created by \-f is formatted like
 ```
@@ -103,7 +104,7 @@ iteration, cycles
 0, 320299
 1, 239529
 2, 172374
-... until (n - 1)  
+... until (m - 1)  
 ```
 The files created by \-o is formatted like 
 ```
