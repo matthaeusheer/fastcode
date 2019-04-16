@@ -33,7 +33,9 @@ add_executable(test_integration_hgwosca
         src/objectives.c
         src/utils.c)
 target_include_directories(test_integration_hgwosca PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_integration_hgwosca PRIVATE ${CRITERION_LIBRARIES})
+target_link_libraries(test_integration_hgwosca
+        PRIVATE ${CRITERION_LIBRARIES}
+        m)
 
 ##### Integration test executable ######
 add_executable(test_integration_pengu
