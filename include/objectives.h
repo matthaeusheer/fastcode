@@ -20,6 +20,8 @@ double rastigrin      (const double * args, size_t dim);
 
 double rosenbrock     (const double * args, size_t dim);
 
+double rosenbrock_neg (const double * args, size_t dim);
+
 double sphere         (const double * args, size_t dim);
 
 double egghol2d       (const double * args, size_t dim);

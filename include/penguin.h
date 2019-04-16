@@ -13,22 +13,22 @@ extern "C" {
 
 // attenuation coefficient TODO: validate values
 // should be above 1.0 at all times in order to not revert the exponent in equation 11
-#define ATT_COEF_START 2
-#define ATT_COEF_STEP 0.05
+#define ATT_COEF_START 1.0
+#define ATT_COEF_STEP 0.001
 
 // heat absorption coefficient TODO: validate values
-#define HAB_COEF_START 2
-#define HAB_COEF_STEP 0.05
+#define HAB_COEF_START 1
+#define HAB_COEF_STEP 0.001
 
 // mutation coefficient TODO: validate values
-#define MUT_COEF_START 0.5
+#define MUT_COEF_START 0.2
 #define MUT_COEF_STEP 0.001
 
 // heat radiation damping value
 #define HEAD_RAD_DAMPING 0.8
 
 // TODO validate values / see if not better to generate each round
-#define A 2       // see equ 18 from paper
+#define A 3      // see equ 18 from paper
 #define B 0.1     // see equ 18 from paper
 
 
