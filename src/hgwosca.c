@@ -194,14 +194,16 @@ void clamp_all_positions(size_t wolf_count, size_t dim,
   }
 }
 
-/**
-   Prints the population to standard output.
- */
-void gwo_print_pop(size_t colony_size, size_t dim, const double *const population) {
+size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
+  double max = -INFINITY;
+  size_t max_idx = 0;
   for (size_t idx = 0; idx < colony_size; idx++) {
-    printf("wolf%03ld, ", idx);
-    print_solution(dim, &population[idx * dim]);
+    if (fitness[idx] < max) {
+      max = fitness[idx];
+      max_idx = idx;
+    }
   }
+  return max_idx;
 }
 
 
@@ -228,6 +230,11 @@ double *hgwosca(double(*obj)(const double *const, size_t),
   double *const fitness = init_fitness(wolf_count, dim, obj, population);
   size_t alpha = 0, beta = 0, delta = 0;
 
+  #ifdef DEBUG
+    print_population(wolf_count, dim, population);  // Print the initialized population
+    printf("# AVG FITNESS: %f\n", average_value(wolf_count, fitness));
+  #endif
+
   for (size_t iter = 0; iter < max_iterations; iter++) {
     update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
     double a = 2 - iter * ((double) 2 / max_iterations);
@@ -236,9 +243,10 @@ double *hgwosca(double(*obj)(const double *const, size_t),
     update_fitness(wolf_count, dim, obj, population, fitness);
 
     #ifdef DEBUG
-        gwo_print_pop(wolf_count, dim, population);
-        //printf("\nBEST SOLUTION: %ld\n", best_solution);
-        //print_solution(dim, &fitness);
+        print_population(wolf_count, dim, population);
+        printf("# AVG FITNESS: %f\n", average_value(wolf_count, fitness));
+        // printf("\nBEST SOLUTION: %ld\n", best_solution);
+        // print_solution(dim, &fitness);
     #endif
   }
 

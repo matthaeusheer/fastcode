@@ -163,11 +163,6 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *  fitness);
 
 
 /**
-   Prints the population to standard output.
- */
-void pen_print_pop(size_t colony_size, size_t dim, const double * population);
-
-/**
    Prints the fitness to standard output.
 */
 void pen_print_fitness(size_t colony_size, double * fitness);

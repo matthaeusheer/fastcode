@@ -216,17 +216,6 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
 
 
 /**
-   Prints the population to standard output.
- */
-void pen_print_pop(size_t colony_size, size_t dim, const double *const population) {
-  for (size_t idx = 0; idx < colony_size; idx++) {
-    printf("pengu%03ld, ", idx);
-    print_solution(dim, &population[idx * dim]);
-  }
-}
-
-
-/**
    Prints the fitness to standard output.
 */
 void pen_print_fitness(size_t colony_size, double *const fitness) {
@@ -261,7 +250,8 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
 
   #ifdef DEBUG
-    pen_print_pop(colony_size, dim, population); // printing the initial status of the population
+  print_population(colony_size, dim, population); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
   #endif
 
   // initialize coefficients
@@ -270,7 +260,6 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double attenuation_coef = ATT_COEF_START;
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
-
     for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
       for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
         if (fitness[penguin_j] < fitness[penguin_i]) {
@@ -307,13 +296,12 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
       }
     }
 
-
     #ifdef DEBUG
-      //printf("=====\n");
-      size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-      pen_print_pop(colony_size, dim, population);
+      print_population(colony_size, dim, population);
+      printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+      // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
       //pen_print_fitness(colony_size, fitness);
-      //printf("\nBEST SOLUTION: %ld\n", best_solution);
+      // printf("\nBEST SOLUTION: %ld\n", best_solution);
       //print_solution(dim, &population[best_solution]);
     #endif
 
@@ -329,7 +317,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
   #ifdef DEBUG
     //printf("===============================");
-    //pen_print_pop(colony_size, dim, population);
+    //print_population(colony_size, dim, population);
     //pen_print_fitness(colony_size, fitness);
     //printf("\nBEST SOLUTION: %ld\n", best_solution);
     //  print_solution(dim, &population[best_solution]);

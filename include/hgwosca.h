@@ -87,10 +87,7 @@ double clamp(double val, double min, double max);
 void clamp_all_positions(size_t wolf_count, size_t dim, double *population,
                          const double *min_positions, const double *max_positions);
 
-/**
-   Prints the population to standard output.
- */
-void gwo_print_pop(size_t colony_size, size_t dim, const double * population);
+size_t gwo_get_fittest_idx(size_t colony_size, const double * fitness);
 
 #ifdef __cplusplus
 }
