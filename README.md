@@ -37,6 +37,29 @@ You can later on build individual targets by make <target_name>. Check CMakeList
 Hint: If you use an IDE such as CLion all of this will be handled automatically and you can bild individual
 targets and run tests directly.
 
+## Debugging
+
+All debugging code should be wrapped in ifdef DEBUG, such as
+```c
+#ifdef DEBUG
+  print_population(colony_size, dim, population);  // for evolution plot
+  printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));  // for fitness plot
+#endif
+```
+
+### Monitor single values
+If you want to track one value over say all iterations (e.g. objective function value), 
+put a  
+```prtinf("# MY VALUE: %d", my_value);```  
+inside your iteration loop. Then, parse lines which start with "# MY VALUE:".  
+An example is given in the plot_optimization_evolution notebook.  
+
+### Optimization evolution
+To plot the 2D evolution of particles for an algorithm over time, 
+check out the plot_optimization_evolution notebook. Data formats are described there. 
+You basically need to use print_population in every iteration. Make sure not to 
+plot a shitton of other stuff since then the parsing might fail. Lines starting with # will be handled, other stuff might break it.
+
 ## Testing
 
 This project uses [`criterion`](https://github.com/Snaipe/Criterion) for testing.  
