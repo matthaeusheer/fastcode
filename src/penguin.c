@@ -217,11 +217,31 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
 
 /**
    Prints the fitness to standard output.
-*/
+ */
 void pen_print_fitness(size_t colony_size, double *const fitness) {
   for (size_t idx = 0; idx < colony_size; idx++) {
     printf("Pengion %03ld:\t%8.4f\n", idx, fitness[idx]);
   }
+}
+
+
+/**
+   Initialise the rotation matrix of size `dim` times `dim`. Its rotation rate is given by
+   `theta` (between -pi and pi).
+ */
+double* pen_init_rotation_matrix(size_t dim, const double theta) {
+  double* matrix = (double*)malloc(dim * dim * sizeof(double));
+  double* temp = (double*)malloc(dim * dim * sizeof(double));
+  double* basic_rotation = (double*)malloc(dim * dim * sizeof(double));
+  identity(dim, matrix);
+  identity(dim, temp);
+  identity(dim, basic_rotation);
+  for(size_t idx = 0; idx < dim; idx++) {
+    for(size_t runner = idx; runner < dim; runner++) {
+      double sign = (random_0_to_1() > 0.5 ? -1.0 : 1.0);
+    }
+  }
+  return matrix;
 }
 
 
@@ -249,10 +269,13 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const population = pen_generate_population(colony_size, dim, min_positions, max_positions);
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
 
-  #ifdef DEBUG
-    print_population(colony_size, dim, population); // printing the initial status of the population
-    printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-  #endif
+#ifdef DEBUG
+  print_population(colony_size, dim, population); // printing the initial status of the population
+  printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+#endif
+
+  // initialise rotation matrix
+  const double *const r_matrix = pen_init_rotation_matrix(dim, 2.0);
 
   // initialize coefficients
   double heat_absorption_coef = HAB_COEF_START;
@@ -285,8 +308,8 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
           /* TODO: check if this should really be updated in the copy of the array. Seems to me
-          it can extremely be overwritten at a later point in time by another pair of penguins
-          containing the same penguin_j. */
+             it can extremely be overwritten at a later point in time by another pair of penguins
+             containing the same penguin_j. */
           memcpy(&population[penguin_j * dim], spiral, dim * sizeof(double));
           fitness[penguin_j] = (*obj)(&population[penguin_j * dim], dim);
           // fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
@@ -304,27 +327,27 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
     mutation_coef -= MUT_COEF_STEP;
     attenuation_coef += ATT_COEF_STEP;
 
-    #ifdef DEBUG
-      print_population(colony_size, dim, population);
-      printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-      // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-      //pen_print_fitness(colony_size, fitness);
-      // printf("\nBEST SOLUTION: %ld\n", best_solution);
-      //print_solution(dim, &population[best_solution]);
-    #endif
+#ifdef DEBUG
+    print_population(colony_size, dim, population);
+    printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+    // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
+    //pen_print_fitness(colony_size, fitness);
+    // printf("\nBEST SOLUTION: %ld\n", best_solution);
+    //print_solution(dim, &population[best_solution]);
+#endif
   }
 
   size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
   double *const final_solution = (double *) malloc(dim * sizeof(double));
   memcpy(final_solution, &population[best_solution], dim * sizeof(double));
 
-  #ifdef DEBUG
-    //printf("===============================");
-    //print_population(colony_size, dim, population);
-    //pen_print_fitness(colony_size, fitness);
-    //printf("\nBEST SOLUTION: %ld\n", best_solution);
-    //  print_solution(dim, &population[best_solution]);
-  #endif
+#ifdef DEBUG
+  //printf("===============================");
+  //print_population(colony_size, dim, population);
+  //pen_print_fitness(colony_size, fitness);
+  //printf("\nBEST SOLUTION: %ld\n", best_solution);
+  //  print_solution(dim, &population[best_solution]);
+#endif
 
   free(population);
   free(fitness);
