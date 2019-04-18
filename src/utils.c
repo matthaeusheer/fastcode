@@ -51,17 +51,35 @@ double average_value(size_t arr_length, const double * arr) {
 
 
 void mmm(size_t dim, const double* const a, const double* const b, double* const res) {
-  double sum = 0.0;
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {
+      double sum = 0.0;
       for(size_t runner = 0; runner < dim; runner++) {
         sum += a[row * dim + runner] * b[runner * dim + col];
       }
       res[row * dim + col] = sum;
-      sum = 0.0;
     }
   }
 }
+
+
+void mvm(size_t dim, const double* m, const double* v, double* res) {
+  for(size_t idx = 0; idx < dim; idx++) {
+    double sum = 0.0;
+    for(size_t runner = 0; runner < dim; runner++) {
+      sum += m[idx * dim + runner] * v[runner];
+    }
+    res[idx] = sum;
+  }
+}
+
+
+void vva(size_t dim, const double* a, const double* b, double* res) {
+  for(size_t idx = 0; idx < dim; idx++) {
+    res[idx] = a[idx] + b[idx];
+  }
+}
+
 
 void identity(size_t dim, double* const matrix) {
   for(size_t row = 0; row < dim; row++) {
@@ -72,8 +90,13 @@ void identity(size_t dim, double* const matrix) {
 }
 
 
-void negate(size_t size, double* const array) {
+void scalar_mul(size_t size, const double scalar, double* const array) {
   for(size_t idx = 0; idx < size; idx++) {
-    array[idx] = -array[idx];
+    array[idx] = scalar * array[idx];
   }
+}
+
+
+void negate(size_t size, double* const array) {
+  scalar_mul(size, -1.0, array);
 }

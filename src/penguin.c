@@ -89,6 +89,10 @@ double pen_heat_radiation(double fitness) {
    coefficient. Note that the heat radiation determines the direction of attractiveness.
    If `heat_rad` refers to the heat radiation of `penguin_i`, then the attractiveness is
    how much `penguin_j` is attracted to `penguin_i`, not the other way around.
+   NOTE: attractiveness actually increases with distance. The reasoning here is that we
+   try to minimise the objective value, therefore high heat radiation is bad, and high
+   attractiveness is bad as well. We might want to rename all this or change the behaviour to
+   make a little more sense.
  */
 double pen_attractiveness(double heat_rad,
                           size_t dim,
@@ -96,7 +100,7 @@ double pen_attractiveness(double heat_rad,
                           const double *const penguin_j,
                           double attenuation_coef) {
   double dist = pen_eucledian_distance(dim, penguin_i, penguin_j);
-  return heat_rad * exp(-dist * attenuation_coef);
+  return heat_rad * exp(dist * attenuation_coef);
 }
 
 
@@ -148,25 +152,32 @@ double pen_compute_y_k(double attract,
 
 
 /**
-   Compute spiral like movement. See equation 18 in paper.
-   TODO: this function currently only supports computing the spiral movement for two
-   dimensional penguins. This is not usable in practice, since most objective functions
-   will have more than two parameters. This needs to be generalized.
+   Compute spiral movement of the penguin towards the centre. See paper on SPO for
+   clarification.
  */
-double *pen_get_spiral_like_movement(double attract,
+double* pen_get_spiral_like_movement(double attract,
                                      size_t dim,
-                                     const double *const penguin_i,
-                                     const double *const penguin_j) {
+                                     const double *const centre,
+                                     const double *const penguin,
+                                     const double *const rotation_matrix) {
+  // TODO: mem management here is horrible
   double *spiral = (double *) malloc(dim * sizeof(double));
+  double* centre_cpy = (double*)malloc(dim * sizeof(double));
+  memcpy(centre_cpy, centre, dim * sizeof(double));
 
-  for (size_t dimension = 0; dimension < dim; dimension += 2) {
-    double x_i = penguin_i[dimension];
-    double y_i = penguin_i[dimension + 1];
-    double x_j = penguin_j[dimension];
-    double y_j = penguin_j[dimension + 1];
-    spiral[dimension] = pen_compute_x_k(attract, x_i, y_i, x_j, y_j);
-    spiral[dimension + 1] = pen_compute_y_k(attract, x_i, y_i, x_j, y_j);
-  }
+  negate(dim, centre_cpy);
+  double* tmp = (double*)malloc(dim * sizeof(double));
+  vva(dim, penguin, centre_cpy, tmp);
+  mvm(dim, rotation_matrix, tmp, spiral);
+
+  free(tmp);
+  free(centre_cpy);
+
+  // TODO: create issue for this -> need that the larger the attractiveness (current bad),
+  // the smaller r.
+  double r = 100/attract;
+
+  scalar_mul(dim, r, spiral);
 
   return spiral;
 }
@@ -314,28 +325,23 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
           // calculate spiral movement
           double *const spiral = pen_get_spiral_like_movement(attract, dim,
+                                                              &population[penguin_i * dim],
                                                               &population[penguin_j * dim],
-                                                              &population[penguin_i * dim]);
+                                                              r_matrix);
 
           // mutate movement
           pen_mutate(dim, spiral, mutation_coef);
 
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
-          /* TODO: check if this should really be updated in the copy of the array. Seems to me
-             it can extremely be overwritten at a later point in time by another pair of penguins
-             containing the same penguin_j. */
+
           memcpy(&population[penguin_j * dim], spiral, dim * sizeof(double));
           fitness[penguin_j] = (*obj)(&population[penguin_j * dim], dim);
-          // fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
 
           free(spiral);
         }
       }
     }
-
-    // sort and find best solution
-
 
     // update coefficients
     heat_absorption_coef -= HAB_COEF_STEP;

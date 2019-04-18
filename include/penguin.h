@@ -130,14 +130,19 @@ double pen_compute_x_k(double attract, double x_i, double y_i, double x_j, doubl
 double pen_compute_y_k(double attract, double x_i, double y_i, double x_j, double y_j);
 
 /**
-   Compute spiral like movement. See equation 18 in paper.
-   TODO: this function currently only supports computing the spiral movement for two
-   dimensional penguins. This is not usable in practice, since most objective functions
-   will have more than two parameters. This needs to be generalized.
+   Compute spiral movement of the penguin towards the centre. See paper on SPO for
+   clarification.
  */
 double *pen_get_spiral_like_movement(double attract, size_t dim,
-                                     const double * penguin_i, const double * penguin_j);
+                                     const double * centre, const double * penguin,
+                                     const double* rotation_matrix);
 
+
+/**
+   Initialise the rotation matrix of size `dim` times `dim`. Its rotation rate is given by
+   `theta` (between -pi and pi).
+ */
+double* pen_init_rotation_matrix(size_t dim, const double theta);
 
 /**
    Mutates the spiral according the equation 19 from the paper. This modifies the spiral
