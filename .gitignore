@@ -59,6 +59,7 @@ cmake-build-debug/
 cmake-build-release/
 
 # fastpy stuff
+/.env/
 **/.python-version
 **/.ipynb_checkpoints
 **/__pycache__/

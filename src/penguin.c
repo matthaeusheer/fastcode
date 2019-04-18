@@ -80,7 +80,7 @@ double pen_eucledian_distance(size_t dim,
    Computes the heat radiation of a penguin. See equation 6 in paper.
  */
 double pen_heat_radiation(double fitness) {
-  return AREA * EPS * SIGMA * pow(fitness, 4.0);
+  return AREA * EPS * SIGMA * pow(308.15, 4.0);
 }
 
 
@@ -100,7 +100,7 @@ double pen_attractiveness(double heat_rad,
                           const double *const penguin_j,
                           double attenuation_coef) {
   double dist = pen_eucledian_distance(dim, penguin_i, penguin_j);
-  return heat_rad * exp(dist * attenuation_coef);
+  return heat_rad * exp(-dist * attenuation_coef);
 }
 
 
@@ -173,11 +173,7 @@ double* pen_get_spiral_like_movement(double attract,
   free(tmp);
   free(centre_cpy);
 
-  // TODO: create issue for this -> need that the larger the attractiveness (current bad),
-  // the smaller r.
-  double r = 100/attract;
-
-  scalar_mul(dim, r, spiral);
+  scalar_mul(dim, attract, spiral);
 
   return spiral;
 }
@@ -247,8 +243,8 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
   identity(dim, matrix);
   identity(dim, tmp);
   identity(dim, basic_rotation);
-  for(size_t idx = 0; idx < dim; idx++) {
-    for(size_t runner = idx; runner < dim; runner++) {
+  for(size_t idx = 0; idx < dim - 1; idx++) {
+    for(size_t runner = idx + 1; runner < dim; runner++) {
       // get basic rotation matrix
       basic_rotation[idx * dim + idx] = cos(theta);
       basic_rotation[idx * dim + runner] = -sin(theta);
@@ -267,6 +263,7 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
   }
   free(tmp);
   free(basic_rotation);
+  scalar_mul(dim * dim, A, matrix);
   return matrix;
 }
 
@@ -294,6 +291,8 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
   double *const population = pen_generate_population(colony_size, dim, min_positions, max_positions);
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
+  double *const population_cpy = (double*)malloc(colony_size * dim * sizeof(double));
+  memcpy(population_cpy, population, colony_size * dim * sizeof(double));
 
 #ifdef DEBUG
   print_population(colony_size, dim, population); // printing the initial status of the population
@@ -301,7 +300,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 #endif
 
   // initialise rotation matrix
-  const double *const r_matrix = pen_init_rotation_matrix(dim, 2.0);
+  const double *const r_matrix = pen_init_rotation_matrix(dim, B);
 
   // initialize coefficients
   double heat_absorption_coef = HAB_COEF_START;
@@ -331,6 +330,8 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
           // mutate movement
           pen_mutate(dim, spiral, mutation_coef);
+          /* negate(dim, spiral); */
+          vva(dim, spiral, &population[penguin_j * dim], spiral);
 
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
@@ -347,6 +348,13 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
     heat_absorption_coef -= HAB_COEF_STEP;
     mutation_coef -= MUT_COEF_STEP;
     attenuation_coef += ATT_COEF_STEP;
+
+    /* memcpy(population, population_cpy, colony_size * dim * sizeof(double)); */
+
+    // update fitness
+    for(size_t penguin = 0; penguin < colony_size; penguin++) {
+      fitness[penguin] = (*obj)(&population[penguin * dim], dim);
+    }
 
 #ifdef DEBUG
     print_population(colony_size, dim, population);
