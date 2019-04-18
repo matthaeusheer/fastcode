@@ -61,3 +61,29 @@ Test(utils_unit, mmm_ident) {
   free(random);
   free(ident);
 }
+
+
+Test(utils_unit, mmm_rotation) {
+  size_t dim = 2;
+  double res[] = {0.0, 0.0, 0.0, 0.0};
+  double a[] = {1.0, 2.0, 3.0, 4.0};
+  double b[] = {0.0, -1.0, 1.0, 0.0};
+  double expected[] = {3.0, 1.0, 4.0, 2.0};
+  mmm(dim, a, b, res);
+  cr_assert_arr_eq(expected, res, dim * dim, "matrix should be rotated by 90 degrees");
+}
+
+
+Test(utils_unit, negate) {
+  size_t dim = 100;
+  double* const array = (double*)malloc(dim * sizeof(double));
+  double* const copy = (double*)malloc(dim * sizeof(double));
+  for(size_t idx = 0; idx < dim; idx++) {
+    array[idx] = random_0_to_1();
+  }
+  memcpy(copy, array, dim * sizeof(double));
+  negate(dim, array);
+  for(size_t idx = 0; idx < dim; idx++) {
+    cr_assert(array[idx] == -copy[idx], "array value should be negated");
+  }
+}
