@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.9.2)
 
 project(fastcode)
@@ -143,3 +144,4 @@ add_executable(test_units
         src/utils.c)
 target_include_directories(test_units PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_units PRIVATE ${CRITERION_LIBRARIES})
+

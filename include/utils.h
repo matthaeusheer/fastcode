@@ -35,20 +35,37 @@ double random_0_to_1();
 double average_value(size_t arr_length, const double * arr);
 
 /**
- * Compute matrix matrix multiplication between `a` and `b`, both square matrices of size
- * `dim` times `dim` and store the result in `res`.
+   Compute matrix matrix multiplication between `a` and `b`, both square matrices of size
+   `dim` times `dim` and store the result in `res`.
  */
 void mmm(size_t dim, const double* a, const double* b, double* res);
 
 /**
- * Overwrites `matrix` of size `dim` times `dim` to be an identity matrix.
+   Compute matrix vector multiplication between `m` (matrix) and `v` (vector), where `m` is
+   `dim` times `dim` and store the result in `res`.
+ */
+void mvm(size_t dim, const double* m, const double* v, double* res);
+
+/**
+   Compute vector vector addition between `a` and `b`, both having a length of size `dim`
+   and store the result in `res`.
+ */
+void vva(size_t dim, const double* a, const double* b, double* res);
+
+/**
+   Overwrites `matrix` of size `dim` times `dim` to be an identity matrix.
  */
 void identity(size_t dim, double* matrix);
 
 /**
-  * Negates all values within `array` of size `size`.
-  */
+   Negates all values within `array` of size `size`.
+ */
 void negate(size_t size, double* array);
+
+/**
+   Scalar multiplication of an array.
+ */
+void scalar_mul(size_t size, double scalar, double* array);
 
 #ifdef __cplusplus
 }

@@ -74,6 +74,37 @@ Test(utils_unit, mmm_rotation) {
 }
 
 
+Test(utils_unit, mvm_zero) {
+  size_t dim = 100;
+  double* zeros = filled_array(dim, 0.0);
+  double* res = filled_array(dim, 1.0);
+  double* const random = (double*)malloc(dim * dim * sizeof(double));
+  for(size_t idx = 0; idx < dim * dim; idx++) {
+    random[idx] = random_0_to_1();
+  }
+  mvm(dim, random, zeros, res);
+  cr_assert_arr_eq(zeros, res, dim, "vector should be zeros everywhere");
+  free(res);
+  free(zeros);
+  free(random);
+}
+
+
+Test(utils_unit, vva) {
+  size_t dim = 100;
+  double* a = filled_array(dim, 1.5);
+  double* b = filled_array(dim, 0.1);
+  double* res = filled_array(dim, 1.0);
+  double* expected = filled_array(dim, 1.6);
+  vva(dim, a, b, res);
+  cr_assert_arr_eq(expected, res, dim, "vector should be 1.6 everywhere");
+  free(res);
+  free(a);
+  free(b);
+  free(expected);
+}
+
+
 Test(utils_unit, negate) {
   size_t dim = 100;
   double* const array = (double*)malloc(dim * sizeof(double));

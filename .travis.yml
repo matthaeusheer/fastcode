@@ -11,5 +11,4 @@ script:
   - cd build
   - cmake ..
   - make
-  - ./test_integration_hgwosca
-  - ./test_units
+  - make test

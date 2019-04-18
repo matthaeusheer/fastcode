@@ -169,15 +169,15 @@ Test(penguin_unit, attractiveness) {
 
   double attractiveness_i_j = pen_attractiveness(heat_rad_i, dim, penguin_i, penguin_j, ATT_COEF_START);
   double attractiveness_j_i = pen_attractiveness(heat_rad_j, dim, penguin_i, penguin_j, ATT_COEF_START);
-  cr_assert(attractiveness_i_j > attractiveness_j_i, "penguin j should be more attractive to "
-                                                     "penguin i than the other way around");
+  cr_assert(attractiveness_i_j > attractiveness_j_i, "penguin i should be more attractive to "
+                                                     "penguin j than the other way around");
   double attractiveness_i_j_bis = pen_attractiveness(heat_rad_i, 4, penguin_j, penguin_i, ATT_COEF_START);
   cr_assert(fabs(attractiveness_i_j - attractiveness_i_j_bis) < DBL_EPSILON, "order of penguins in "
                                                                              "arguments should not matter");
 
   double attractiveness_i_k = pen_attractiveness(heat_rad_i, 4, penguin_i, penguin_k, ATT_COEF_START);
-  cr_assert(attractiveness_i_j < attractiveness_i_k, "penguin k should be more attractive to "
-                                                     "penguin i than penguin j is attracted to penguin i, since k is closer to i");
+  cr_assert(attractiveness_i_j > attractiveness_i_k, "penguin k should be more attractive to "
+                                                     "penguin i than penguin j is attracted to penguin i, since j is closer to i");
 
   double attractiveness_j_k = pen_attractiveness(heat_rad_j, 4, penguin_j, penguin_k, ATT_COEF_START);
   cr_assert(attractiveness_i_j > attractiveness_j_k, "penguin j should be more attractive to "
