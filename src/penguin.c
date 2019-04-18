@@ -214,15 +214,15 @@ void pen_clamp_position(size_t dim, double *const position,
    objective function value (fitness) is highest.
  */
 size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
-  double max = -INFINITY;
-  size_t max_idx = 0;
+  double min = INFINITY;
+  size_t min_idx = 0;
   for (size_t idx = 0; idx < colony_size; idx++) {
-    if (fitness[idx] > max) {
-      max = fitness[idx];
-      max_idx = idx;
+    if (fitness[idx] < min) {
+      min = fitness[idx];
+      min_idx = idx;
     }
   }
-  return max_idx;
+  return min_idx;
 }
 
 
