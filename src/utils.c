@@ -48,3 +48,25 @@ double average_value(size_t arr_length, const double * arr) {
   }
   return sum / arr_length;
 }
+
+
+void mmm(size_t dim, double* const a, double* const b, double* const res) {
+  double sum = 0.0;
+  for(size_t row = 0; row < dim; row++) {
+    for(size_t col = 0; col < dim; col++) {
+      for(size_t runner = 0; runner < dim; runner++) {
+        sum += a[row * dim + runner] * b[runner * dim + col];
+      }
+      res[row * dim + col] = sum;
+      sum = 0.0;
+    }
+  }
+}
+
+void identity(size_t dim, double* const matrix) {
+  for(size_t row = 0; row < dim; row++) {
+    for(size_t col = 0; col < dim; col++) {
+      matrix[row * dim + col] = (col == row ? 1.0 : 0.0);
+    }
+  }
+}
