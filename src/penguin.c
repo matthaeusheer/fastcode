@@ -231,16 +231,31 @@ void pen_print_fitness(size_t colony_size, double *const fitness) {
  */
 double* pen_init_rotation_matrix(size_t dim, const double theta) {
   double* matrix = (double*)malloc(dim * dim * sizeof(double));
-  double* temp = (double*)malloc(dim * dim * sizeof(double));
+  double* tmp = (double*)malloc(dim * dim * sizeof(double));
   double* basic_rotation = (double*)malloc(dim * dim * sizeof(double));
   identity(dim, matrix);
-  identity(dim, temp);
+  identity(dim, tmp);
   identity(dim, basic_rotation);
   for(size_t idx = 0; idx < dim; idx++) {
     for(size_t runner = idx; runner < dim; runner++) {
-      double sign = (random_0_to_1() > 0.5 ? -1.0 : 1.0);
+      // get basic rotation matrix
+      basic_rotation[idx * dim + idx] = cos(theta);
+      basic_rotation[idx * dim + runner] = -sin(theta);
+      basic_rotation[runner * dim + idx] = sin(theta);
+      basic_rotation[runner * dim + runner] = cos(theta);
+      negate(dim * dim, basic_rotation);
+      mmm(dim, tmp, basic_rotation, matrix);
+      memcpy(tmp, matrix, dim * dim * sizeof(double));
+      // reset to identity
+      negate(dim * dim, basic_rotation);
+      basic_rotation[idx * dim + idx] = 1.0;
+      basic_rotation[idx * dim + runner] = 0.0;
+      basic_rotation[runner * dim + idx] = 0.0;
+      basic_rotation[runner * dim + runner] = 1.0;
     }
   }
+  free(tmp);
+  free(basic_rotation);
   return matrix;
 }
 

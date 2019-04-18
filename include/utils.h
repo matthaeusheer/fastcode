@@ -38,12 +38,17 @@ double average_value(size_t arr_length, const double * arr);
  * Compute matrix matrix multiplication between `a` and `b`, both square matrices of size
  * `dim` times `dim` and store the result in `res`.
  */
-void mmm(size_t dim, double* a, double* b, double* res);
+void mmm(size_t dim, const double* a, const double* b, double* res);
 
 /**
  * Overwrites `matrix` of size `dim` times `dim` to be an identity matrix.
  */
 void identity(size_t dim, double* matrix);
+
+/**
+  * Negates all values within `array` of size `size`.
+  */
+void negate(size_t size, double* array);
 
 #ifdef __cplusplus
 }

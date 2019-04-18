@@ -50,7 +50,7 @@ double average_value(size_t arr_length, const double * arr) {
 }
 
 
-void mmm(size_t dim, double* const a, double* const b, double* const res) {
+void mmm(size_t dim, const double* const a, const double* const b, double* const res) {
   double sum = 0.0;
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {
@@ -68,5 +68,12 @@ void identity(size_t dim, double* const matrix) {
     for(size_t col = 0; col < dim; col++) {
       matrix[row * dim + col] = (col == row ? 1.0 : 0.0);
     }
+  }
+}
+
+
+void negate(size_t size, double* const array) {
+  for(size_t idx = 0; idx < size; idx++) {
+    array[idx] = -array[idx];
   }
 }
