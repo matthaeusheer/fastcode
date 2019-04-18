@@ -2,7 +2,6 @@
 
 #include "float.h"
 #include "math.h"
-#include "utils.h"
 #include "objectives.h"
 #include "penguin.h"
 
@@ -15,8 +14,6 @@ Test(macro_tests, min_and_max) {
 
 
 Test(penguin_unit, random_min_max) {
-  srand((unsigned) time(NULL));
-
   double r = random_min_max(0.0, 1.0);
   cr_assert(r <= 1.0, "random_min_max upper bound 1");
   cr_assert(r >= 0.0, "random_min_max lower bound 1");
@@ -36,8 +33,6 @@ Test(penguin_unit, random_min_max) {
 
 
 Test(penguin_unit, generate_population) {
-  srand((unsigned) time(NULL));
-
   // Generating the max and min values allowed for every dimension.
   double max[] = {100.0, 0.0, 11.0, -2.0};
   double min[] = {-100.0, -5.0, 10.0, -4.0};
@@ -61,8 +56,6 @@ Test(penguin_unit, generate_population) {
 
 
 Test(penguin_unit, copy_population) {
-  srand((unsigned) time(NULL));
-
   size_t population_size = 100;
   size_t population_dim = 4;
   double max[] = {100.0, 0.0, 11.0, -2.0};
