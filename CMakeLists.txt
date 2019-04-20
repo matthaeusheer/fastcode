@@ -32,7 +32,8 @@ add_executable(benchmark
         src/objectives.c
         src/utils.c)
 
-##### Integration test executable ######
+
+##### hgwosca integration test executable ######
 add_executable(test_integration_hgwosca
         tests/test_integration_hgwosca.c
         src/hgwosca.c
@@ -43,7 +44,40 @@ target_link_libraries(test_integration_hgwosca
         PRIVATE ${CRITERION_LIBRARIES}
         m)
 
-##### Integration test executable ######
+##### hgwosca unit test ######
+add_executable(test_hgwosca
+        tests/test_hgwosca.c
+        src/cpp_utils.cpp
+        src/hgwosca.c
+        src/utils.c
+        src/objectives.c)
+target_include_directories(test_hgwosca PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_hgwosca PRIVATE ${CRITERION_LIBRARIES})
+
+
+##### pso basic integration test executable  ######
+add_executable(test_integration_pso
+        tests/test_integration_pso.c
+        src/pso.c
+        src/objectives.c
+        src/utils.c)
+target_include_directories(test_integration_pso PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_integration_pso
+        PRIVATE ${CRITERION_LIBRARIES}
+        m)
+
+##### pso basic unit test ######
+add_executable(test_pso
+        tests/test_pso.c
+        src/cpp_utils.cpp
+        src/pso.c
+        src/utils.c
+        src/objectives.c)
+target_include_directories(test_pso PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_pso PRIVATE ${CRITERION_LIBRARIES})
+
+
+##### Penguin integration test executable ######
 #add_executable(test_integration_pengu
 #        tests/test_integration_pengu.c
 #        src/penguin.c
@@ -55,17 +89,6 @@ target_link_libraries(test_integration_hgwosca
 #        m)
 
 ##### penguin unit test ######
-add_executable(test_hgwosca
-        tests/test_hgwosca.c
-        src/cpp_utils.cpp
-        src/hgwosca.c
-        src/utils.c
-        src/objectives.c)
-target_include_directories(test_hgwosca PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_hgwosca PRIVATE ${CRITERION_LIBRARIES})
-
-
-##### penguin unit test ######
 add_executable(test_penguin
         tests/test_penguin.c
         src/cpp_utils.cpp
@@ -74,6 +97,7 @@ add_executable(test_penguin
         src/objectives.c)
 target_include_directories(test_penguin PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_penguin PRIVATE ${CRITERION_LIBRARIES} m)
+
 
 ##### objectives unit test ######
 add_executable(test_objectives
