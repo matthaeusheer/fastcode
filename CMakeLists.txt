@@ -77,25 +77,25 @@ target_include_directories(test_pso PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_pso PRIVATE ${CRITERION_LIBRARIES})
 
 ##### pso rbf integration test executable  ######
-add_executable(test_integration_psorbf
-        tests/test_integration_pso_rbf.c
-        src/pso_rbf.c
-        src/objectives.c
-        src/utils.c)
-target_include_directories(test_integration_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_integration_psorbf
-        PRIVATE ${CRITERION_LIBRARIES}
-        m)
-
+#add_executable(test_integration_psorbf
+#        tests/test_integration_pso_rbf.c
+#        src/pso_rbf.c
+#        src/objectives.c
+#        src/utils.c)
+#target_include_directories(test_integration_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
+#target_link_libraries(test_integration_psorbf
+#        PRIVATE ${CRITERION_LIBRARIES}
+#        m)
+#
 ##### pso rbf unit test ######
-add_executable(test_psorbf
-        tests/test_pso_rbf.c
-        src/cpp_utils.cpp
-        src/pso_rbf.c
-        src/utils.c
-        src/objectives.c)
-target_include_directories(test_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
-target_link_libraries(test_psorbf PRIVATE ${CRITERION_LIBRARIES})
+#add_executable(test_psorbf
+#        tests/test_pso_rbf.c
+#        src/cpp_utils.cpp
+#        src/pso_rbf.c
+#        src/utils.c
+#        src/objectives.c)
+#target_include_directories(test_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
+#target_link_libraries(test_psorbf PRIVATE ${CRITERION_LIBRARIES})
 
 ##### Penguin integration test executable ######
 #add_executable(test_integration_pengu
