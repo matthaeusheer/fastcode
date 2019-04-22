@@ -20,12 +20,12 @@ double* rand_init(size_t swarm_size,
 void eval_fitness(double (*func)(const double* const, size_t),
                   size_t swarm_size,
                   size_t dim,
-                  const double* const x,
+                  const double* const positions,
                   double* fitness);
 
 //returns swarm_size x dim size array
 // velocity at every posize_t of every particle
-double* gen_init_velocity(const double* const x,
+double* gen_init_velocity(const double* const positions,
                           size_t swarm_size, size_t dim,
                           const double* const min_positions,
                           const double* const max_positions);
@@ -42,9 +42,9 @@ void generate_vel_limit(const double* min_positions,
                         size_t dim);
 
 // updates velocities, works on array returned by gen_velocity
-double* update_velocity(double* v,
-                        double* x,
-                        double* y,
+void update_velocity(double* velocity,
+                        double* positions,
+                        double* local_best_position,
                         double* best,
                         size_t swarm_size,
                         size_t dim,
@@ -52,8 +52,8 @@ double* update_velocity(double* v,
                         const double* const max_vel);
 
 
-void update_position(double* x,
-                    double* v,
+void update_position(double* positions,
+                    double* velocity,
                     size_t swarm_size,
                     size_t dim,
                     const double* const min_positions,

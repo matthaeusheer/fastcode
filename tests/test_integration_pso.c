@@ -32,8 +32,11 @@ Test(pso_basic_integration, sum_of_squares) {
 	for (size_t d=0;d<dim;d++){
 		printf(" sos %f \t", solution[d] );
 	}
-
   cr_assert(fabs(sum_of_squares(solution, dim)) < 0.1, "sos objective should be minimised at 0");
+  
+  free(solution);
+  free(mins);
+  free(maxs);
 }
 /*
 Test(pso_basic_integration, rosenbrock) {
@@ -67,6 +70,10 @@ Test(pso_basic_integration, sphere) {
     printf(" sph %f \t", solution[d] );
   }
   cr_assert(fabs(sphere(solution, dim) - 0 ) < 0.1, "sphere objective should be minimised at 0");
+
+  free(solution);
+  free(mins);
+  free(maxs);
 }
 
 Test(pso_basic_integration, egghol2d) {
@@ -83,6 +90,10 @@ Test(pso_basic_integration, egghol2d) {
     printf(" egg %f \t", solution[d] );
   }
   cr_assert(fabs( egghol2d(solution, dim) - 959.6407 ) < 0.1, "egghol2d objective should be minimised at -959.6407");
+
+  free(solution);
+  free(mins);
+  free(maxs);
 }
 
 Test(pso_basic_integration, rastigrin) {
@@ -98,6 +109,10 @@ Test(pso_basic_integration, rastigrin) {
     printf("ras %f \t", solution[d] );
   }
   cr_assert(fabs(rastigrin(solution, dim) - 0 ) < 0.1, "rastigrin objective should be minimised at 0");
+
+  free(solution);
+  free(mins);
+  free(maxs);
 }
 
 /*
@@ -114,4 +129,6 @@ Test(pso_basic_integration, griewank) {
     printf("gr %f \t", solution[d] );
   }
   cr_assert(fabs(griewank(solution, dim) - 0) < 0.1, "griewank objective should be minimised at 0");
+
+  free(solution);
 }*/

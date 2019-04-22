@@ -14,6 +14,7 @@
 #define COG 2
 #define SOCIAL 2
 #define INERTIA 0.5
+#define VEL_LIMIT_SCALE 5
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
 #endif
@@ -39,29 +40,29 @@ double* rand_init(size_t swarm_size,
   //returns swarm_size size array
 void eval_fitness(double (*func)(const double* const, size_t),
                   size_t swarm_size, size_t dim,
-                  const double* const x, double* fitness) {
+                  const double* const positions, double* fitness) {
   for (size_t pop=0; pop<swarm_size; pop++){
-    fitness[pop] = func(x+(pop*dim),dim);
+    fitness[pop] = func(positions+(pop*dim),dim);
   }
   return ;
 }
 
   //returns swarm_size x dim size array
   // velocity at every posize_t of every particle
-double* gen_init_velocity(const double* const x,
+double* gen_init_velocity(const double* const positions,
                           size_t swarm_size, size_t dim,
                           const double* const min_positions,
                           const double* const max_positions) {
-  double* u = (double *)malloc(swarm_size*dim*sizeof(double));
-  u = rand_init(swarm_size,dim,min_positions,max_positions);
-  double* v = (double *)malloc(swarm_size*dim*sizeof(double));
+  double* u = rand_init(swarm_size,dim,min_positions,max_positions);
+  double* velocity = (double *)malloc(swarm_size*dim*sizeof(double));
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      v[idx] = 0.25*(u[idx] - x[idx]);
+      velocity[idx] = 0.25*(u[idx] - positions[idx]);
     }
   }
-  return v;
+  free(u);
+  return velocity;
 }
 
   // sorts the population in decreasing order of fitness /
@@ -89,41 +90,41 @@ void generate_vel_limit(const double* min_positions,
                         double* max_vel,
                         size_t dim) {
   for (size_t d=0;d<dim;d++){
-    min_vel[d] = min_positions[d]/5;
-    max_vel[d] = max_positions[d]/5;
+    min_vel[d] = min_positions[d]/VEL_LIMIT_SCALE;
+    max_vel[d] = max_positions[d]/VEL_LIMIT_SCALE;
   }
 }
 
   // updates velocities, works on array returned by gen_velocity
-double* update_velocity(double * v, double* x, double * y,
+  //REMOVE VNEW WORK WITH VELOCITY
+void update_velocity(double* velocity, double* positions,
+                        double* local_best_position,
                         double* best, size_t swarm_size, size_t dim,
                         const double* const min_vel,
                         const double* const max_vel) {
-  double* vnew = (double*)malloc(dim*swarm_size*sizeof(double));
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      vnew[idx] = INERTIA*v[idx] + COG*random_0_to_1()*(y[idx] - x[idx]) +
-      SOCIAL*random_0_to_1()*(best[d] * x[idx]);
-      vnew[idx] = min(max(min_vel[d],vnew[idx]),max_vel[d]);
+      velocity[idx] = INERTIA*velocity[idx] + COG*random_0_to_1()*(local_best_position[idx] - positions[idx]) +
+      SOCIAL*random_0_to_1()*(best[d] * positions[idx]);
+      velocity[idx] = min(max(min_vel[d],velocity[idx]),max_vel[d]);
     }
   }
-  return vnew;
+  return ;
 }
 
-void update_position(double* x, double* v,
+void update_position(double* positions, double* velocity,
                     size_t swarm_size, size_t dim,
                     const double* const min_positions,
                     const double* const max_positions) {
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      x[idx] += v[idx];
-      if (x[idx] >= max_positions[d] || x[idx] <= min_positions[d]){
-        v[idx] = -v[idx];
+      positions[idx] += velocity[idx];
+      if (positions[idx] >= max_positions[d] || positions[idx] <= min_positions[d]){
+        velocity[idx] = -velocity[idx];
       }
-      x[idx] = min(max(min_positions[d],x[idx]),max_positions[d]);
-      //TODO: PROJECT ON BOUNDS - RATHER DO A BOUNCE THAN A SIMPLE PROJECT
+      positions[idx] = min(max(min_positions[d],positions[idx]),max_positions[d]);
     }
   }
   return;
@@ -141,15 +142,13 @@ double * pso_basic (double(*fit)(const double* const, size_t),
   srand((unsigned) time(NULL));
   // REPLACE WITH FIXED ZERO SEED
 
-  // double known_optima = 0.;   // TODO : DEPENDENT ON OBJECTIVE FUNCTION
   double* min_vel = (double*)malloc(dim*sizeof(double));
   double* max_vel = (double*)malloc(dim*sizeof(double));
   generate_vel_limit(min_positions,max_positions,min_vel,max_vel,dim);
 
   size_t sizeof_position = dim*swarm_size*sizeof(double);
   // randomly initialise postions of swarm particles
-  double* current_positions = (double*)malloc(sizeof_position);
-  current_positions = rand_init(swarm_size, dim,min_positions,max_positions);
+  double* current_positions = rand_init(swarm_size, dim,min_positions,max_positions);
   double* local_best_position = (double*)malloc(sizeof_position);
   memcpy(local_best_position,current_positions, sizeof_position);
 
@@ -160,21 +159,18 @@ double * pso_basic (double(*fit)(const double* const, size_t),
   double* local_best_fitness = (double*)malloc(sizeof_fitness);
   memcpy(local_best_fitness,current_fitness, sizeof_fitness );
 
-  double* p_velocity = (double*)malloc(sizeof_position);
-  p_velocity = gen_init_velocity(current_positions,swarm_size,dim,
+  double* p_velocity = gen_init_velocity(current_positions,swarm_size,dim,
   min_positions,max_positions);
 
-  double* global_best_position = (double*)malloc(dim*sizeof(double));
   size_t global_best_idx = best_fitness(local_best_fitness,dim,swarm_size);
 
-  global_best_position = (local_best_position + (dim*global_best_idx));
+  double* global_best_position = (local_best_position + (dim*global_best_idx));
   double global_best_fitness = local_best_fitness[global_best_idx];
 
   size_t iter = 0;
-  // double error = 1e3;
-  while ( iter < max_iter) { // error > EPS &&
+  while ( iter < max_iter) {
 
-    p_velocity = update_velocity(p_velocity,current_positions,
+    update_velocity(p_velocity,current_positions,
     local_best_position,global_best_position,swarm_size,
     dim,min_vel,max_vel);
 
@@ -200,5 +196,17 @@ double * pso_basic (double(*fit)(const double* const, size_t),
     iter++;
 
   }
-  return global_best_position;
+
+  double *const best_solution = (double *const) malloc(dim * sizeof(double));
+  memcpy(best_solution, global_best_position , dim * sizeof(double));
+
+  free(min_vel);
+  free(max_vel);
+  free(current_positions);
+  free(local_best_position);
+  free(current_fitness);
+  free(local_best_fitness);
+  free(p_velocity);
+
+  return best_solution;
 }
