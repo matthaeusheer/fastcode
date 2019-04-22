@@ -62,11 +62,11 @@ Test(pso_unit,gen_init_velocity){
 	double* vel = (double*)malloc(sizeof(double)*swarm_size*dim);
 	vel = gen_init_velocity(x,swarm_size,dim,mins,maxs);
 	for (size_t s=0;s<swarm_size;s++){
-			for (size_t d = 0; d < dim; d++) {
-					size_t idx = s*dim + d;
-			    cr_assert(vel[idx] <= (maxs[d] - x[idx])* 0.5,"%ld dimension should be bound above",d);
-			    cr_assert(vel[idx] >= (mins[d] - x[idx])*0.5, "%ld dimension should be bound below",d);
-			}
+		for (size_t d = 0; d < dim; d++) {
+			size_t idx = s*dim + d;
+	    cr_assert(vel[idx] <= (maxs[d] - x[idx])* 0.5,"%ld dimension should be bound above",d);
+	    cr_assert(vel[idx] >= (mins[d] - x[idx])*0.5, "%ld dimension should be bound below",d);
+		}
 	}
 }
 
@@ -89,8 +89,7 @@ Test(pso_unit,best_fitness){
 	best_index = best_fitness(fitness,dim, swarm_size);
   cr_assert(best_index == 1, "the optima is at local_best_position[1]");
 	global_best_position = local_best_position+(dim*best_index);
-	// printf("global_best_position[0]:%f\n", global_best_position[0] );
-	// printf("global_best_position[1]:%f\n", global_best_position[1] );
+
   cr_assert(global_best_position[0] == 2.5, "first dim of global best is 1");
   cr_assert(global_best_position[1] == 4.0, "second dim of global best is 0");
 
@@ -113,11 +112,11 @@ Test(pso_unit,update_velocity){
 	vel = update_velocity(vel, x, y, best, swarm_size, dim,
 												mins, maxs);
 	for (size_t s=0;s<swarm_size;s++){
-			for (size_t d = 0; d < dim; d++) {
-					size_t idx = s*dim + d;
-			    cr_assert(vel[idx] <= maxs[d] ,"%ld dimension'd velocity should be bound above",d);
-			    cr_assert(vel[idx] >= mins[d] , "%ld dimension'd velocity should be bound below",d);
-			}
+		for (size_t d = 0; d < dim; d++) {
+			size_t idx = s*dim + d;
+	    cr_assert(vel[idx] <= maxs[d] ,"%ld dimension'd velocity should be bound above",d);
+	    cr_assert(vel[idx] >= mins[d] , "%ld dimension'd velocity should be bound below",d);
+		}
 	}
 
 	free(vel);
@@ -140,11 +139,11 @@ Test(pso_basic,update_position){
 												mins, maxs);
 	update_position( x, vel, swarm_size, dim, mins, maxs);
 	for (size_t s=0;s<swarm_size;s++){
-			for (size_t d = 0; d < dim; d++) {
-					size_t idx = s*dim + d;
-					cr_assert(x[idx] <= maxs[d] ,"%ld dimension'd position should be bound above",d);
-					cr_assert(x[idx] >= mins[d] ,"%ld dimension'd position should be bound below",d);
-			}
+		for (size_t d = 0; d < dim; d++) {
+			size_t idx = s*dim + d;
+			cr_assert(x[idx] <= maxs[d] ,"%ld dimension'd position should be bound above",d);
+			cr_assert(x[idx] >= mins[d] ,"%ld dimension'd position should be bound below",d);
+		}
 	}
 }
 

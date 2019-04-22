@@ -26,9 +26,7 @@ Test(pso_basic_integration, sum_of_squares) {
   double* mins = filled_array(dim, -10);
   double* maxs = filled_array(dim, 10);
   double* solution = pso_basic(sum_of_squares, swarm_size, dim, max_iter, mins, maxs);
-  /*for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx]) < 0.00001, "each dimension should be zero");
-  }*/
+
   printf("sum of sum_of_squares: %f\n", sum_of_squares(solution, dim) );
   printf("best sum_of_squares : \n"  );
 	for (size_t d=0;d<dim;d++){
@@ -62,10 +60,7 @@ Test(pso_basic_integration, sphere) {
   double* mins = filled_array(dim, -5);
   double* maxs = filled_array(dim, 5);
   double* solution = pso_basic(sphere, swarm_count, dim, max_iter, mins, maxs);
-  /*for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
-              "to 1");
-  }*/
+
   printf("sum of sphere:%f\n",sphere(solution, dim) );
   printf("best sphere : \n"  );
   for (size_t d=0;d<dim;d++){
@@ -81,10 +76,7 @@ Test(pso_basic_integration, egghol2d) {
   double* mins = filled_array(dim, -512);
   double* maxs = filled_array(dim, 512);
   double* solution = pso_basic(egghol2d, swarm_count, dim, max_iter, mins, maxs);
-  /*for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
-              "to 1");
-  }*/
+
   printf("sum of egghol2d:%f\n",egghol2d(solution, dim) );
   printf("best egghol2d : \n"  );
   for (size_t d=0;d<dim;d++){
@@ -107,6 +99,7 @@ Test(pso_basic_integration, rastigrin) {
   }
   cr_assert(fabs(rastigrin(solution, dim) - 0 ) < 0.1, "rastigrin objective should be minimised at 0");
 }
+
 /*
 Test(pso_basic_integration, griewank) {
   size_t swarm_count = SWARM_SIZE;
