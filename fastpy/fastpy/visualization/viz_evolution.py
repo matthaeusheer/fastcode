@@ -23,7 +23,7 @@ def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwarg
         if iter_idx == 0:
             color = 'black'
         else:
-            color = viz_utils.get_color_cm_jet(cm.hot, 0, len(evolution_data), iter_idx - 1)
+            color = viz_utils.get_color_from_cm(cm.hot, 1, len(evolution_data), iter_idx + 1)
 
         x = [pos[0] for pos in step_dict.values()]
         y = [pos[1] for pos in step_dict.values()]
