@@ -35,7 +35,7 @@ void print_solution(size_t dim, const double *const solution) {
  */
 void print_population(size_t colony_size, size_t dim, const double *population) {
   for (size_t idx = 0; idx < colony_size; idx++) {
-    printf("pengu%03ld, ", idx);
+    printf("member%03ld, ", idx);
     print_solution(dim, &population[idx * dim]);
   }
 }

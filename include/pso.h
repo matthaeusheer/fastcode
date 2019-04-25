@@ -7,28 +7,28 @@ extern "C" {
 double * pso_basic (double(*fit)(const double* const, size_t),
                     size_t swarm_size,
                     size_t dim, size_t max_iter,
-                    const double* const min_positions,
-                    const double* const max_positions);
+                    const double* min_positions,
+                    const double* max_positions);
 
 //returns swarm_size * dim size array
 double* pso_rand_init(size_t swarm_size,
                   size_t dim,
-                  const double* const min_positions,
-                  const double* const max_positions);
+                  const double* min_positions,
+                  const double* max_positions);
 
 //returns swarm_size size array
 void pso_eval_fitness(double (*func)(const double* const, size_t),
                   size_t swarm_size,
                   size_t dim,
-                  const double* const positions,
+                  const double* positions,
                   double* fitness);
 
 //returns swarm_size x dim size array
 // velocity at every posize_t of every particle
-double* pso_gen_init_velocity(const double* const positions,
+double* pso_gen_init_velocity(const double* positions,
                           size_t swarm_size, size_t dim,
-                          const double* const min_positions,
-                          const double* const max_positions);
+                          const double* min_positions,
+                          const double* max_positions);
 
 // sorts the population in decreasing order of fitness /
 // i.e pop[0] posize_ts to best location yet.
@@ -48,16 +48,16 @@ void pso_update_velocity(double* velocity,
                         double* best,
                         size_t swarm_size,
                         size_t dim,
-                        const double* const min_vel,
-                        const double* const max_vel);
+                        const double* min_vel,
+                        const double* max_vel);
 
 
 void update_position(double* positions,
                     double* velocity,
                     size_t swarm_size,
                     size_t dim,
-                    const double* const min_positions,
-                    const double* const max_positions);
+                    const double* min_positions,
+                    const double* max_positions);
 #ifdef __cplusplus
 }
 #endif
