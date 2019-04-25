@@ -30,6 +30,18 @@ double schaf2d        (const double * args, size_t dim);
 
 double griewank       (const double * args, size_t dim);
 
+double schwefel01     (const double * args, size_t dim);
+  
+double freundsteinroth(const double * args, size_t dim);
+
+double powel          (const double * args, size_t dim);
+  
+double cosinemixture  (const double * args, size_t dim);
+  
+double beale          (const double * args, size_t dim);
+  
+  
+
 
 /*******************************************************************************
   UTILITIES
