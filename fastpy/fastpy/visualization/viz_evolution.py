@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import cm
 
 from fastpy.visualization import viz_utils
+import plotly.graph_objs as go
 
 
 def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwargs):
@@ -35,6 +36,129 @@ def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwarg
         ax.set_ylim(kwargs['ylims'])
 
     return fig, ax
+
+
+def simulate_optimization_evolution_2d(evolution_data, best_obj_values):
+    """Instead of a static plot, this produces a plotly simulation of the evolution of the data."""
+    iterations = range(len(evolution_data))
+
+    # make figure
+    figure = {
+        'data': [],
+        'layout': {},
+        'frames': []
+    }
+
+    # fill in most of layout
+    min_x, max_x, min_y, max_y = viz_utils.get_min_max_of_evolution_data(evolution_data)
+    figure['layout']['xaxis'] = {'title': 'x', 'range': [min_x, max_x], 'zeroline': False}
+    figure['layout']['yaxis'] = {'title': 'y', 'range': [min_y, max_y], 'zeroline': False}
+    figure['layout']['hovermode'] = 'closest'
+    figure['layout'].update(width=700, height=700, autosize=False)
+    figure['layout']['sliders'] = {
+        'args': [
+            'transition', {
+                'duration': 10,
+                'easing': 'cubic-in-out'
+            }
+        ],
+        'initialValue': 0,
+        'plotlycommand': 'animate',
+        'values': iterations,
+        'visible': True
+    }
+    figure['layout']['updatemenus'] = [
+        {
+            'buttons': [
+                {
+                    'args': [None, {'frame': {'duration': 200, 'redraw': False},
+                                    'fromcurrent': True,
+                                    'transition': {'duration': 200, 'easing': 'quadratic-in-out'}}],
+                    'label': 'Play',
+                    'method': 'animate'
+                },
+                {
+                    'args': [[None], {'frame': {'duration': 0, 'redraw': False}, 'mode': 'immediate',
+                                      'transition': {'duration': 0}}],
+                    'label': 'Pause',
+                    'method': 'animate'
+                }
+            ],
+            'direction': 'left',
+            'pad': {'r': 10, 't': 87},
+            'showactive': True,
+            'type': 'buttons',
+            'x': 0.1,
+            'xanchor': 'right',
+            'y': 0,
+            'yanchor': 'top'
+        }
+    ]
+
+    sliders_dict = {
+        'active': 0,
+        'yanchor': 'top',
+        'xanchor': 'left',
+        'currentvalue': {
+            'font': {'size': 20},
+            'prefix': 'Iteration:',
+            'visible': True,
+            'xanchor': 'right'
+        },
+        'transition': {'duration': 10, 'easing': 'cubic-in-out'},
+        'pad': {'b': 10, 't': 50},
+        'len': 0.9,
+        'x': 0.1,
+        'y': 0,
+        'steps': []
+    }
+
+    # make data
+
+    x_positions = []
+    y_positions = []
+    for iter_idx, step_dict in enumerate(evolution_data):
+        x = [pos[0] for pos in step_dict.values()]
+        y = [pos[1] for pos in step_dict.values()]
+        x_positions.append(x)
+        y_positions.append(y)
+
+    data_points = {'x': x_positions[0],
+                   'y': y_positions[0],
+                   'mode': 'markers',
+                   'marker': {'color': 'black'}}
+
+    figure['data'].append(data_points)
+
+    # make frames
+    iter_idx = 1
+    for x, y in zip(x_positions, y_positions):
+        frame = {'data': [], 'name': str(iter_idx)}
+
+        color = viz_utils.get_color_from_cm(cm.winter_r, min(best_obj_values), max(best_obj_values), best_obj_values[iter_idx-1], hex=True)
+        data_dict = {
+            'x': x,
+            'y': y,
+            'mode': 'markers',
+            'marker': {'color': color}
+        }
+        frame['data'].append(data_dict)
+
+        figure['frames'].append(frame)
+        slider_step = {'args': [
+            [str(iter_idx)],
+            {'frame': {'duration': 10, 'redraw': False},
+             'mode': 'immediate',
+             'transition': {'duration': 10}}
+        ],
+            'label': str(iter_idx),
+            'method': 'animate'}
+        sliders_dict['steps'].append(slider_step)
+        iter_idx += 1
+
+    figure['layout']['sliders'] = [sliders_dict]
+
+    return figure
 
 
 def plot_objective_value_evolution(values):

@@ -22,9 +22,13 @@ def setup_figure_1ax(x_label='', y_label='', size=(13, 9), shrink_ax=True):
     return fig, ax
 
 
-def get_color_cm_jet(cmap, vmin, vmax, value):
-    norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
-    return [val / 255 for val in cmap(norm(value), bytes=True)]
+def get_color_from_cm(cmap, vmin, vmax, value, hex=True):
+    norm = matplotlib.colors.LogNorm(vmin=vmin, vmax=vmax)
+    rgba = cmap(norm(value))
+    if hex:
+        return matplotlib.colors.rgb2hex(rgba[:3])
+    else:
+        return rgba
 
 
 def get_n_until_first_repeat(input_list, exclude_start='#'):
@@ -41,3 +45,34 @@ def get_n_until_first_repeat(input_list, exclude_start='#'):
             counter += 1
         else:
             return counter
+
+
+def get_min_max_of_evolution_data(evolution_data):
+    global_min_x = 10e6
+    global_min_y = 10e6
+    global_max_x = -10e6
+    global_max_y = -10e6
+
+    for step_dict in evolution_data:
+        x = [pos[0] for pos in step_dict.values()]
+        y = [pos[1] for pos in step_dict.values()]
+
+        max_x = max(x)
+        max_y = max(y)
+        min_x = min(x)
+        min_y = min(y)
+
+        global_min_x = min(global_min_x, min_x)
+        global_min_y = min(global_min_y, min_y)
+        global_max_x = max(global_max_x, max_x)
+        global_max_y = max(global_max_y, max_y)
+
+    return global_min_x, global_max_x, global_min_y, global_max_y
+
+
+def rgb2hex(r,g,b):
+    return "#{:02x}{:02x}{:02x}".format(r,g,b)
+
+
+def hex2rgb(hexcode):
+    return tuple(map(ord,hexcode[1:].decode('hex')))
