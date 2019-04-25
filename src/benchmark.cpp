@@ -8,6 +8,7 @@
 
 #include "hgwosca.h"
 #include "penguin.h"
+#include "pso.h"
 
 
 std::vector<timeInt64> time_algorithm(Config cfg) {
@@ -88,7 +89,8 @@ algo_map_t create_algo_map() {
 
   // Register more algorithms here as they get implemented.
   algo_map_t algo_map = {{"hgwosca", &hgwosca},
-                         {"penguin", &pen_emperor_penguin}};
+                         {"penguin", &pen_emperor_penguin},
+                         {"pso", &pso_basic}};
 
   return algo_map;
 }

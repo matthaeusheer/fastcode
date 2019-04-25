@@ -159,6 +159,11 @@ double * pso_basic (double(*fit)(const double* const, size_t),
   double* local_best_fitness = (double*)malloc(sizeof_fitness);
   memcpy(local_best_fitness,current_fitness, sizeof_fitness );
 
+  #ifdef DEBUG
+      print_population(swarm_size, dim, current_positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(swarm_size, current_fitness));
+  #endif
+
   double* p_velocity = pso_gen_init_velocity(current_positions,swarm_size,dim,
   min_positions,max_positions);
 
@@ -194,6 +199,11 @@ double * pso_basic (double(*fit)(const double* const, size_t),
     global_best_position = local_best_position+(dim*global_best_idx);
     global_best_fitness  = local_best_fitness[global_best_idx];
     iter++;
+
+  #ifdef DEBUG
+      print_population(swarm_size, dim, current_positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(swarm_size, current_fitness));
+  #endif
 
   }
 

@@ -29,6 +29,7 @@ add_executable(benchmark
         src/cpp_utils.cpp
         src/penguin.c
         src/hgwosca.c
+        src/pso.c
         src/objectives.c
         src/utils.c)
 
