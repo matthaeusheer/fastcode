@@ -47,6 +47,7 @@ double *pen_copy_population(size_t colony_size, size_t dim,
 /**
  * Calculates initial fitness of each penguin by plugging its dim dimensions
  * into the objective function. The returned fitness array is of size colony_size.
+ * High objective function value = high fitness = high heat radiation = LOW cost as defined in the paper.
  */
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
@@ -289,7 +290,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   // seed rng
   srand((unsigned) time(NULL));
 
-  double *const population = pen_generate_population(colony_size, dim, min_positions, max_positions);
+  double *population = pen_generate_population(colony_size, dim, min_positions, max_positions);
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
   double *const population_cpy = (double*)malloc(colony_size * dim * sizeof(double));
   memcpy(population_cpy, population, colony_size * dim * sizeof(double));
@@ -308,9 +309,19 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double attenuation_coef = ATT_COEF_START;
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
-    for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
-      for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
-        if (fitness[penguin_j] > fitness[penguin_i]) {
+    printf("#----- Iteration %lu ----- \n", iter);
+
+    // number of updates for each pengu
+    size_t * const n_updates_per_pengu = (size_t *) malloc(colony_size * sizeof(size_t));
+    memset(n_updates_per_pengu, 0, colony_size);
+
+    // actual updates for every pengu, we can select the values by taking all updates up fo n_updates_per_pengu[idx]
+    double *const updated_positions = filled_array(colony_size * colony_size * dim, 0.0);
+
+    for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
+      size_t update_counter = 0;
+      for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
+        if (fitness[penguin_j] > fitness[penguin_i]) {  // high fitness = high heat radiation = low cost
 
           // calculate heat radiation
           double heat_rad = heat_absorption_coef * pen_heat_radiation(fitness[penguin_i]);
@@ -336,47 +347,79 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
 
-          memcpy(&population[penguin_j * dim], spiral, dim * sizeof(double));
-          fitness[penguin_j] = (*obj)(&population[penguin_j * dim], dim);
 
+          print_double_array(dim, spiral);
+          memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],
+                  spiral, dim * sizeof(double));
+
+          //printf("# (i, j) (%lu, %lu): (%f, %f)\n", penguin_i, penguin_j, fitness[penguin_i], fitness[penguin_j]);
+          update_counter += 1;
+
+          // fitness[penguin_j] = (*obj)(&population_copy[penguin_j * dim], dim);
+          // fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
           free(spiral);
         }
       }
+      n_updates_per_pengu[penguin_j] = update_counter;
     }
+
+
+    print_size_t_array(colony_size, n_updates_per_pengu);
+
+    // accumulate changes for every pengu during this iteration
+    for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
+      double * const mean_pos = filled_array(dim, 0.0);
+
+      if (n_updates_per_pengu[pengu_idx] > 0) {
+        for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
+          double mean_pos_dim = mean_value_in_strides(dim * n_updates_per_pengu[pengu_idx],
+                                                      &updated_positions[pengu_idx * dim * colony_size],
+                                                      dim_idx,
+                                                      dim);
+          mean_pos[dim_idx] = mean_pos_dim;
+        }
+        printf("# Mean position for pengu %lu\n", pengu_idx);
+        print_double_array(dim, mean_pos);
+
+        // Update positions and fitness
+        memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(double));
+        fitness[pengu_idx] = (*obj)(&population[pengu_idx * dim], dim);
+
+      }
+      free(mean_pos);
+    }
+
+    free(n_updates_per_pengu);
 
     // update coefficients
     heat_absorption_coef -= HAB_COEF_STEP;
     mutation_coef -= MUT_COEF_STEP;
     attenuation_coef += ATT_COEF_STEP;
 
-    /* memcpy(population, population_cpy, colony_size * dim * sizeof(double)); */
+    #ifdef DEBUG
+      print_population(colony_size, dim, population);
+      printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+      // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
+      //pen_print_fitness(colony_size, fitness);
+      // printf("\nBEST SOLUTION: %ld\n", best_solution);
+      //print_solution(dim, &population[best_solution]);
+    #endif
 
-    // update fitness
-    for(size_t penguin = 0; penguin < colony_size; penguin++) {
-      fitness[penguin] = (*obj)(&population[penguin * dim], dim);
-    }
+  } // loop on iterations
 
-#ifdef DEBUG
-    print_population(colony_size, dim, population);
-    printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-    // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-    //pen_print_fitness(colony_size, fitness);
-    // printf("\nBEST SOLUTION: %ld\n", best_solution);
-    //print_solution(dim, &population[best_solution]);
-#endif
-  }
-
+  // final cleanup
   size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
   double *const final_solution = (double *) malloc(dim * sizeof(double));
   memcpy(final_solution, &population[best_solution], dim * sizeof(double));
 
-#ifdef DEBUG
+
+  #ifdef DEBUG
   //printf("===============================");
   //print_population(colony_size, dim, population);
   //pen_print_fitness(colony_size, fitness);
   //printf("\nBEST SOLUTION: %ld\n", best_solution);
   //  print_solution(dim, &population[best_solution]);
-#endif
+  #endif
 
   free(population);
   free(fitness);
