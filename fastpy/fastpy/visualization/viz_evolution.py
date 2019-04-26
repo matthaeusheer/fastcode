@@ -20,7 +20,7 @@ def plot_optimization_evolution_2d(evolution_data, *args, obj_func=None, **kwarg
         obj_func: name of the objective function to contour plot in the background
     """
     mpld3.enable_notebook()
-    fig, ax = viz_utils.setup_figure_1ax(x_label='x position', y_label='y_position', size=(8, 8), shrink_ax=False)
+    fig, ax = viz_utils.setup_figure_1ax(x_label='x position', y_label='y position', size=(8, 8), shrink_ax=False)
 
     if obj_func:
         if obj_func not in OBJ_FUNCS:
