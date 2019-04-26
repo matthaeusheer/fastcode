@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
 /**
  *  Prints the solution array of one algorithm output to console.
  */
@@ -66,6 +68,13 @@ void negate(size_t size, double* array);
    Scalar multiplication of an array.
  */
 void scalar_mul(size_t size, double scalar, double* array);
+ /*
+ * Calc mean values in strides and offset. Assumes length of input is divisible by stride.
+ */
+double mean_value_in_strides(size_t length, const double * input, size_t offset, size_t stride);
+
+void print_size_t_array(size_t length, const size_t * arr);
+void print_double_array(size_t length, const double * arr);
 
 #ifdef __cplusplus
 }

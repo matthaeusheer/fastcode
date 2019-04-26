@@ -13,8 +13,10 @@ Test(utils_unit, random_0_to_1) {
   }
 }
 
-
 Test(utils_unit, random_min_max) {
+  srand((unsigned) time(NULL));
+
+
   double r = random_min_max(0.0, 1.0);
   cr_assert(r <= 1.0, "random_min_max upper bound 1");
   cr_assert(r >= 0.0, "random_min_max lower bound 1");
@@ -118,3 +120,51 @@ Test(utils_unit, negate) {
     cr_assert(array[idx] == -copy[idx], "array value should be negated");
   }
 }
+
+
+Test(utils_unit, mean_value_in_strides_simple) {
+  size_t stride = 2;
+  size_t length = 10;
+  double test_array[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2};
+  for (size_t offset = 0; offset < 2; offset++) {
+    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    cr_assert_eq(mean, offset + 1);
+  }
+}
+
+
+Test(utils_unit, mean_value_in_strides_complex) {
+  size_t stride = 3;
+  size_t length = 6;
+  double test_array[] = {1, 2, 3, 4, 5, 6};
+  double expected[] = {5.0 / 2, 7.0 / 2, 9.0 / 2};
+  for (size_t offset = 0; offset < 3; offset++) {
+    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    cr_assert_eq(mean, expected[offset]);
+  }
+}
+
+Test(utils_unit, mean_value_in_strides_complex_2) {
+  size_t stride = 2;
+  size_t length = 6;
+  double test_array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  // basically take the inner 6 most items with stride equals 2
+  double expected[] = {(3.0 + 5.0 + 7.0) / 3, (4.0 + 6.0 + 8.0) / 3};
+  for (size_t offset = 0; offset < 2; offset++) {
+    double mean = mean_value_in_strides(length, &test_array[2], offset, stride);
+    cr_assert_eq(mean, expected[offset]);
+  }
+}
+
+Test(utils_unit, mean_value_in_strides_single) {
+  size_t stride = 2;
+  size_t length = 3;
+  double test_array[] = {1, 2, 3};
+  // basically take the inner 6 most items with stride equals 2
+  double expected[] = {2.0, 2.0};
+  for (size_t offset = 0; offset < 2; offset++) {
+    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    cr_assert_eq(mean, expected[offset]);
+  }
+}
+

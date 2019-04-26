@@ -129,17 +129,27 @@ add_executable(test_objectives
 target_include_directories(test_objectives PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_objectives PRIVATE ${CRITERION_LIBRARIES})
 
+##### objectives unit test ######
+add_executable(test_utils
+        tests/test_utils.c
+        src/utils.c)
+target_include_directories(test_utils PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_utils PRIVATE ${CRITERION_LIBRARIES})
+
+
 
 ##### All unit tests together #####
 add_executable(test_units
         tests/test_objectives.c
         tests/test_hgwosca.c
         tests/test_penguin.c
-        tests/test_utils.cpp
+        tests/test_cpp_utils.cpp
+        tests/test_utils.c
         src/cpp_utils.cpp
         src/hgwosca.c
         src/penguin.c
         src/objectives.c
+        src/utils.c
         src/utils.c)
 target_include_directories(test_units PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_units PRIVATE ${CRITERION_LIBRARIES})

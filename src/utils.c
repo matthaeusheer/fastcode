@@ -50,6 +50,7 @@ double average_value(size_t arr_length, const double * arr) {
 }
 
 
+<<<<<<< HEAD
 void mmm(size_t dim, const double* const a, const double* const b, double* const res) {
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {
@@ -100,3 +101,30 @@ void scalar_mul(size_t size, const double scalar, double* const array) {
 void negate(size_t size, double* const array) {
   scalar_mul(size, -1.0, array);
 }
+=======
+double mean_value_in_strides(size_t length, const double * input, size_t offset, size_t stride) {
+  double sum = 0.0;
+  int counter = 0;
+  for (size_t idx = offset; idx < length; idx += stride) {
+    sum += input[idx];
+    counter += 1;
+  }
+  if (counter > 0)
+    sum /= counter;
+  return sum;
+}
+
+void print_size_t_array(size_t length, const size_t * arr) {
+  for (size_t idx = 0; idx < length; ++idx) {
+    printf("\t# %lu \n", arr[idx]);
+  }
+  printf("#-----\n");
+}
+
+void print_double_array(size_t length, const double * arr) {
+  for (size_t idx = 0; idx < length; ++idx) {
+    printf("\t# %f \n", arr[idx]);
+  }
+  printf("#-----\n");
+}
+>>>>>>> Introduced utils test and new mean stride function.
