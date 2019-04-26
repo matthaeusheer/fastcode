@@ -202,7 +202,7 @@ double * pso_basic (double(*fit)(const double* const, size_t),
 
   #ifdef DEBUG
       print_population(swarm_size, dim, current_positions); // printing the initial status of the population
-      printf("# AVG FITNESS: %f\n", average_value(swarm_size, current_fitness));
+      printf("# AVG FITNESS: %f\n", average_value(swarm_size, local_best_fitness));
   #endif
 
   }

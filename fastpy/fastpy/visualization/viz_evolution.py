@@ -1,11 +1,14 @@
 import numpy as np
-from matplotlib import cm
+from matplotlib import ticker, cm
+import mpld3
 
 from fastpy.visualization import viz_utils
-import plotly.graph_objs as go
+from fastpy.obj_funcs import rosenbrock
+
+OBJ_FUNCS = {'rosenbrock': rosenbrock}
 
 
-def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwargs):
+def plot_optimization_evolution_2d(evolution_data, *args, obj_func=None, **kwargs):
     """For a given population, plot their positions in solution space in 2d over time.
 
     Arguments
@@ -14,9 +17,27 @@ def plot_optimization_evolution_2d(evolution_data, *args, init_pop=True, **kwarg
                         holding their 2d positions as a list
         xlims (optional): list of lower and upper x lim for plot
         ylims (optional): list of lower and upper y lim for plot
+        obj_func: name of the objective function to contour plot in the background
     """
-
+    mpld3.enable_notebook()
     fig, ax = viz_utils.setup_figure_1ax(x_label='x position', y_label='y_position', size=(8, 8), shrink_ax=False)
+
+    if obj_func:
+        if obj_func not in OBJ_FUNCS:
+            raise NotImplementedError(f'{obj_func} is not implemented for plotting. '
+                                      f'Only {list(OBJ_FUNCS.keys())} can be plotted.\n'
+                                      f'Feel free to implement them in python :)')
+
+        mpld3.disable_notebook()  # contour plots cannot be json serialized so we have to switch of d3 mode
+        min_x, max_x, min_y, max_y = viz_utils.get_min_max_of_evolution_data(evolution_data)
+        x_list = np.linspace(min_x, max_x, 100)
+        y_list = np.linspace(min_y, max_y, 100)
+        x_mesh, y_mesh = np.meshgrid(x_list, y_list)
+
+        z_mesh = OBJ_FUNCS[obj_func](np.vstack([x_mesh.ravel(), y_mesh.ravel()])).reshape((100, 100))
+
+        ax.contourf(x_mesh, y_mesh, z_mesh, [rosenbrock(np.array([k, k])) for k in np.linspace(1, 20, 50)], cmap='jet',
+                    locator=ticker.LogLocator(), alpha=0.1)
 
     for iter_idx, step_dict in enumerate(evolution_data):
 
