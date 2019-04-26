@@ -24,9 +24,9 @@ extern "C" {
 #define MUT_COEF_START 0.02
 #define MUT_COEF_STEP 0
 
-
 #define A 0.1       // see equ 18 from paper
 #define B 1     // see equ 18 from paper
+
 
 
 // helper utilities

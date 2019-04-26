@@ -19,7 +19,11 @@ void print_population(size_t colony_size, size_t dim, const double *population);
 /**
  * Fills an double array with a given length and unique value for all entries.
  */
-double *filled_array(size_t length, double val);
+double *filled_double_array(size_t length, double val);
+
+size_t *filled_size_t_array(size_t length, size_t val);
+
+int *filled_int_array(size_t length, int val);
 
 /**
    Generate a random double between min and max.
@@ -75,6 +79,7 @@ double mean_value_in_strides(size_t length, const double * input, size_t offset,
 
 void print_size_t_array(size_t length, const size_t * arr);
 void print_double_array(size_t length, const double * arr);
+void print_int_array(size_t length, const int * arr);
 
 #ifdef __cplusplus
 }
