@@ -37,7 +37,7 @@ double griewank       (const double * args, size_t dim);
 
 void print_solution(size_t dim, const double * solution);
 
-double *filled_array(size_t length, double val);
+double *filled_double_array(size_t length, double val);
 
 #ifdef __cplusplus
 }

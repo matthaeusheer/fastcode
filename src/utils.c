@@ -5,8 +5,24 @@
 #include "utils.h"
 
 
-double *filled_array(size_t length, double val) {
+double *filled_double_array(size_t length, double val) {
   double *res = (double *) malloc(length * sizeof(double));
+  for (size_t idx = 0; idx < length; idx++) {
+    res[idx] = val;
+  }
+  return res;
+}
+
+int *filled_int_array(size_t length, int val) {
+  int *res = (int *) malloc(length * sizeof(int));
+  for (size_t idx = 0; idx < length; idx++) {
+    res[idx] = val;
+  }
+  return res;
+}
+
+size_t *filled_size_t_array(size_t length, size_t val) {
+  size_t *res = (size_t *) malloc(length * sizeof(size_t));
   for (size_t idx = 0; idx < length; idx++) {
     res[idx] = val;
   }
@@ -117,6 +133,13 @@ double mean_value_in_strides(size_t length, const double * input, size_t offset,
 void print_size_t_array(size_t length, const size_t * arr) {
   for (size_t idx = 0; idx < length; ++idx) {
     printf("\t# %lu \n", arr[idx]);
+  }
+  printf("#-----\n");
+}
+
+void print_int_array(size_t length, const int * arr) {
+  for (size_t idx = 0; idx < length; ++idx) {
+    printf("\t# %d \n", arr[idx]);
   }
   printf("#-----\n");
 }

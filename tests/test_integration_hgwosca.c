@@ -23,8 +23,8 @@ Test(hgwosca_integration, sum_of_squares) {
   size_t wolf_count = 30;
   size_t dim = 10;
   size_t max_iter = 120;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = hgwosca(sum_of_squares, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx]) < 0.00001, "each dimension should be zero");
@@ -40,8 +40,8 @@ Test(hgwosca_integration, sum) {
   size_t wolf_count = 30;
   size_t dim = 10;
   size_t max_iter = 100;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = hgwosca(sum, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx] + 100) < 0.00001, "each dimension should be -100");
@@ -58,8 +58,8 @@ Test(hgwosca_integration, sum_2) {
   size_t wolf_count = 50;
   size_t dim = 2;
   size_t max_iter = 100;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = hgwosca(sum, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx] + 100) < 0.00001, "each dimension should be -100");
@@ -76,8 +76,8 @@ Test(hgwosca_integration, rosenbrock) {
   size_t wolf_count = 40;
   size_t dim = 3;
   size_t max_iter = 1500;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = hgwosca(rosenbrock, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
@@ -93,8 +93,8 @@ Test(hgwosca_integration, sphere) {
   size_t wolf_count = 30;
   size_t dim = 10;
   size_t max_iter = 800;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = hgwosca(sphere, wolf_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
       cr_assert(fabs(solution[idx]) < 0.1, "each dimension should be reasonably close "
@@ -111,8 +111,8 @@ Test(hgwosca_integration, sphere) {
 /*   size_t wolf_count = 40; */
 /*   size_t dim = 10; */
 /*   size_t max_iter = 100; */
-/*   double* mins = filled_array(dim, -100); */
-/*   double* maxs = filled_array(dim, 100); */
+/*   double* mins = filled_double_array(dim, -100); */
+/*   double* maxs = filled_double_array(dim, 100); */
 /*   double* solution = hgwosca(rastigrin, wolf_count, dim, max_iter, mins, maxs); */
 /*   print_solution(dim, solution); */
 /*   for(size_t idx = 0; idx < dim; idx++) { */
@@ -131,8 +131,8 @@ Test(hgwosca_integration, sphere) {
 /*   size_t wolf_count = 80; */
 /*   size_t dim = 2; */
 /*   size_t max_iter = 9000; */
-/*   const double* const mins = filled_array(dim, -512); */
-/*   const double* const maxs = filled_array(dim, 512); */
+/*   const double* const mins = filled_double_array(dim, -512); */
+/*   const double* const maxs = filled_double_array(dim, 512); */
 /*   double* solution = hgwosca(egghol2d, wolf_count, dim, max_iter, mins, maxs); */
 /*   print_solution(dim, solution); */
 /*   printf("Objective=%f\n", egghol2d(solution, dim)); */
@@ -149,8 +149,8 @@ Test(hgwosca_integration, sphere) {
 /*   size_t wolf_count = 40; */
 /*   size_t dim = 2; */
 /*   size_t max_iter = 9000; */
-/*   const double* const mins = filled_array(dim, -100); */
-/*   const double* const maxs = filled_array(dim, 100); */
+/*   const double* const mins = filled_double_array(dim, -100); */
+/*   const double* const maxs = filled_double_array(dim, 100); */
 /*   double* solution = hgwosca(schaf2d, wolf_count, dim, max_iter, mins, maxs); */
 /*     print_solution(dim, solution); */
 /*     printf("Objective=%f\n", schaf2d(solution, dim)); */
@@ -167,8 +167,8 @@ Test(hgwosca_integration, sphere) {
 /*   size_t wolf_count = 30; */
 /*   size_t dim = 5; */
 /*   size_t max_iter = 800; */
-/*   double* mins = filled_array(dim, -600); */
-/*   double* maxs = filled_array(dim, 600); */
+/*   double* mins = filled_double_array(dim, -600); */
+/*   double* maxs = filled_double_array(dim, 600); */
 /*   double* solution = hgwosca(griewank, wolf_count, dim, max_iter, mins, maxs); */
 /*   print_solution(dim, solution); */
 /*   printf("Objective=%f\n", schaf2d(solution, dim)); */

@@ -23,8 +23,8 @@ Test(pso_basic_integration, sum_of_squares) {
   size_t swarm_size = SWARM_SIZE;
   size_t dim = DIM;
   size_t max_iter = 250;
-  double* mins = filled_array(dim, -10);
-  double* maxs = filled_array(dim, 10);
+  double* mins = filled_double_array(dim, -10);
+  double* maxs = filled_double_array(dim, 10);
   double* solution = pso_basic(sum_of_squares, swarm_size, dim, max_iter, mins, maxs);
 
   printf("sum of sum_of_squares: %f\n", sum_of_squares(solution, dim) );
@@ -44,7 +44,7 @@ Test(pso_basic_integration, rosenbrock) {
   size_t dim = 5;
   size_t max_iter = 10000;
   double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = pso_basic(rosenbrock, swarm_count, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
@@ -60,8 +60,8 @@ Test(pso_basic_integration, sphere) {
   size_t swarm_count = SWARM_SIZE;
   size_t dim = DIM;
   size_t max_iter = 250;
-  double* mins = filled_array(dim, -5);
-  double* maxs = filled_array(dim, 5);
+  double* mins = filled_double_array(dim, -5);
+  double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(sphere, swarm_count, dim, max_iter, mins, maxs);
 
   printf("sum of sphere:%f\n",sphere(solution, dim) );
@@ -80,8 +80,8 @@ Test(pso_basic_integration, egghol2d) {
   size_t swarm_count = SWARM_SIZE;
   size_t dim = 2;
   size_t max_iter = 250;
-  double* mins = filled_array(dim, -512);
-  double* maxs = filled_array(dim, 512);
+  double* mins = filled_double_array(dim, -512);
+  double* maxs = filled_double_array(dim, 512);
   double* solution = pso_basic(egghol2d, swarm_count, dim, max_iter, mins, maxs);
 
   printf("sum of egghol2d:%f\n",egghol2d(solution, dim) );
@@ -100,8 +100,8 @@ Test(pso_basic_integration, rastigrin) {
   size_t swarm_count = SWARM_SIZE;
   size_t dim = DIM;
   size_t max_iter = 250;
-  double* mins = filled_array(dim, -5);
-  double* maxs = filled_array(dim, 5);
+  double* mins = filled_double_array(dim, -5);
+  double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(rastigrin, swarm_count, dim, max_iter, mins, maxs);
   printf("sum of rastigrin:%f\n",rastigrin(solution, dim) );
   printf("best rastigrin : \n"  );
@@ -121,7 +121,7 @@ Test(pso_basic_integration, griewank) {
   size_t dim = DIM;
   size_t max_iter = 250;
   double* mins = filled_array(dim, -5);
-  double* maxs = filled_array(dim, 5);
+  double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(griewank, swarm_count, dim, max_iter, mins, maxs);
   printf("sum of griewank:%f\n",griewank(solution, dim) );
   printf("best griewank : \n"  );

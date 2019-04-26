@@ -303,6 +303,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   // initialise rotation matrix
   const double *const r_matrix = pen_init_rotation_matrix(dim, B);
 
+
   // initialize coefficients
   double heat_absorption_coef = HAB_COEF_START;
   double mutation_coef = MUT_COEF_START;
@@ -312,14 +313,12 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
     printf("#----- Iteration %lu ----- \n", iter);
 
     // number of updates for each pengu
-    size_t * const n_updates_per_pengu = (size_t *) malloc(colony_size * sizeof(size_t));
-    memset(n_updates_per_pengu, 0, colony_size);
+    int *const n_updates_per_pengu = filled_int_array(colony_size, 0);
 
     // actual updates for every pengu, we can select the values by taking all updates up fo n_updates_per_pengu[idx]
-    double *const updated_positions = filled_array(colony_size * colony_size * dim, 0.0);
+    double *const updated_positions = filled_double_array(colony_size * colony_size * dim, 0.0);
 
     for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
-      size_t update_counter = 0;
       for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
         if (fitness[penguin_j] > fitness[penguin_i]) {  // high fitness = high heat radiation = low cost
 
@@ -344,6 +343,7 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
           /* negate(dim, spiral); */
           vva(dim, spiral, &population[penguin_j * dim], spiral);
 
+
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
 
@@ -352,23 +352,24 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
           memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],
                   spiral, dim * sizeof(double));
 
+
           //printf("# (i, j) (%lu, %lu): (%f, %f)\n", penguin_i, penguin_j, fitness[penguin_i], fitness[penguin_j]);
-          update_counter += 1;
+          //print_double_array(dim, spiral);
+          //printf("\n");
 
           // fitness[penguin_j] = (*obj)(&population_copy[penguin_j * dim], dim);
           // fitness[penguin_i] = (*obj)(&population[penguin_i * dim], dim);
           free(spiral);
         }
       }
-      n_updates_per_pengu[penguin_j] = update_counter;
     }
 
 
-    print_size_t_array(colony_size, n_updates_per_pengu);
+    print_int_array(colony_size, n_updates_per_pengu);
 
     // accumulate changes for every pengu during this iteration
     for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
-      double * const mean_pos = filled_array(dim, 0.0);
+      double *const mean_pos = filled_double_array(dim, 0.0);
 
       if (n_updates_per_pengu[pengu_idx] > 0) {
         for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
@@ -378,8 +379,8 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
                                                       dim);
           mean_pos[dim_idx] = mean_pos_dim;
         }
-        printf("# Mean position for pengu %lu\n", pengu_idx);
-        print_double_array(dim, mean_pos);
+        //printf("# Mean position for pengu %lu\n", pengu_idx);
+        //print_double_array(dim, mean_pos);
 
         // Update positions and fitness
         memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(double));
@@ -397,12 +398,12 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
     attenuation_coef += ATT_COEF_STEP;
 
     #ifdef DEBUG
-      print_population(colony_size, dim, population);
-      printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-      // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-      //pen_print_fitness(colony_size, fitness);
-      // printf("\nBEST SOLUTION: %ld\n", best_solution);
-      //print_solution(dim, &population[best_solution]);
+        print_population(colony_size, dim, population);
+        printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+        // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
+        //pen_print_fitness(colony_size, fitness);
+        // printf("\nBEST SOLUTION: %ld\n", best_solution);
+        //print_solution(dim, &population[best_solution]);
     #endif
 
   } // loop on iterations
@@ -414,11 +415,11 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
 
 
   #ifdef DEBUG
-  //printf("===============================");
-  //print_population(colony_size, dim, population);
-  //pen_print_fitness(colony_size, fitness);
-  //printf("\nBEST SOLUTION: %ld\n", best_solution);
-  //  print_solution(dim, &population[best_solution]);
+    //printf("===============================");
+    //print_population(colony_size, dim, population);
+    //pen_print_fitness(colony_size, fitness);
+    //printf("\nBEST SOLUTION: %ld\n", best_solution);
+    //  print_solution(dim, &population[best_solution]);
   #endif
 
   free(population);
