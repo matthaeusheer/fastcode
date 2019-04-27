@@ -51,13 +51,12 @@ void pso_update_velocity(double* velocity,
                         const double* min_vel,
                         const double* max_vel);
 
-
-void update_position(double* positions,
-                    double* velocity,
-                    size_t swarm_size,
-                    size_t dim,
-                    const double* min_positions,
-                    const double* max_positions);
+void pso_update_position(double* positions,
+                         double* velocity,
+                         size_t swarm_size,
+                         size_t dim,
+                         const double* min_positions,
+                         const double* max_positions);
 #ifdef __cplusplus
 }
 #endif
