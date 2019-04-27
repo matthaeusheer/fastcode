@@ -10,8 +10,8 @@ Test(pengu_integration, sum) {
   size_t population_size = 30;
   size_t dim = 2;
   size_t max_iter = 100;
-  double* maxs = filled_array(dim, 100);
-  double* mins = filled_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
   double* solution = pen_emperor_penguin(sum, population_size, dim, max_iter, mins, maxs);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(fabs(solution[idx] + 100) < 0.00001, "each dimension should be -100");
@@ -28,8 +28,8 @@ Test(pengu_integration, sum_of_squares) {
   size_t population_size = 30;
   size_t dim = 2;
   size_t max_iter = 120;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_array(dim, 100);
+  double* mins = filled_double_array(dim, -100);
+  double* maxs = filled_double_array(dim, 100);
   double* solution = pen_emperor_penguin(sum_of_squares, population_size, dim, max_iter, mins, maxs);
   print_solution(dim, solution);
   for(size_t idx = 0; idx < dim; idx++) {
