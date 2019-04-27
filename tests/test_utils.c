@@ -78,8 +78,8 @@ Test(utils_unit, mmm_rotation) {
 
 Test(utils_unit, mvm_zero) {
   size_t dim = 100;
-  double* zeros = filled_array(dim, 0.0);
-  double* res = filled_array(dim, 1.0);
+  double* zeros = filled_double_array(dim, 0.0);
+  double* res = filled_double_array(dim, 1.0);
   double* const random = (double*)malloc(dim * dim * sizeof(double));
   for(size_t idx = 0; idx < dim * dim; idx++) {
     random[idx] = random_0_to_1();
@@ -94,10 +94,10 @@ Test(utils_unit, mvm_zero) {
 
 Test(utils_unit, vva) {
   size_t dim = 100;
-  double* a = filled_array(dim, 1.5);
-  double* b = filled_array(dim, 0.1);
-  double* res = filled_array(dim, 1.0);
-  double* expected = filled_array(dim, 1.6);
+  double* a = filled_double_array(dim, 1.5);
+  double* b = filled_double_array(dim, 0.1);
+  double* res = filled_double_array(dim, 1.0);
+  double* expected = filled_double_array(dim, 1.6);
   vva(dim, a, b, res);
   cr_assert_arr_eq(expected, res, dim, "vector should be 1.6 everywhere");
   free(res);
@@ -167,4 +167,3 @@ Test(utils_unit, mean_value_in_strides_single) {
     cr_assert_eq(mean, expected[offset]);
   }
 }
-

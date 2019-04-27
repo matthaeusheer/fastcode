@@ -150,37 +150,3 @@ Test(penguin_unit, mutate) {
   cr_assert_lt(fabs(original[2] - 0.0), 0.5, "Third dimension out of bounds.");
   cr_assert_lt(fabs(original[3] - 0.5), 0.5, "Fourth dimension out of bounds.");
 }
-
-
-Test(penguin_unit, attractiveness) {
-  size_t dim = 4;
-  double penguin_i[] = {0.0, 0.0, 0.0, 0.0};
-  double penguin_j[] = {0.0, 4.0, 3.0, 6.0};
-  double penguin_k[] = {1.0, 1.0, 1.0, 0.0};
-  double fitness[] = {100.0, 10.0, 9.0};
-
-  double heat_rad_i = pen_heat_radiation(fitness[0]);
-  double heat_rad_j = pen_heat_radiation(fitness[1]);
-  double heat_rad_k = pen_heat_radiation(fitness[2]);
-
-  cr_assert(heat_rad_i > heat_rad_j, "Penguin i should radiate more than penguin j.");
-  cr_assert(heat_rad_i > heat_rad_k, "Penguin i should radiate more than penguin k.");
-  cr_assert(heat_rad_j > heat_rad_k, "Penguin j should radiate more than penguin k.");
-
-  double attractiveness_i_j = pen_attractiveness(heat_rad_i, dim, penguin_i, penguin_j, ATT_COEF_START);
-  double attractiveness_j_i = pen_attractiveness(heat_rad_j, dim, penguin_i, penguin_j, ATT_COEF_START);
-  cr_assert(attractiveness_i_j > attractiveness_j_i, "penguin i should be more attractive to "
-                                                     "penguin j than the other way around");
-  double attractiveness_i_j_bis = pen_attractiveness(heat_rad_i, 4, penguin_j, penguin_i, ATT_COEF_START);
-  cr_assert(fabs(attractiveness_i_j - attractiveness_i_j_bis) < DBL_EPSILON, "order of penguins in "
-                                                                             "arguments should not matter");
-
-  double attractiveness_i_k = pen_attractiveness(heat_rad_i, 4, penguin_i, penguin_k, ATT_COEF_START);
-  cr_assert(attractiveness_i_j > attractiveness_i_k, "penguin k should be more attractive to "
-                                                     "penguin i than penguin j is attracted to penguin i, since j is closer to i");
-
-  double attractiveness_j_k = pen_attractiveness(heat_rad_j, 4, penguin_j, penguin_k, ATT_COEF_START);
-  cr_assert(attractiveness_i_j > attractiveness_j_k, "penguin j should be more attractive to "
-                                                     "penguin i than penguin k is attracted to penguin j, since i radiates much more "
-                                                     "energy");
-}

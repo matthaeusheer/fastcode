@@ -153,3 +153,13 @@ add_executable(test_units
         src/utils.c)
 target_include_directories(test_units PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_units PRIVATE ${CRITERION_LIBRARIES})
+
+enable_testing()
+add_test(unit
+  test_units -q)
+add_test(integration_hgwosca
+  test_integration_hgwosca -q)
+# add_test(integration_pengu
+  # test_integration_pengu -q)
+# add_test(integration_psorbf
+  # test_integration_psorbf -q)
