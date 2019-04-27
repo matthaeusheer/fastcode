@@ -27,13 +27,8 @@ Test(pso_basic_integration, sum_of_squares) {
   double* maxs = filled_double_array(dim, 10);
   double* solution = pso_basic(sum_of_squares, swarm_size, dim, max_iter, mins, maxs);
 
-  printf("sum of sum_of_squares: %f\n", sum_of_squares(solution, dim) );
-  printf("best sum_of_squares : \n"  );
-	for (size_t d=0;d<dim;d++){
-		printf(" sos %f \t", solution[d] );
-	}
   cr_assert(fabs(sum_of_squares(solution, dim)) < 0.1, "sos objective should be minimised at 0");
-  
+
   free(solution);
   free(mins);
   free(maxs);
@@ -64,11 +59,6 @@ Test(pso_basic_integration, sphere) {
   double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(sphere, swarm_count, dim, max_iter, mins, maxs);
 
-  printf("sum of sphere:%f\n",sphere(solution, dim) );
-  printf("best sphere : \n"  );
-  for (size_t d=0;d<dim;d++){
-    printf(" sph %f \t", solution[d] );
-  }
   cr_assert(fabs(sphere(solution, dim) - 0 ) < 0.1, "sphere objective should be minimised at 0");
 
   free(solution);
@@ -84,11 +74,6 @@ Test(pso_basic_integration, egghol2d) {
   double* maxs = filled_double_array(dim, 512);
   double* solution = pso_basic(egghol2d, swarm_count, dim, max_iter, mins, maxs);
 
-  printf("sum of egghol2d:%f\n",egghol2d(solution, dim) );
-  printf("best egghol2d : \n"  );
-  for (size_t d=0;d<dim;d++){
-    printf(" egg %f \t", solution[d] );
-  }
   cr_assert(fabs( egghol2d(solution, dim) - 959.6407 ) < 0.1, "egghol2d objective should be minimised at -959.6407");
 
   free(solution);
@@ -103,11 +88,7 @@ Test(pso_basic_integration, rastigrin) {
   double* mins = filled_double_array(dim, -5);
   double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(rastigrin, swarm_count, dim, max_iter, mins, maxs);
-  printf("sum of rastigrin:%f\n",rastigrin(solution, dim) );
-  printf("best rastigrin : \n"  );
-  for (size_t d=0;d<dim;d++){
-    printf("ras %f \t", solution[d] );
-  }
+
   cr_assert(fabs(rastigrin(solution, dim) - 0 ) < 0.1, "rastigrin objective should be minimised at 0");
 
   free(solution);
