@@ -295,10 +295,10 @@ double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
   double *const population_cpy = (double*)malloc(colony_size * dim * sizeof(double));
   memcpy(population_cpy, population, colony_size * dim * sizeof(double));
 
-#ifdef DEBUG
-  print_population(colony_size, dim, population); // printing the initial status of the population
-  printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-#endif
+  #ifdef DEBUG
+    print_population(colony_size, dim, population); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+  #endif
 
   // initialise rotation matrix
   const double *const r_matrix = pen_init_rotation_matrix(dim, B);
