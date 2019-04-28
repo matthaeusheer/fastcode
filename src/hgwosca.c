@@ -40,7 +40,7 @@ double *init_population(size_t wolf_count,
  */
 void update_fitness(size_t wolf_count,
                     size_t dim,
-                    double(*obj)(const double *const, size_t),
+                    obj_func_t obj,
                     double *const population, double *const fitness) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     fitness[wolf] = (*obj)(&population[wolf * dim], dim);
@@ -79,7 +79,7 @@ void update_leaders(size_t wolf_count,
  */
 double *init_fitness(size_t wolf_count,
                      size_t dim,
-                     double(*obj)(const double *const, size_t),
+                     obj_func_t obj,
                      double *const population) {
   double *const fitness = (double *const) malloc(wolf_count * sizeof(double));
   update_fitness(wolf_count, dim, obj, population, fitness);
@@ -220,7 +220,7 @@ size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
    Returns:
      The position minimising the objective function. This array has size `dim`.
  */
-double *hgwosca(double(*obj)(const double *const, size_t),
+double *hgwosca(obj_func_t obj,
                 size_t wolf_count,
                 size_t dim,
                 size_t max_iterations,

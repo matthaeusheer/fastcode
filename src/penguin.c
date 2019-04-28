@@ -52,7 +52,7 @@ double *pen_copy_population(size_t colony_size, size_t dim,
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
                                 const double *const population,
-                                double(*obj)(const double *const, size_t)) {
+                                obj_func_t obj) {
   double *fitness = (double *) malloc(colony_size * sizeof(double));
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
     size_t idx = pengu_idx * dim;
@@ -281,7 +281,7 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
+double *pen_emperor_penguin(obj_func_t obj,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,

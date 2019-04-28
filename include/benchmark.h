@@ -8,9 +8,6 @@
 #include "objectives.h"
 
 
-// Objective function type
-typedef double (*obj_func_t)(const double *, size_t);
-
 // Algorithm function type
 typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *, const double *);
 

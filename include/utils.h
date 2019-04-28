@@ -6,6 +6,10 @@ extern "C" {
 
 #include <stddef.h>
 
+
+// Objective function type
+typedef double (*obj_func_t)(const double *, size_t);
+
 /**
  *  Prints the solution array of one algorithm output to console.
  */
