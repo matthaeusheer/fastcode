@@ -72,12 +72,6 @@ double *pen_generate_population(size_t colony_size,
                                 const double * max_positions);
 
 /**
-   Generates a copy of the population array.
- */
-double *pen_copy_population(size_t colony_size, size_t dim,
-                            const double * population);
-
-/**
    Get the initial fitness values for each penguin in the population. This will
    generate a new fitness array.
  */
@@ -96,7 +90,7 @@ double pen_eucledian_distance(size_t dim,
 /**
    Computes the heat radiation of a penguin. See equation 6 in paper.
  */
-double pen_heat_radiation(double fitness);
+double pen_heat_radiation();
 
 /**
    Get the attractiveness between two penguins. Uses the heat radiation and attenuation
@@ -111,33 +105,12 @@ double pen_attractiveness(double heat_rad,
                           double attenuation_coef);
 
 /**
-   Computes the common sum in equation 18 from the paper.
- */
-double pen_compute_common_sum(double attract, double x_i, double y_i, double x_j, double y_j);
-
-/**
-   Computes the factor in the position update equation 18 from the paper.
- */
-double pen_compute_factor(double attract, double x_i, double y_i, double x_j, double y_j);
-
-/**
-   Computes the x_k update value from equation 18 from the paper.
- */
-double pen_compute_x_k(double attract, double x_i, double y_i, double x_j, double y_j);
-
-/**
-   Computes the y_k update value from equation 18 from the paper.
- */
-double pen_compute_y_k(double attract, double x_i, double y_i, double x_j, double y_j);
-
-/**
    Compute spiral movement of the penguin towards the centre. See paper on SPO for
    clarification.
  */
 double *pen_get_spiral_like_movement(double attract, size_t dim,
                                      const double * centre, const double * penguin,
                                      const double* rotation_matrix);
-
 
 /**
    Initialise the rotation matrix of size `dim` times `dim`. Its rotation rate is given by
@@ -162,12 +135,6 @@ void pen_clamp_position(size_t dim, double * position,
    Gets the index of the fittest penguin in the population. Note that the less fit, the better.
  */
 size_t pen_get_fittest_idx(size_t colony_size, const double *  fitness);
-
-
-/**
-   Prints the fitness to standard output.
-*/
-void pen_print_fitness(size_t colony_size, double * fitness);
 
 #ifdef __cplusplus
 }
