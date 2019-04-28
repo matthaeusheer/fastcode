@@ -34,17 +34,6 @@ double *pen_generate_population(size_t colony_size,
 }
 
 /**
- * Deep copy of a penguin population.
- */
-double *pen_copy_population(size_t colony_size, size_t dim,
-                            const double *const population) {
-  size_t size = colony_size * dim * sizeof(double);
-  double *copy = (double *) malloc(size);
-  memcpy(copy, population, size);
-  return copy;
-}
-
-/**
  * Calculates initial fitness of each penguin by plugging its dim dimensions
  * into the objective function. The returned fitness array is of size colony_size.
  * High objective function value = high fitness = high heat radiation = LOW cost as defined in the paper.
@@ -80,20 +69,16 @@ double pen_eucledian_distance(size_t dim,
 /**
    Computes the heat radiation of a penguin. See equation 6 in paper.
  */
-double pen_heat_radiation(double fitness) {
+double pen_heat_radiation() {
   return AREA * EPS * SIGMA * pow(308.15, 4.0);
 }
 
 
 /**
-   Get the attractiveness between two penguins. Uses the heat radiation and attenuation
-   coefficient. Note that the heat radiation determines the direction of attractiveness.
-   If `heat_rad` refers to the heat radiation of `penguin_i`, then the attractiveness is
-   how much `penguin_j` is attracted to `penguin_i`, not the other way around.
-   NOTE: attractiveness actually increases with distance. The reasoning here is that we
-   try to minimise the objective value, therefore high heat radiation is bad, and high
-   attractiveness is bad as well. We might want to rename all this or change the behaviour to
-   make a little more sense.
+   Obtain the attractiveness between a pair of penguins. Note that since the
+   heat radiation is no longer based on fitness, this value is purely based on
+   the distance between the penguins and therefore their order in the arguments
+   no longer matters.
  */
 double pen_attractiveness(double heat_rad,
                           size_t dim,
@@ -102,53 +87,6 @@ double pen_attractiveness(double heat_rad,
                           double attenuation_coef) {
   double dist = pen_eucledian_distance(dim, penguin_i, penguin_j);
   return heat_rad * exp(-dist * attenuation_coef);
-}
-
-
-/**
-   Computes the common sum in equation 18 from the paper.
- */
-double pen_compute_common_sum(double attract,
-                              double x_i, double y_i,
-                              double x_j, double y_j) {
-  double exponent_term1 = (1 - attract) * exp(B * atan(y_i / x_i));
-  double exponent_term2 = attract * exp(B * atan(y_j / x_j));
-  return 1 / B * log(exponent_term1 + exponent_term2);
-}
-
-
-/**
-   Computes the factor in the position update equation 18 from the paper.
- */
-double pen_compute_factor(double attract,
-                          double x_i, double y_i,
-                          double x_j, double y_j) {
-  double exponent = pen_compute_common_sum(attract, x_i, y_i, x_j, y_j);
-  return A * exp(B * exponent);
-}
-
-
-/**
-   Computes the x_k update value from equation 18 from the paper.
- */
-double pen_compute_x_k(double attract,
-                       double x_i, double y_i,
-                       double x_j, double y_j) {
-  double factor = pen_compute_factor(attract, x_i, y_i, x_j, y_j);
-  double cos_arg = pen_compute_common_sum(attract, x_i, y_i, x_j, y_j);
-  return factor * cos(cos_arg);
-}
-
-
-/**
-   Computes the y_k update value from equation 18 from the paper.
- */
-double pen_compute_y_k(double attract,
-                       double x_i, double y_i,
-                       double x_j, double y_j) {
-  double factor = pen_compute_factor(attract, x_i, y_i, x_j, y_j);
-  double cos_arg = pen_compute_common_sum(attract, x_i, y_i, x_j, y_j);
-  return factor * sin(cos_arg);
 }
 
 
@@ -220,16 +158,6 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
     }
   }
   return min_idx;
-}
-
-
-/**
-   Prints the fitness to standard output.
- */
-void pen_print_fitness(size_t colony_size, double *const fitness) {
-  for (size_t idx = 0; idx < colony_size; idx++) {
-    printf("Pengion %03ld:\t%8.4f\n", idx, fitness[idx]);
-  }
 }
 
 
@@ -319,7 +247,7 @@ double *pen_emperor_penguin(obj_func_t obj,
         if (fitness[penguin_j] > fitness[penguin_i]) {  // high fitness = high heat radiation = low cost
 
           // calculate heat radiation
-          double heat_rad = heat_absorption_coef * pen_heat_radiation(fitness[penguin_i]);
+          double heat_rad = heat_absorption_coef * pen_heat_radiation();
 
           // calculate attractiveness
           double attract = pen_attractiveness(heat_rad,
@@ -388,10 +316,6 @@ double *pen_emperor_penguin(obj_func_t obj,
     #ifdef DEBUG
         print_population(colony_size, dim, population);
         printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
-        // size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
-        // pen_print_fitness(colony_size, fitness);
-        // printf("\nBEST SOLUTION: %ld\n", best_solution);
-        // print_solution(dim, &population[best_solution]);
     #endif
 
   } // end loop on iterations

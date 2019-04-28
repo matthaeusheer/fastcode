@@ -13,25 +13,6 @@ Test(macro_tests, min_and_max) {
 }
 
 
-Test(penguin_unit, random_min_max) {
-  double r = random_min_max(0.0, 1.0);
-  cr_assert(r <= 1.0, "random_min_max upper bound 1");
-  cr_assert(r >= 0.0, "random_min_max lower bound 1");
-
-  r = random_min_max(-5.0, 0.0);
-  cr_assert(r <= 0.0, "random_min_max upper bound 2");
-  cr_assert(r >= -5.0, "random_min_max lower bound 2");
-
-  r = random_min_max(-100.0, 100.0);
-  cr_assert(r <= 100.0, "random_min_max upper bound 3");
-  cr_assert(r >= -100.0, "random_min_max lower bound 3");
-
-  r = random_min_max(0.0, 0.0);
-  cr_assert(r <= 0.0, "random_min_max upper bound 4");
-  cr_assert(r >= 0.0, "random_min_max lower bound 4");
-}
-
-
 Test(penguin_unit, generate_population) {
   // Generating the max and min values allowed for every dimension.
   double max[] = {100.0, 0.0, 11.0, -2.0};
@@ -52,26 +33,6 @@ Test(penguin_unit, generate_population) {
     cr_assert(population[idx + 3] >= -4.0, "fourth dimension lower bound check");
   }
   free(population);
-}
-
-
-Test(penguin_unit, copy_population) {
-  size_t population_size = 100;
-  size_t population_dim = 4;
-  double max[] = {100.0, 0.0, 11.0, -2.0};
-  double min[] = {-100.0, -5.0, 10.0, -4.0};
-  double *population = pen_generate_population(population_size, population_dim, min, max);
-  double *population_copy = pen_copy_population(population_size, population_dim, population);
-
-  // Check that values in original population and copy are the same.
-  // Note the documentation of criterion is false. The third parameter needs to be the size.
-  cr_assert_arr_eq(population, population_copy, population_size);
-
-  // Check that original and copy are at different locations in memory.
-  cr_assert_neq(population, population_copy);
-
-  free(population);
-  free(population_copy);
 }
 
 
