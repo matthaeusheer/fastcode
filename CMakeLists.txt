@@ -99,15 +99,15 @@ target_link_libraries(test_pso PRIVATE ${CRITERION_LIBRARIES})
 #target_link_libraries(test_psorbf PRIVATE ${CRITERION_LIBRARIES})
 
 ##### Penguin integration test executable ######
-#add_executable(test_integration_pengu
-#        tests/test_integration_pengu.c
-#        src/penguin.c
-#        src/objectives.c
-#        src/utils.c)
-#target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
-#target_link_libraries(test_integration_pengu
-#        PRIVATE ${CRITERION_LIBRARIES}
-#        m)
+add_executable(test_integration_pengu
+       tests/test_integration_pengu.c
+       src/penguin.c
+       src/objectives.c
+       src/utils.c)
+target_include_directories(test_integration_pengu PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_integration_pengu
+       PRIVATE ${CRITERION_LIBRARIES}
+       m)
 
 ##### penguin unit test ######
 add_executable(test_penguin
@@ -159,7 +159,7 @@ add_test(unit
   test_units -q)
 add_test(integration_hgwosca
   test_integration_hgwosca -q)
-# add_test(integration_pengu
-  # test_integration_pengu -q)
+add_test(integration_pengu
+  test_integration_pengu -q)
 # add_test(integration_psorbf
   # test_integration_psorbf -q)
