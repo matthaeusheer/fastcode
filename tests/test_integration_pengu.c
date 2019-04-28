@@ -5,9 +5,6 @@
 #include "penguin.h"
 #include "utils.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-
 
 Test(pengu_integration, sum_of_squares) {
   size_t population_size = 50;
