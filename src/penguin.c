@@ -99,7 +99,6 @@ double* pen_get_spiral_like_movement(double attract,
                                      const double *const centre,
                                      const double *const penguin,
                                      const double *const rotation_matrix) {
-  // TODO: mem management here is horrible
   double *spiral = (double *) malloc(dim * sizeof(double));
   double* centre_cpy = (double*)malloc(dim * sizeof(double));
   memcpy(centre_cpy, centre, dim * sizeof(double));
@@ -234,8 +233,6 @@ double *pen_emperor_penguin(obj_func_t obj,
   double attenuation_coef = ATT_COEF_START;
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
-    printf("# ----- Iteration %lu ----- \n", iter);
-
     // number of updates for each pengu
     int *const n_updates_per_pengu = filled_int_array(colony_size, 0);
 
@@ -270,6 +267,7 @@ double *pen_emperor_penguin(obj_func_t obj,
 
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
+
 
           // add movement to updated position
           memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],
