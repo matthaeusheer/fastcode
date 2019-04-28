@@ -24,9 +24,9 @@
 
   //returns swarm_size * dim size array
 double* pso_rand_init(size_t swarm_size,
-                  size_t dim,
-                  const double* const min_positions,
-                  const double* const max_positions) {
+                      size_t dim,
+                      const double* const min_positions,
+                      const double* const max_positions) {
   double* init = (double*)malloc(swarm_size*dim*sizeof(double));
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
@@ -38,9 +38,9 @@ double* pso_rand_init(size_t swarm_size,
 }
 
   //returns swarm_size size array
-void pso_eval_fitness(double (*func)(const double* const, size_t),
-                  size_t swarm_size, size_t dim,
-                  const double* const positions, double* fitness) {
+void pso_eval_fitness(obj_func_t func,
+                      size_t swarm_size, size_t dim,
+                      const double* const positions, double* fitness) {
   for (size_t pop=0; pop<swarm_size; pop++){
     fitness[pop] = func(positions+(pop*dim),dim);
   }
@@ -50,9 +50,9 @@ void pso_eval_fitness(double (*func)(const double* const, size_t),
   //returns swarm_size x dim size array
   // velocity at every posize_t of every particle
 double* pso_gen_init_velocity(const double* const positions,
-                          size_t swarm_size, size_t dim,
-                          const double* const min_positions,
-                          const double* const max_positions) {
+                              size_t swarm_size, size_t dim,
+                              const double* const min_positions,
+                              const double* const max_positions) {
   double* u = pso_rand_init(swarm_size,dim,min_positions,max_positions);
   double* velocity = (double *)malloc(swarm_size*dim*sizeof(double));
   for (size_t particle=0; particle < swarm_size; particle++){
@@ -85,10 +85,10 @@ size_t pso_best_fitness(double* fitness,size_t dim, size_t swarm_size) {
 
   // limit max and min velocity values to ensure no boundary overflow
 void pso_generate_vel_limit(const double* min_positions,
-                        const double* max_positions,
-                        double* min_vel,
-                        double* max_vel,
-                        size_t dim) {
+                            const double* max_positions,
+                            double* min_vel,
+                            double* max_vel,
+                            size_t dim) {
   for (size_t d=0;d<dim;d++){
     min_vel[d] = min_positions[d]/VEL_LIMIT_SCALE;
     max_vel[d] = max_positions[d]/VEL_LIMIT_SCALE;
@@ -98,10 +98,10 @@ void pso_generate_vel_limit(const double* min_positions,
   // updates velocities, works on array returned by gen_velocity
   //REMOVE VNEW WORK WITH VELOCITY
 void pso_update_velocity(double* velocity, double* positions,
-                        double* local_best_position,
-                        double* best, size_t swarm_size, size_t dim,
-                        const double* const min_vel,
-                        const double* const max_vel) {
+                         double* local_best_position,
+                         double* best, size_t swarm_size, size_t dim,
+                         const double* const min_vel,
+                         const double* const max_vel) {
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
@@ -114,9 +114,9 @@ void pso_update_velocity(double* velocity, double* positions,
 }
 
 void pso_update_position(double* positions, double* velocity,
-                    size_t swarm_size, size_t dim,
-                    const double* const min_positions,
-                    const double* const max_positions) {
+                         size_t swarm_size, size_t dim,
+                         const double* const min_positions,
+                         const double* const max_positions) {
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
@@ -133,12 +133,12 @@ void pso_update_position(double* positions, double* velocity,
   /**
   Particle Swarm Algorithm to find the global minima of objective function using a nature mimicking swarm
   **/
-double * pso_basic (double(*fit)(const double* const, size_t),
-                    size_t swarm_size,
-                    size_t dim,
-                    size_t max_iter,
-                    const double* const min_positions,
-                    const double* const max_positions) {
+double * pso_basic(obj_func_t fit,
+                   size_t swarm_size,
+                   size_t dim,
+                   size_t max_iter,
+                   const double* const min_positions,
+                   const double* const max_positions) {
   srand((unsigned) time(NULL));
   // REPLACE WITH FIXED ZERO SEED
 
