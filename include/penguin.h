@@ -53,7 +53,7 @@ extern "C" {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *pen_emperor_penguin(double(*obj)(const double *const, size_t),
+double *pen_emperor_penguin(obj_func_t obj,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,
@@ -78,7 +78,7 @@ double *pen_generate_population(size_t colony_size,
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
                                 const double * population,
-                                double(*obj)(const double *const, size_t));
+                                obj_func_t obj);
 
 /**
    Compute the euclidean distance between two penguins.
