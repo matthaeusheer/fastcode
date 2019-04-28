@@ -111,3 +111,27 @@ Test(penguin_unit, mutate) {
   cr_assert_lt(fabs(original[2] - 0.0), 0.5, "Third dimension out of bounds.");
   cr_assert_lt(fabs(original[3] - 0.5), 0.5, "Fourth dimension out of bounds.");
 }
+
+
+Test(penguin_unit, attractiveness) {
+  size_t dim = 2;
+  double penguins[] = {
+    0.0, 0.0,
+    4.0, 4.0,
+    2.0, 1.0
+  };
+  double heat_rad = 2.3;
+  cr_assert_eq(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
+               pen_attractiveness(heat_rad, dim, &penguins[2], &penguins[0], 0.5),
+               "attractiveness should not be affected by the order of the penguins");
+  cr_assert_lt(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
+               pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[4], 0.5),
+               "penguins 1 should attract penguin 3 more than it attracts penguin 2");
+  cr_assert_eq(pen_attractiveness(0, dim, &penguins[0], &penguins[2], 0.5),
+               0.0,
+               "attractiveness should linearly scale with heat radiation");
+  cr_assert_lt(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
+               pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.1),
+               "attractiveness should scale inverse exponentially with attenuation \
+                coefficient");
+}
