@@ -11,6 +11,8 @@ extern "C" {
 #define EPS 0.98        // emissivity of bird plumage
 #define SIGMA 5.6703e-8 // stefan-boltzmann constant
 
+#define BODY_TEMP 308.15 // 35 degrees Celcius in Kelvin
+
 // attenuation coefficient
 // should be above 1.0 at all times in order to not revert the exponent in equation 11
 #define ATT_COEF_START 1.0
