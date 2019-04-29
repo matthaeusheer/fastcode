@@ -70,7 +70,7 @@ double pen_eucledian_distance(size_t dim,
    Computes the heat radiation of a penguin. See equation 6 in paper.
  */
 double pen_heat_radiation() {
-  return AREA * EPS * SIGMA * pow(308.15, 4.0);
+  return AREA * EPS * SIGMA * pow(BODY_TEMP, 4.0);
 }
 
 
