@@ -40,10 +40,10 @@ double *gwo_init_population(size_t wolf_count,
  */
 void gwo_update_fitness(size_t wolf_count,
                         size_t dim,
-                        obj_func_t obj,
+                        obj_func_t obj_func,
                         double *const population, double *const fitness) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
-    fitness[wolf] = (*obj)(&population[wolf * dim], dim);
+    fitness[wolf] = (*obj_func)(&population[wolf * dim], dim);
   }
 }
 
@@ -79,10 +79,10 @@ void gwo_update_leaders(size_t wolf_count,
  */
 double *gwo_init_fitness(size_t wolf_count,
                          size_t dim,
-                         obj_func_t obj,
+                         obj_func_t obj_func,
                          double *const population) {
   double *const fitness = (double *const) malloc(wolf_count * sizeof(double));
-  gwo_update_fitness(wolf_count, dim, obj, population, fitness);
+  gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
   return fitness;
 }
 
@@ -211,7 +211,7 @@ size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
    Run the Hybrid Grey Wolf Optimiser with Sine Cosine Algorithm.
 
    Args:
-     - obj: the objective function to minimise.
+     - obj_func: the objective function to minimise.
      - wolf_count: the number of wolves to use.
      - max_iterations: the maximum number of iterations to perform.
      - min_positions: the minimum allowed position for each dimension.
@@ -220,14 +220,14 @@ size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
    Returns:
      The position minimising the objective function. This array has size `dim`.
  */
-double *gwo_hgwosca(obj_func_t obj,
+double *gwo_hgwosca(obj_func_t obj_func,
                     size_t wolf_count,
                     size_t dim,
                     size_t max_iterations,
                     const double *const min_positions,
                     const double *const max_positions) {
   double *const population = gwo_init_population(wolf_count, dim, min_positions, max_positions);
-  double *const fitness = gwo_init_fitness(wolf_count, dim, obj, population);
+  double *const fitness = gwo_init_fitness(wolf_count, dim, obj_func, population);
   size_t alpha = 0, beta = 0, delta = 0;
 
   #ifdef DEBUG
@@ -240,7 +240,7 @@ double *gwo_hgwosca(obj_func_t obj,
     double a = 2 - iter * ((double) 2 / max_iterations);
     gwo_update_all_positions(wolf_count, dim, a, population, alpha, beta, delta);
     gwo_clamp_all_positions(wolf_count, dim, population, min_positions, max_positions);
-    gwo_update_fitness(wolf_count, dim, obj, population, fitness);
+    gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
 
     #ifdef DEBUG
         print_population(wolf_count, dim, population);

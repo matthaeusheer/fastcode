@@ -7,7 +7,7 @@ extern "C" {
 #include "stddef.h"
 #include "utils.h"
 
-double * gwo_hgwosca(obj_func_t obj,
+double * gwo_hgwosca(obj_func_t obj_func,
                      size_t wolf_count,
                      size_t dim,
                      size_t max_iterations,
@@ -25,7 +25,7 @@ double *gwo_init_population(size_t wolf_count, size_t dim, const double * min_po
  */
 void gwo_update_fitness(size_t wolf_count,
                         size_t dim,
-                        obj_func_t obj,
+                        obj_func_t obj_func,
                         double *population,
                         double *fitness);
 
@@ -37,7 +37,7 @@ void gwo_update_leaders(size_t wolf_count, double *fitness, size_t *alpha, size_
 /**
    Initialise the fitness for all wolves.
  */
-double *gwo_init_fitness(size_t wolf_count, size_t dim, obj_func_t obj, double *population);
+double *gwo_init_fitness(size_t wolf_count, size_t dim, obj_func_t obj_func, double *population);
 
 /**
    Get recommended position of `dimension` for `wolf` with respect to `leader`, for a given

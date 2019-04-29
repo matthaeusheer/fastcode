@@ -41,11 +41,11 @@ double *pen_generate_population(size_t colony_size,
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
                                 const double *const population,
-                                obj_func_t obj) {
+                                obj_func_t obj_func) {
   double *fitness = (double *) malloc(colony_size * sizeof(double));
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
     size_t idx = pengu_idx * dim;
-    fitness[pengu_idx] = (*obj)(&population[idx], dim);
+    fitness[pengu_idx] = (*obj_func)(&population[idx], dim);
   }
   return fitness;
 }
@@ -199,7 +199,7 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
 /**
    Run the emperor penguin metaheuristic.
    Arguments:
-     - obj: the objective function accepting an array of doubles and the dimension.
+     - obj_func: the objective function accepting an array of doubles and the dimension.
      - dim: the dimension count of a solution (penguin).
      - max_iterations: the maximal count of iterations to be run.
      - min_positions: an array of the minimum values for each dimension.
@@ -208,7 +208,7 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *pen_emperor_penguin(obj_func_t obj,
+double *pen_emperor_penguin(obj_func_t obj_func,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,
@@ -217,7 +217,7 @@ double *pen_emperor_penguin(obj_func_t obj,
   srand((unsigned) time(NULL));
 
   double *population = pen_generate_population(colony_size, dim, min_positions, max_positions);
-  double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj);
+  double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj_func);
 
   #ifdef DEBUG
     print_population(colony_size, dim, population); // printing the initial status of the population
@@ -297,7 +297,7 @@ double *pen_emperor_penguin(obj_func_t obj,
 
         // finally positions and fitness for a whole iteration
         memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(double));
-        fitness[pengu_idx] = (*obj)(&population[pengu_idx * dim], dim);
+        fitness[pengu_idx] = (*obj_func)(&population[pengu_idx * dim], dim);
 
       }
       free(mean_pos);
