@@ -44,7 +44,7 @@ extern "C" {
 /**
    Run the emperor penguin metaheuristic.
    Arguments:
-     - obj: the objective function accepting an array of doubles and the dimension.
+     - obj_func: the objective function accepting an array of doubles and the dimension.
      - dim: the dimension count of a solution (penguin).
      - max_iterations: the maximal count of iterations to be run.
      - min_positions: an array of the minimum values for each dimension.
@@ -53,7 +53,7 @@ extern "C" {
      An array of doubles representing a solution. The length of the array is
      `dim`.
  */
-double *pen_emperor_penguin(obj_func_t obj,
+double *pen_emperor_penguin(obj_func_t obj_func,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,
@@ -78,7 +78,7 @@ double *pen_generate_population(size_t colony_size,
 double *pen_get_initial_fitness(size_t colony_size,
                                 size_t dim,
                                 const double * population,
-                                obj_func_t obj);
+                                obj_func_t obj_func);
 
 /**
    Compute the euclidean distance between two penguins.

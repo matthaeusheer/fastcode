@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-double * pso_basic (obj_func_t fit,
+double * pso_basic (obj_func_t obj_func,
                     size_t swarm_size,
                     size_t dim, size_t max_iter,
                     const double* min_positions,
@@ -19,7 +19,7 @@ double* pso_rand_init(size_t swarm_size,
                   const double* max_positions);
 
 //returns swarm_size size array
-void pso_eval_fitness(obj_func_t func,
+void pso_eval_fitness(obj_func_t obj_func,
                       size_t swarm_size,
                       size_t dim,
                       const double* positions,

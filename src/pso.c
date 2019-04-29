@@ -38,11 +38,11 @@ double* pso_rand_init(size_t swarm_size,
 }
 
   //returns swarm_size size array
-void pso_eval_fitness(obj_func_t func,
+void pso_eval_fitness(obj_func_t obj_func,
                       size_t swarm_size, size_t dim,
                       const double* const positions, double* fitness) {
   for (size_t pop=0; pop<swarm_size; pop++){
-    fitness[pop] = func(positions+(pop*dim),dim);
+    fitness[pop] = obj_func(positions+(pop*dim),dim);
   }
   return ;
 }
@@ -133,7 +133,7 @@ void pso_update_position(double* positions, double* velocity,
   /**
   Particle Swarm Algorithm to find the global minima of objective function using a nature mimicking swarm
   **/
-double * pso_basic(obj_func_t fit,
+double * pso_basic(obj_func_t obj_func,
                    size_t swarm_size,
                    size_t dim,
                    size_t max_iter,
@@ -155,7 +155,7 @@ double * pso_basic(obj_func_t fit,
   // calculate the fitness at every position of the swarm
   size_t sizeof_fitness = swarm_size*sizeof(double);
   double* current_fitness = (double*)malloc(sizeof_fitness);
-  pso_eval_fitness(fit,swarm_size,dim,current_positions,current_fitness);
+  pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
   double* local_best_fitness = (double*)malloc(sizeof_fitness);
   memcpy(local_best_fitness,current_fitness, sizeof_fitness );
 
@@ -182,7 +182,7 @@ double * pso_basic(obj_func_t fit,
     pso_update_position(current_positions,p_velocity,swarm_size,
         dim,min_positions,max_positions);
 
-    pso_eval_fitness(fit,swarm_size,dim,current_positions,current_fitness);
+    pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
 
     // check local best fitness
     for (size_t p=0;p<swarm_size;p++){
