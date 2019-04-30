@@ -4,8 +4,10 @@
 extern "C" {
 #endif
 
+#include "stddef.h"
+#include "utils.h"
 
-double* squirrel (double(*fit)(const double* const, size_t),
+double* squirrel (obj_func_t obj_func,
                   size_t population,
                   size_t dim,
                   size_t max_iter,
@@ -14,7 +16,7 @@ double* squirrel (double(*fit)(const double* const, size_t),
 /**
 * Randomly initialize squirrel population
 **/
-double* squirrel_rand_init(size_t population,
+double* sqr_rand_init(size_t population,
                   size_t dim,
                   const double* const min_positions,
                   const double* const max_positions);
@@ -23,22 +25,22 @@ double* squirrel_rand_init(size_t population,
 *   returns 1 with probability passed as arguement [0,1]
 *   returns 0 with probability ( 1 - probability)
 **/
-int squirrel_bernoulli_distribution(double probability);
+int sqr_bernoulli_distribution(double probability);
 
 /**
 *   Evaluate fitness at current positions
 *   and update in array fitness
 **/
-void squirrel_eval_fitness(double (*func)(const double* const, size_t),
-                          size_t population,
-                          size_t dim,
-                          const double* const positions,
-                          double* fitness);
+void sqr_eval_fitness(obj_func_t obj_func,
+                      size_t population,
+                      size_t dim,
+                      const double* const positions,
+                      double* fitness);
 /**
 *   find the lowest value and store
 *   at the beginning of the array
 **/
-void squirrel_sort1(double* fitness,
+void sqr_lowest_val_to_front(double* fitness,
                     double* positions,
                     size_t population,
                     size_t dim);
@@ -46,19 +48,19 @@ void squirrel_sort1(double* fitness,
 *   find the 4 lowest values and
 *   store them in the first four places in the array
 **/
-void squirrel_sort4(double* fitness,
+void sqr_lowest4_vals_to_front(double* fitness,
                     double* positions,
                     size_t population,
                     size_t dim);
 /**
 * Calculate gliding distance
 **/
-double squirrel_gliding_dist();
+double sqr_gliding_dist();
 /**
 *   move squirrels from acorn and
 *   select normal trees to hickory tree
 **/
-void move_to_hickory(double* positions,
+void sqr_move_to_hickory(double* positions,
                       size_t population,
                       size_t dim,
                       const double* const min_positions,
@@ -66,46 +68,37 @@ void move_to_hickory(double* positions,
 /**
 *   move squirrels on normal tree towards acorn tree
 **/
-void move_normal_to_acorn(double* positions,
+void sqr_move_normal_to_acorn(double* positions,
                           size_t population,
                           size_t dim,
                           const double* const min_positions,
                           const double* const  max_positions);
 /**
-*   check for boundary overflow
-*   NOT IMPLEMENTED YET, SEEMS TO WORK WITHOUT
-**/
-void squirrel_enforce_bounds(double* positions,
-                            size_t population,
-                            size_t dim,
-                            const double* const min_positions,
-                            const double* const  max_positions);
-/**
 *   Evalulate seasonal_const to check for change of seasonal
 **/
-double squirrel_eval_seasonal_cons(double* positions, size_t dim);
+double sqr_eval_seasonal_cons(double* positions, size_t dim);
 
 /**
 *   Calculate min seasonal constant
 *   threshold for change of season
 **/
-double squirrel_eval_smin(size_t iter);
+double sqr_eval_smin(size_t iter);
 
 /**
 *   Calculate factorial of a positive integer
 **/
-double squirrel_factorial(size_t n);
+double sqr_factorial(size_t n);
 
 /**
 *   Calculate factorial of non-integer values
 **/
-double squirrel_eval_gamma(double x);
+double sqr_eval_gamma(double x);
 
 /**
 *  Levy flight based random step for
 *  random restart/relocation after season change
 **/
-double squirrel_levy_flight();
+double sqr_levy_flight();
 
 /**
 *   if season has changed,
