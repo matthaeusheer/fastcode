@@ -30,6 +30,7 @@ add_executable(benchmark
         src/penguin.c
         src/hgwosca.c
         src/pso.c
+        src/squirrel.c
         src/objectives.c
         src/utils.c)
 
@@ -77,26 +78,26 @@ add_executable(test_pso
 target_include_directories(test_pso PRIVATE ${CRITERION_INCLUDE_DIRS})
 target_link_libraries(test_pso PRIVATE ${CRITERION_LIBRARIES})
 
-##### pso rbf integration test executable  ######
-#add_executable(test_integration_psorbf
-#        tests/test_integration_pso_rbf.c
-#        src/pso_rbf.c
-#        src/objectives.c
-#        src/utils.c)
-#target_include_directories(test_integration_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
-#target_link_libraries(test_integration_psorbf
-#        PRIVATE ${CRITERION_LIBRARIES}
-#        m)
-#
-##### pso rbf unit test ######
-#add_executable(test_psorbf
-#        tests/test_pso_rbf.c
-#        src/cpp_utils.cpp
-#        src/pso_rbf.c
-#        src/utils.c
-#        src/objectives.c)
-#target_include_directories(test_psorbf PRIVATE ${CRITERION_INCLUDE_DIRS})
-#target_link_libraries(test_psorbf PRIVATE ${CRITERION_LIBRARIES})
+##### squirrel integration test executable  ######
+add_executable(test_integration_squirrel
+        tests/test_integration_squirrel.c
+        src/squirrel.c
+        src/objectives.c
+        src/utils.c)
+target_include_directories(test_integration_squirrel PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_integration_squirrel
+        PRIVATE ${CRITERION_LIBRARIES}
+        m)
+
+##### squirrel unit test ######
+add_executable(test_squirrel
+        tests/test_squirrel.c
+        src/cpp_utils.cpp
+        src/squirrel.c
+        src/utils.c
+        src/objectives.c)
+target_include_directories(test_squirrel PRIVATE ${CRITERION_INCLUDE_DIRS})
+target_link_libraries(test_squirrel PRIVATE ${CRITERION_LIBRARIES})
 
 ##### Penguin integration test executable ######
 add_executable(test_integration_pengu
@@ -143,11 +144,15 @@ add_executable(test_units
         tests/test_objectives.c
         tests/test_hgwosca.c
         tests/test_penguin.c
+        tests/test_squirrel.c
+        tests/test_pso.c
         tests/test_cpp_utils.cpp
         tests/test_utils.c
         src/cpp_utils.cpp
         src/hgwosca.c
         src/penguin.c
+        src/squirrel.c
+        src/pso.c
         src/objectives.c
         src/utils.c
         src/utils.c)
@@ -161,5 +166,7 @@ add_test(integration_hgwosca
   test_integration_hgwosca -q)
 add_test(integration_pengu
   test_integration_pengu -q)
-# add_test(integration_psorbf
-  # test_integration_psorbf -q)
+add_test(integration_pso
+  test_integration_pso -q)
+add_test(integration_squirrel
+  test_integration_squirrel -q)

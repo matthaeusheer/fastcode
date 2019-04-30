@@ -16,13 +16,13 @@ BASIC PSO INTEGRATION TEST
 #define M_PI (3.14159265358979323846)
 #endif
 
-#define SWARM_SIZE 100
+#define SWARM_SIZE 1000
 #define DIM 2
 
 Test(pso_basic_integration, sum_of_squares) {
   size_t swarm_size = SWARM_SIZE;
   size_t dim = DIM;
-  size_t max_iter = 250;
+  size_t max_iter = 1000;
   double* mins = filled_double_array(dim, -10);
   double* maxs = filled_double_array(dim, 10);
   double* solution = pso_basic(sum_of_squares, swarm_size, dim, max_iter, mins, maxs);
@@ -33,28 +33,11 @@ Test(pso_basic_integration, sum_of_squares) {
   free(mins);
   free(maxs);
 }
-/*
-Test(pso_basic_integration, rosenbrock) {
-  size_t swarm_count = 50;
-  size_t dim = 5;
-  size_t max_iter = 10000;
-  double* mins = filled_array(dim, -100);
-  double* maxs = filled_double_array(dim, 100);
-  double* solution = pso_basic(rosenbrock, swarm_count, dim, max_iter, mins, maxs);
-  for(size_t idx = 0; idx < dim; idx++) {
-    cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
-              "to 1");
-  }
-  free(solution);
-  free(mins);
-  free(maxs);
-}
-*/
 
 Test(pso_basic_integration, sphere) {
   size_t swarm_count = SWARM_SIZE;
   size_t dim = DIM;
-  size_t max_iter = 250;
+  size_t max_iter = 1000;
   double* mins = filled_double_array(dim, -5);
   double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(sphere, swarm_count, dim, max_iter, mins, maxs);
@@ -66,25 +49,10 @@ Test(pso_basic_integration, sphere) {
   free(maxs);
 }
 
-Test(pso_basic_integration, egghol2d) {
-  size_t swarm_count = SWARM_SIZE;
-  size_t dim = 2;
-  size_t max_iter = 250;
-  double* mins = filled_double_array(dim, -512);
-  double* maxs = filled_double_array(dim, 512);
-  double* solution = pso_basic(egghol2d, swarm_count, dim, max_iter, mins, maxs);
-
-  cr_assert(fabs( egghol2d(solution, dim) - 959.6407 ) < 0.1, "egghol2d objective should be minimised at -959.6407");
-
-  free(solution);
-  free(mins);
-  free(maxs);
-}
-
 Test(pso_basic_integration, rastigrin) {
   size_t swarm_count = SWARM_SIZE;
   size_t dim = DIM;
-  size_t max_iter = 250;
+  size_t max_iter = 1000;
   double* mins = filled_double_array(dim, -5);
   double* maxs = filled_double_array(dim, 5);
   double* solution = pso_basic(rastigrin, swarm_count, dim, max_iter, mins, maxs);
@@ -95,21 +63,3 @@ Test(pso_basic_integration, rastigrin) {
   free(mins);
   free(maxs);
 }
-
-/*
-Test(pso_basic_integration, griewank) {
-  size_t swarm_count = SWARM_SIZE;
-  size_t dim = DIM;
-  size_t max_iter = 250;
-  double* mins = filled_array(dim, -5);
-  double* maxs = filled_double_array(dim, 5);
-  double* solution = pso_basic(griewank, swarm_count, dim, max_iter, mins, maxs);
-  printf("sum of griewank:%f\n",griewank(solution, dim) );
-  printf("best griewank : \n"  );
-  for (size_t d=0;d<dim;d++){
-    printf("gr %f \t", solution[d] );
-  }
-  cr_assert(fabs(griewank(solution, dim) - 0) < 0.1, "griewank objective should be minimised at 0");
-
-  free(solution);
-}*/
