@@ -1,6 +1,6 @@
 #include <criterion/criterion.h>
 
-#include "utils_test.h"
+#include "testing_utilities.h"
 #include "objectives.h"
 #include "pso.h"
 

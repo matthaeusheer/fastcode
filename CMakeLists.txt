@@ -38,7 +38,7 @@ add_executable(benchmark
 ##### hgwosca integration test executable ######
 add_executable(test_integration_hgwosca
         tests/test_integration_hgwosca.c
-        tests/utils_test.c
+        tests/testing_utilities.c
         src/hgwosca.c
         src/objectives.c
         src/utils.c)
@@ -61,7 +61,7 @@ target_link_libraries(test_hgwosca PRIVATE ${CRITERION_LIBRARIES})
 ##### pso basic integration test executable  ######
 add_executable(test_integration_pso
         tests/test_integration_pso.c
-        tests/utils_test.c
+        tests/testing_utilities.c
         src/pso.c
         src/objectives.c
         src/utils.c)
@@ -83,7 +83,7 @@ target_link_libraries(test_pso PRIVATE ${CRITERION_LIBRARIES})
 ##### squirrel integration test executable  ######
 add_executable(test_integration_squirrel
         tests/test_integration_squirrel.c
-        tests/utils_test.c
+        tests/testing_utilities.c
         src/squirrel.c
         src/objectives.c
         src/utils.c)
@@ -105,7 +105,7 @@ target_link_libraries(test_squirrel PRIVATE ${CRITERION_LIBRARIES})
 ##### Penguin integration test executable ######
 add_executable(test_integration_pengu
        tests/test_integration_pengu.c
-       tests/utils_test.c
+       tests/testing_utilities.c
        src/penguin.c
        src/objectives.c
        src/utils.c)
