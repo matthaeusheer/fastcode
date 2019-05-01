@@ -226,6 +226,8 @@ double *gwo_hgwosca(obj_func_t obj_func,
                     size_t max_iterations,
                     const double *const min_positions,
                     const double *const max_positions) {
+  srand(100);
+
   double *const population = gwo_init_population(wolf_count, dim, min_positions, max_positions);
   double *const fitness = gwo_init_fitness(wolf_count, dim, obj_func, population);
   size_t alpha = 0, beta = 0, delta = 0;

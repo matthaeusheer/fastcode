@@ -219,7 +219,7 @@ double* squirrel (obj_func_t obj_func,
                   size_t max_iter,
                   const double* const min_positions,
                   const double* const max_positions) {
-  srand((unsigned) time(NULL));
+  srand(100);
 
   double p_dp = PREDATOR_PROB;
   size_t num_jump_hick = ceil(NUM_JUMP_HICK*population);
