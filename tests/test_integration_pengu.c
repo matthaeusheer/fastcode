@@ -14,7 +14,7 @@ Test(pengu_integration, sum_of_squares) {
 }
 
 Test(pengu_integration, rosenbrock) {
-  test_algo(rosenbrock, 50, 2, -5, 5, 200, pen_emperor_penguin, 0, 1, false);
+  test_algo(rosenbrock, 100, 2, -5, 5, 200, pen_emperor_penguin, 0, 1, false);
 }
 
 Test(pengu_integration, rastigrin) {
