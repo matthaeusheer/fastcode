@@ -211,7 +211,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
                             size_t max_iterations,
                             const double *const min_positions,
                             const double *const max_positions) {
-  srand((unsigned) time(NULL));
+  srand(100);
 
   double *population = pen_generate_population(colony_size, dim, min_positions, max_positions);
   double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj_func);

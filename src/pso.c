@@ -139,8 +139,7 @@ double * pso_basic(obj_func_t obj_func,
                    size_t max_iter,
                    const double* const min_positions,
                    const double* const max_positions) {
-  srand((unsigned) time(NULL));
-  // REPLACE WITH FIXED ZERO SEED
+  srand(100);
 
   double* min_vel = (double*)malloc(dim*sizeof(double));
   double* max_vel = (double*)malloc(dim*sizeof(double));
