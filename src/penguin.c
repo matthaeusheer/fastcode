@@ -1,8 +1,5 @@
 /**
    Base implementation of the emperor penguin metaheuristic.
-   NOTE: This metaheuristic maximises fitness, as opposed to minimising it
-   like many other metaheuristics do. Consider this when feeding it the
-   objective function.
 */
 
 #include <stdio.h>
@@ -227,12 +224,13 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   // initialise rotation matrix
   const double *const r_matrix = pen_init_rotation_matrix(dim, B);
 
-  // initialize coefficients
-  double heat_absorption_coef = HAB_COEF_START;
-  double mutation_coef = MUT_COEF_START;
-  double attenuation_coef = ATT_COEF_START;
-
   for (size_t iter = 0; iter < max_iterations; iter++) {
+
+    // initialize coefficients
+    double heat_absorption_coef = linear_scale(HAB_COEF_START, HAB_COEF_END, max_iterations, iter);
+    double mutation_coef = linear_scale(MUT_COEF_START, MUT_COEF_END, max_iterations, iter);
+    double attenuation_coef = linear_scale(ATT_COEF_START, ATT_COEF_END, max_iterations, iter);
+
     // number of updates for each pengu
     int *const n_updates_per_pengu = filled_int_array(colony_size, 0);
 
@@ -305,11 +303,6 @@ double *pen_emperor_penguin(obj_func_t obj_func,
 
     free(n_updates_per_pengu);
     free(updated_positions);
-
-    // update coefficients
-    heat_absorption_coef -= HAB_COEF_STEP;
-    mutation_coef -= MUT_COEF_STEP;
-    attenuation_coef += ATT_COEF_STEP;
 
     #ifdef DEBUG
         print_population(colony_size, dim, population);

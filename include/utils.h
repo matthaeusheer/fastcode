@@ -40,6 +40,11 @@ double random_min_max(double min, double max);
 double random_0_to_1();
 
 /**
+    Linearly scale a value between `start` and `end` by a ratio of `iter_max`/`iter`.
+ */
+double linear_scale(double start, double end, size_t iter_max, size_t iter);
+
+/**
  * Get average value of an array.
  */
 double average_value(size_t arr_length, const double * arr);

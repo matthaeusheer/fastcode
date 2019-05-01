@@ -15,19 +15,19 @@ extern "C" {
 
 // attenuation coefficient
 // should be above 1.0 at all times in order to not revert the exponent in equation 11
-#define ATT_COEF_START 1.0
-#define ATT_COEF_STEP 0.02
+#define ATT_COEF_START 0.0
+#define ATT_COEF_END 1.0
 
 // heat absorption coefficient
 #define HAB_COEF_START 1
-#define HAB_COEF_STEP 0.01
+#define HAB_COEF_END 0
 
 // mutation coefficient
-#define MUT_COEF_START 0.05
-#define MUT_COEF_STEP 0
+#define MUT_COEF_START 0.1
+#define MUT_COEF_END 0
 
 #define A 0.1       // see equ 18 from paper
-#define B 0.5     // see equ 18 from paper
+#define B 0.5       // see equ 18 from paper
 
 
 
