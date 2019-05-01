@@ -5,8 +5,7 @@
 #include <criterion/criterion.h>
 
 #include "utils.h"
-#include "utils_test.h"
-
+#include "testing_utilities.h"
 
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
                double min_bound, double max_bound,
