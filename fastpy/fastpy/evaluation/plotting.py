@@ -7,6 +7,19 @@ from fastpy.visualization import viz_utils
 from fastpy.io.output_loader import OutputParser
 
 
+FLOP_COUNT = {'hgwosca': {'pop*dim': 4,
+                          'pop*flop_obj': 1,
+                          'max_iter*pop*dim': 31,
+                          'max_iter*pop*flop_obj': 1}}
+
+FLOP_OBJ = {'sum_of_squares': {'dim': 2},
+            'sum': {'dim': 1},
+            'rastigrin': {'dim': 7},
+            'rosenbrock': {'dim-1': 8},
+            'sphere': {'dim': 2},
+            'griewank': {'dim': 6}}
+
+
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser):
     """For all algorithms present in the out_parser data, plot mean runtime vs input size.
 
