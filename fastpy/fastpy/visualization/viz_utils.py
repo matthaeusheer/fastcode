@@ -2,7 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 
-def setup_figure_1ax(x_label='', y_label='', size=(13, 9), shrink_ax=True):
+def setup_figure_1ax(x_label='', y_label='', title='', size=(13, 9), shrink_ax=True):
     """Returns a (figure, ax) tuple with legend on the right hand side, no spines."""
 
     matplotlib.rcParams.update({'font.size': 20})
@@ -10,6 +10,7 @@ def setup_figure_1ax(x_label='', y_label='', size=(13, 9), shrink_ax=True):
     fig.set_size_inches(size)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    ax.set_title(title)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
