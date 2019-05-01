@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "stddef.h"
+#include <stdlib.h>
 
 /*******************************************************************************
   OBJECTIVE FUNCTIONS PROTOTYPES

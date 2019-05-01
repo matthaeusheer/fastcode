@@ -1,5 +1,7 @@
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
 
 #include "objectives.h"
 
@@ -108,4 +110,60 @@ float griewank(const float *const args, size_t dim) {
     prod *= cos(args[idx] / sqrt(idx));
   }
   return sum - prod + 1;
+}
+
+/**This class defines the Schwefel 1 global optimization problem.
+ *This is a unimodal minimization problem defined as follows:
+ */
+float schwefel01(const float *const args, size_t dim){
+  float sch00 = 0;
+  float alpha = sqrt(M_PI);
+  for (size_t idx = 0; idx < dim; idx++) {
+    sch00 += pow(args[idx],2);
+  }
+  return pow(sch00, alpha);
+}
+
+
+/* Sum of cosines
+ * will always converge*/
+float cosinemixture(const float *const args, size_t dim){
+  float cosmix = 0.0;
+  float cosmix1 = 0.0;
+  for(size_t idx = 0; idx < dim; idx++) {
+    cosmix += - args[idx] * args[idx];
+    cosmix1 += - 0.1*cos(5*M_PI*args[idx]);
+  }
+  return cosmix + cosmix1;
+}
+
+
+/**
+   This class defines the Powell global optimization problem. 	N=4,	32.58%
+   This is a multimodal minimization problem defined as follows */
+
+float powel(const float *const args, size_t dim){
+  float powel = pow((args[2] + 10 * args[0]), 2) + 5 * pow((args[1] - args[3]), 2) + pow((args[0] - 2 * args[1]), 4) + 10 * pow((args[2] - args[3]), 4);
+  return powel;
+}
+
+
+/**
+   41.58%, N=2
+   This class defines the Freudenstein & Roth global
+   optimization problem. This is a multimodal minimization problem defined as follows:
+*/
+
+float freundsteinroth(const float *const args, size_t dim) {
+  float fr = pow((args[0] - 13 + ((5 - args[1]) * args[1] - 2) * args[1]), 2) + pow((args[0] - 29 + ((args[1] + 1) * args[1] - 14) * args[1]), 2);
+  return fr;
+}
+
+/**
+ *Beale
+ This class defines the Beale global optimization problem. This is a multimodal minimization problem defined as follows:
+*/
+float beale(const float *const args, size_t dim) {
+  float beal = pow((args[0] * args[1] - args[0] + 1.5), 2) + pow((args[0] * args[1] * args[1] - args[0] + 2.25), 2) + pow((args[0] * args[1] * args[1] * args[1] - args[0] + 2.625), 2);
+  return beal;
 }
