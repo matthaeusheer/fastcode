@@ -10,6 +10,9 @@ extern "C" {
 // Objective function type
 typedef double (*obj_func_t)(const double *, size_t);
 
+// Algorithm function type
+typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *, const double *);
+
 /**
  *  Prints the solution array of one algorithm output to console.
  */
@@ -89,6 +92,7 @@ double mean_value_in_strides(size_t length, const double * input, size_t offset,
 void print_size_t_array(size_t length, const size_t * arr);
 void print_double_array(size_t length, const double * arr);
 void print_int_array(size_t length, const int * arr);
+
 
 #ifdef __cplusplus
 }
