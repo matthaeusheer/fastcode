@@ -13,6 +13,25 @@ Test(utils_unit, random_0_to_1) {
   }
 }
 
+
+Test(utils_unit, linear_scale) {
+  double start = 1.0;
+  double end = 10.0;
+  size_t iter_count = 9;
+  cr_assert_eq(linear_scale(start, end, iter_count, 0), 1.0, "iteration 0 should be at start");
+  cr_assert_eq(linear_scale(start, end, iter_count, 2), 3.0, "iteration 2 should be scaled");
+  cr_assert_eq(linear_scale(start, end, iter_count, 9), 10.0, "iteration 9 should be at end");
+
+  // start > end
+  start = 10.0;
+  end = 1.0;
+  iter_count = 9;
+  cr_assert_eq(linear_scale(start, end, iter_count, 0), 10.0, "iteration 0 should be at start");
+  cr_assert_eq(linear_scale(start, end, iter_count, 2), 8.0, "iteration 2 should be scaled");
+  cr_assert_eq(linear_scale(start, end, iter_count, 9), 1.0, "iteration 9 should be at end");
+}
+
+
 Test(utils_unit, random_min_max) {
   srand((unsigned) time(NULL));
 

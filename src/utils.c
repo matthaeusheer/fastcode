@@ -45,6 +45,12 @@ void print_solution(size_t dim, const double *const solution) {
   printf("\n");
 }
 
+double linear_scale(double start, double end, size_t iter_max, size_t iter) {
+  double scale = end - start;
+  double factor = (scale / iter_max) * iter;
+  return (start + factor);
+}
+
 
 /**
    Prints the population to standard output.
