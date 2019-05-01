@@ -57,6 +57,11 @@ double linear_scale(double start, double end, size_t iter_max, size_t iter);
 double average_value(size_t arr_length, const double * arr);
 
 /**
+ * Get lowest value of an array.
+ */
+double lowest_value(size_t arr_length, const double * arr);
+
+/**
    Compute matrix matrix multiplication between `a` and `b`, both square matrices of size
    `dim` times `dim` and store the result in `res`.
  */

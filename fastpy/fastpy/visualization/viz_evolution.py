@@ -55,6 +55,8 @@ def plot_optimization_evolution_2d(evolution_data, *args, obj_func=None, **kwarg
         ax.set_xlim(kwargs['xlims'])
     if 'ylims' in kwargs:
         ax.set_ylim(kwargs['ylims'])
+    if 'title' in kwargs:
+        ax.set_title(kwargs['title'])
 
     return fig, ax
 
@@ -182,16 +184,37 @@ def simulate_optimization_evolution_2d(evolution_data, best_obj_values):
     return figure
 
 
-def plot_objective_value_evolution(values):
+def plot_objective_value_evolution(avg_values, best_values, *args, **kwargs):
     """Plots an array of objective values vs iteration index.
     Arguments
     --------
         values: a list of objective values
     """
-    fig, ax = viz_utils.setup_figure_1ax('Iteration index', 'Average objective value', shrink_ax=False)
+    fig, ax1 = viz_utils.setup_figure_1ax('Iteration index', shrink_ax=False, size=(8, 8))
 
-    ax.plot(range(len(values)), values, 'c-', linewidth=2)
-    return fig, ax
+    color = 'tab:blue'
+    ax1.set_ylabel('Best obj value', color=color)
+    ax1.plot(range(len(best_values)), best_values, color=color, linewidth=2)
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.yaxis.set_ticks_position('none')
+
+    ax2 = ax1.twinx()
+    color = 'tab:orange'
+    ax2.set_ylabel('Average obj value', color=color)  # we already handled the x-label with ax1
+    ax2.plot(range(len(avg_values)), avg_values, color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    ax2.spines['top'].set_visible(False)
+    ax2.spines['right'].set_visible(False)
+    ax2.spines['bottom'].set_visible(False)
+    ax2.spines['left'].set_visible(False)
+    ax2.yaxis.set_ticks_position('none')
+    ax1.yaxis.set_ticks_position('none')    
+
+    if 'title' in kwargs:
+        ax1.set_title(kwargs['title'])
+
+    return fig
 
 
 def dummy_evolution_data(pop_size=10, n_iterations=5):

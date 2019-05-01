@@ -218,6 +218,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   #ifdef DEBUG
     print_population(colony_size, dim, population); // printing the initial status of the population
     printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+    printf("# BEST FITNESS: %f\n", lowest_value(colony_size, fitness));
   #endif
 
   // initialise rotation matrix
@@ -289,8 +290,9 @@ double *pen_emperor_penguin(obj_func_t obj_func,
     }
 
     #ifdef DEBUG
-        print_population(colony_size, dim, population);
-        printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+      print_population(colony_size, dim, population);
+      printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(colony_size, fitness));
     #endif
 
   } // end loop on iterations

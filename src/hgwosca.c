@@ -235,6 +235,7 @@ double *gwo_hgwosca(obj_func_t obj_func,
   #ifdef DEBUG
     print_population(wolf_count, dim, population);  // Print the initialized population
     printf("# AVG FITNESS: %f\n", average_value(wolf_count, fitness));
+    printf("# BEST FITNESS: %f\n", lowest_value(wolf_count, fitness));
   #endif
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
@@ -245,10 +246,9 @@ double *gwo_hgwosca(obj_func_t obj_func,
     gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
 
     #ifdef DEBUG
-        print_population(wolf_count, dim, population);
-        printf("# AVG FITNESS: %f\n", average_value(wolf_count, fitness));
-        // printf("\nBEST SOLUTION: %ld\n", best_solution);
-        // print_solution(dim, &fitness);
+      print_population(wolf_count, dim, population);
+      printf("# AVG FITNESS: %f\n", average_value(wolf_count, fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(wolf_count, fitness));
     #endif
   }
 
