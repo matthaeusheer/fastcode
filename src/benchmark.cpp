@@ -12,6 +12,7 @@
 #include "squirrel.h"
 
 
+
 std::vector<timeInt64> time_algorithm(Config cfg) {
 
   // First creating function name to function pointer maps
@@ -88,6 +89,8 @@ algo_map_t create_algo_map() {
                          {"penguin",  &pen_emperor_penguin},
                          {"pso",      &pso_basic},
                          {"squirrel", &squirrel}};
-
   return algo_map;
 }
+
+
+

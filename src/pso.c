@@ -157,6 +157,7 @@ double * pso_basic(obj_func_t obj_func,
   #ifdef DEBUG
       print_population(swarm_size, dim, current_positions); // printing the initial status of the population
       printf("# AVG FITNESS: %f\n", average_value(swarm_size, current_fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(swarm_size, local_best_fitness));
   #endif
 
   double p_velocity[sizeof_position];
@@ -198,6 +199,7 @@ double * pso_basic(obj_func_t obj_func,
   #ifdef DEBUG
       print_population(swarm_size, dim, current_positions); // printing the initial status of the population
       printf("# AVG FITNESS: %f\n", average_value(swarm_size, local_best_fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(swarm_size, local_best_fitness));
   #endif
 
   }

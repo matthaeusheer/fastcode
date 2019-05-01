@@ -84,6 +84,16 @@ double average_value(size_t arr_length, const double * arr) {
 }
 
 
+double lowest_value(size_t arr_length, const double * arr) {
+  double lowest = 10e10;
+  for (size_t idx = 0; idx < arr_length; ++idx) {
+    if (arr[idx] < lowest)
+      lowest = arr[idx];
+  }
+  return lowest;
+}
+
+
 void mmm(size_t dim, const double* const a, const double* const b, double* const res) {
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {

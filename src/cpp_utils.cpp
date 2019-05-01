@@ -130,7 +130,7 @@ void print_file(std::string file_path) {
   }
 }
 
-
+// TODO: This feature is not ported to CMake build system yet.
 void print_git_version() {
   std::cout << "# Git" << std::endl;
   //std::cout << "git version - " << GIT_VERSION << std::endl;
@@ -141,13 +141,13 @@ void print_git_version() {
 
 void print_config(Config config) {
   std::cout << "\n=========================================== " << std::endl;
-  std::cout << "  Algorithm:          " << config.algorithm << std::endl;
-  std::cout << "  Objective function: " << config.obj_func << std::endl;
-  std::cout << "  Dimension:          " << config.dimension << std::endl;
-  std::cout << "  Population          " << config.population << std::endl;
-  std::cout << "  N Iterations:       " << config.n_iterations << std::endl;
-  std::cout << "  Min position:       " << config.min_position << std::endl;
-  std::cout << "  Max position        " << config.max_position << std::endl;
+  std::cout << "  Algorithm:          " << config.algorithm     << std::endl;
+  std::cout << "  Objective function: " << config.obj_func      << std::endl;
+  std::cout << "  Dimension:          " << config.dimension     << std::endl;
+  std::cout << "  Population          " << config.population    << std::endl;
+  std::cout << "  N Iterations:       " << config.n_iterations  << std::endl;
+  std::cout << "  Min position:       " << config.min_position  << std::endl;
+  std::cout << "  Max position        " << config.max_position  << std::endl;
   std::cout << " ===========================================\n" << std::endl;
 }
 

@@ -44,10 +44,9 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
 
                 if sub_config['algorithm'] == algo and sub_config['obj_func'] == obj_func:
 
-                    flop_counter = FlopCounter(sub_config)
-                    flops = flop_counter.flop_count()
-
                     if plot_type == 'performance':
+                        flop_counter = FlopCounter(sub_config)
+                        flops = flop_counter.flop_count()
                         algo_quantity_vs_size[algo][obj_func][plot_type].append(flops/mean_timings[run])
                         y_label = 'Performance [flops/cycle]'
                     elif plot_type == 'runtime':
