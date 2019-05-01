@@ -11,8 +11,8 @@
 
 
 #define EPS 0.001
-#define COG 2
-#define SOCIAL 2
+#define COG 0.5
+#define SOCIAL .9
 #define INERTIA 0.5
 #define VEL_LIMIT_SCALE 5
 #ifndef M_PI
@@ -106,7 +106,7 @@ void pso_update_velocity(double* velocity, double* positions,
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
       velocity[idx] = INERTIA*velocity[idx] + COG*random_0_to_1()*(local_best_position[idx] - positions[idx]) +
-      SOCIAL*random_0_to_1()*(best[d] * positions[idx]);
+      SOCIAL*random_0_to_1()*(best[d] - positions[idx]);
       velocity[idx] = min(max(min_vel[d],velocity[idx]),max_vel[d]);
     }
   }

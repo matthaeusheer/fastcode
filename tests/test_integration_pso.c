@@ -63,3 +63,20 @@ Test(pso_basic_integration, rastigrin) {
   free(mins);
   free(maxs);
 }
+
+
+Test(pso_integration, rosenbrock) {
+  size_t swarm_count = SWARM_SIZE;
+  size_t dim = DIM;
+  size_t max_iter = 1000;
+  double* mins = filled_double_array(dim, -30);
+  double* maxs = filled_double_array(dim, 30);
+  double* solution = pso_basic(rosenbrock, swarm_count, dim, max_iter, mins, maxs);
+  for(size_t idx = 0; idx < dim; idx++) {
+    cr_assert(fabs(solution[idx] - 1) < 0.01, "each dimension should be reasonably close "
+              "to 1");
+  }
+  free(solution);
+  free(mins);
+  free(maxs);
+}
