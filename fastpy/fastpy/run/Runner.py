@@ -13,11 +13,12 @@ PARAM_TO_C_MAP = {'algorithm':  '-a',
                   'obj_func':   '-o',
                   'dimension':  '-d',
                   'n_iter':     '-n',
+                  'n_rep':      '-m',
                   'population': '-p',
                   'min_val':    '-y',
                   'max_val':    '-z'}
 
-BENCHMARK_BIN_DIR = os.path.join(PROJECT_ROOT_PATH, '../bin')
+BENCHMARK_BIN_DIR = os.path.join(PROJECT_ROOT_PATH, '../cmake-build-release')
 BENCHMARK_BIN = 'benchmark'
 
 TIMING_OUT_FILE = 'timings.csv'
@@ -47,7 +48,6 @@ class BenchmarkRunner:
             os.mkdir(sub_dir)
 
             store_json_config(run_config, sub_dir, RUN_CONFIG_FILE_NAME)
-
 
             self._run_algorithm(run_config, sub_dir)
 
