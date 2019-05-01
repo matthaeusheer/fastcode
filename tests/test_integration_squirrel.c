@@ -17,7 +17,7 @@ BASIC SQUIRREL INTEGRATION TEST
 #endif
 
 #define POPULATION 10000
-#define DIM 5
+#define DIM 2
 
 Test(squirrel_integration, sum_of_squares) {
   size_t population = POPULATION;

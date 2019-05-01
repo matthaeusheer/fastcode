@@ -2,6 +2,8 @@ import numpy as np
 
 import matplotlib
 import matplotlib.pyplot as plt
+
+from fastpy.visualization import viz_utils
 from fastpy.io.output_loader import OutputParser
 
 
@@ -32,7 +34,7 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser):
                     algo_times_vs_size[algo][obj_func]['times'].append(mean_timings[run])
                     algo_times_vs_size[algo][obj_func]['sizes'].append(sub_config['dimension'])
 
-    fig, ax = setup_figure_1ax(x_label='Input size', y_label='Mean cycles')
+    fig, ax = viz_utils.setup_figure_1ax(x_label='Input size', y_label='Mean cycles')
 
     for algo, obj_func_dict in algo_times_vs_size.items():
         for obj_func, data_dict in obj_func_dict.items():

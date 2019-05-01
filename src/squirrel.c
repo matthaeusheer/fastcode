@@ -234,6 +234,11 @@ double* squirrel (obj_func_t obj_func,
   // positions[0] is hickory, positions[1:3] are acorn, rest are normal.
   sqr_lowest4_vals_to_front(fitness,positions,population,dim);
 
+  #ifdef DEBUG
+    print_population(population, dim, positions); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(population, fitness));
+  #endif
+
   double s_c = 0;
   size_t iter = 0;
   double s_min = sqr_eval_smin(iter);                                // seasonal constant
@@ -253,9 +258,16 @@ double* squirrel (obj_func_t obj_func,
     sqr_lowest4_vals_to_front(fitness,positions,population,dim);
 
     #ifdef DEBUG
-    printf("\n iter: %d best val: %f\n",iter, fitness[0] );
+    #endif
+
+    #ifdef DEBUG
+      print_population(population, dim, positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(population, fitness));
+      printf("\n # iter: %lu best val: %f\n", iter, fitness[0] );
     #endif
   }
+
+
 
 
   double* const best_solution = (double *const) malloc(dim * sizeof(double));
