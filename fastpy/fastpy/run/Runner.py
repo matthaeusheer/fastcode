@@ -18,7 +18,6 @@ PARAM_TO_C_MAP = {'algorithm':  '-a',
                   'min_val':    '-y',
                   'max_val':    '-z'}
 
-BENCHMARK_BIN_DIR = os.path.join(PROJECT_ROOT_PATH, '../cmake-build-release')
 BENCHMARK_BIN = 'benchmark'
 
 TIMING_OUT_FILE = 'timings.csv'
@@ -31,15 +30,16 @@ SUB_DIR_PATTERN = 'run_{run_idx}'
 
 class BenchmarkRunner:
 
-    def __init__(self, config_path, data_dir=DATA_DIR_PATH):
+    def __init__(self, config_path, data_dir=DATA_DIR_PATH, bin_dir='build'):
         self.config = load_json_config(config_path)
         self.data_dir = data_dir
         self.timestamp = get_date_time_tag()
+        self.bin_dir = bin_dir
 
     def run_benchmarks(self):
         """Main wrapper function to loop over all possible parameter combinations."""
         os.mkdir(self._output_dir)  # main output dir for this whole run
-        shutil.copy(os.path.join(BENCHMARK_BIN_DIR, BENCHMARK_BIN), self._output_dir)
+        shutil.copy(os.path.join(self._bin_dir_path, BENCHMARK_BIN), self._output_dir)
         store_json_config(self.config, self._output_dir, CONFIG_FILE_NAME)
 
         for run_idx, run_config in enumerate(self._build_param_sets()):
@@ -84,7 +84,6 @@ class BenchmarkRunner:
     def _create_params_str(run_config):
         """Given a run_config, dict-type configuration for one single execution of the benchmark executable, build
         a string which represents the parameters on the command line ready to be passed to the executable."""
-
         param_str = ''
         for param, value in run_config.items():
             param_str += PARAM_TO_C_MAP[param]
@@ -100,11 +99,15 @@ class BenchmarkRunner:
 
     @property
     def _benchmark_bin(self):
-        return os.path.join(BENCHMARK_BIN_DIR, BENCHMARK_BIN)
+        return os.path.join(self.bin_dir, BENCHMARK_BIN)
 
     @property
     def _output_dir(self):
         return os.path.join(self.data_dir, f'run_{self.timestamp}')
+
+    @property
+    def _bin_dir_path(self):
+        return os.path.join(PROJECT_ROOT_PATH, self.bin_dir)
 
     def __repr__(self):
         return 'Benchmark running wrapper class.\n' + \
