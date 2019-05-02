@@ -13,12 +13,24 @@ double *filled_double_array(size_t length, double val) {
   return res;
 }
 
+void fill_double_array(double* array, size_t length, double val) {
+  for(size_t idx = 0; idx < length; idx++) {
+    array[idx] = val;
+  }
+}
+
 int *filled_int_array(size_t length, int val) {
   int *res = (int *) malloc(length * sizeof(int));
   for (size_t idx = 0; idx < length; idx++) {
     res[idx] = val;
   }
   return res;
+}
+
+void fill_int_array(int* array, size_t length, int val) {
+  for(size_t idx = 0; idx < length; idx++) {
+    array[idx] = val;
+  }
 }
 
 size_t *filled_size_t_array(size_t length, size_t val) {

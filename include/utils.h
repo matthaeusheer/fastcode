@@ -28,9 +28,13 @@ void print_population(size_t colony_size, size_t dim, const double *population);
  */
 double *filled_double_array(size_t length, double val);
 
+void fill_double_array(double* array, size_t length, double val);
+
 size_t *filled_size_t_array(size_t length, size_t val);
 
 int *filled_int_array(size_t length, int val);
+
+void fill_int_array(int* array, size_t length, int val);
 
 /**
    Generate a random double between min and max.

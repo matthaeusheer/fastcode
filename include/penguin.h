@@ -68,19 +68,21 @@ double *pen_emperor_penguin(obj_func_t obj_func,
    values these dimensions can take are bound by `min_positions` and
    `max_positions`.
  */
-double *pen_generate_population(size_t colony_size,
-                                size_t dim,
-                                const double * min_positions,
-                                const double * max_positions);
+void pen_initialise_population(double* population,
+                               size_t colony_size,
+                               size_t dim,
+                               const double * min_positions,
+                               const double * max_positions);
 
 /**
    Get the initial fitness values for each penguin in the population. This will
    generate a new fitness array.
  */
-double *pen_get_initial_fitness(size_t colony_size,
-                                size_t dim,
-                                const double * population,
-                                obj_func_t obj_func);
+void pen_update_fitness(double* fitness,
+                        size_t colony_size,
+                        size_t dim,
+                        const double * population,
+                        obj_func_t obj_func);
 
 /**
    Compute the euclidean distance between two penguins.
@@ -110,15 +112,15 @@ double pen_attractiveness(double heat_rad,
    Compute spiral movement of the penguin towards the centre. See paper on SPO for
    clarification.
  */
-double *pen_get_spiral_like_movement(double attract, size_t dim,
-                                     const double * centre, const double * penguin,
-                                     const double* rotation_matrix);
+void pen_get_spiral_like_movement(double* spiral, double attract, size_t dim,
+                                  const double * centre, const double * penguin,
+                                  const double* rotation_matrix);
 
 /**
    Initialise the rotation matrix of size `dim` times `dim`. Its rotation rate is given by
    `theta` (between -pi and pi).
  */
-double* pen_init_rotation_matrix(size_t dim, const double theta);
+void  pen_init_rotation_matrix(double* matrix, size_t dim, const double theta);
 
 /**
    Mutates the spiral according the equation 19 from the paper. This modifies the spiral
