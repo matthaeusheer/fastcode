@@ -11,7 +11,7 @@ extern "C" {
 typedef double (*obj_func_t)(const double *, size_t);
 
 // Algorithm function type
-typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double *, const double *);
+typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double, const double);
 
 /**
  *  Prints the solution array of one algorithm output to console.

@@ -11,15 +11,15 @@ double* squirrel (obj_func_t obj_func,
                   size_t population,
                   size_t dim,
                   size_t max_iter,
-                  const double* const min_positions,
-                  const double* const max_positions);
+                  const double min_position,
+                  const double max_position);
 /**
 * Randomly initialize squirrel population
 **/
 double* sqr_rand_init(size_t population,
                   size_t dim,
-                  const double* const min_positions,
-                  const double* const max_positions);
+                  const double min_position,
+                  const double max_position);
 
 /**
 *   returns 1 with probability passed as arguement [0,1]
@@ -63,16 +63,16 @@ double sqr_gliding_dist();
 void sqr_move_to_hickory(double* positions,
                       size_t population,
                       size_t dim,
-                      const double* const min_positions,
-                      const double* const max_positions);
+                      const double min_position,
+                      const double max_position);
 /**
 *   move squirrels on normal tree towards acorn tree
 **/
 void sqr_move_normal_to_acorn(double* positions,
                           size_t population,
                           size_t dim,
-                          const double* const min_positions,
-                          const double* const  max_positions);
+                          const double min_position,
+                          const double max_position);
 /**
 *   Evalulate seasonal_const to check for change of seasonal
 **/
@@ -108,8 +108,8 @@ double sqr_levy_flight();
 void random_restart(double* positions,
                     size_t population,
                     size_t dim,
-                    const double* const min_positions,
-                    const double* const max_positions);
+                    const double min_position,
+                    const double max_position);
 
 
 #ifdef __cplusplus

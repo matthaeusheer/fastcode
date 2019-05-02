@@ -15,8 +15,8 @@ Test(macro_tests, min_and_max) {
 
 Test(penguin_unit, initialise_population) {
   // Generating the max and min values allowed for every dimension.
-  double max[] = {100.0, 0.0, 11.0, -2.0};
-  double min[] = {-100.0, -5.0, 10.0, -4.0};
+  double max = 100.0;
+  double min = -100.0;
 
   double population[100 * 4];
 
@@ -24,15 +24,9 @@ Test(penguin_unit, initialise_population) {
   pen_initialise_population(population, 100, 4, min, max);
 
   // Checking if the initial values of the penguin population are within the specified bounds.
-  for (size_t idx = 0; idx < 4 * 100; idx += 4) {
-    cr_assert(population[idx + 0] <= 100.0, "first dimension upper bound check");
-    cr_assert(population[idx + 0] >= -100.0, "first dimension lower bound check");
-    cr_assert(population[idx + 1] <= 0.0, "second dimension upper bound check");
-    cr_assert(population[idx + 1] >= -5.0, "second dimension lower bound check");
-    cr_assert(population[idx + 2] <= 11.0, "third dimension upper bound check");
-    cr_assert(population[idx + 2] >= 10.0, "third dimension lower bound check");
-    cr_assert(population[idx + 3] <= -2.0, "fourth dimension upper bound check");
-    cr_assert(population[idx + 3] >= -4.0, "fourth dimension lower bound check");
+  for (size_t idx = 0; idx < 4 * 100; idx++) {
+    cr_assert(population[idx] <= 100.0, "dimension should be upper bound");
+    cr_assert(population[idx] >= -100.0, "dimension should be lower bound");
   }
 }
 
@@ -69,8 +63,8 @@ Test(penguin_unit, eucledian_distance) {
 
 Test(penguin_unit, clamp_position) {
   double position[] = {-105, -90,   100,  1000, 0  };
-  double max[]      = { 100,  100,  100,  100,  100};
-  double min[]      = {-100, -100, -100, -100, -100};
+  double max = 100;
+  double min = -100;
   pen_clamp_position(5, position, min, max);
 
   cr_assert_eq(position[0], -100, "1st dimension clamp failed.");

@@ -34,13 +34,13 @@
 
 double* sqr_rand_init(size_t population,
                   size_t dim,
-                  const double* const min_positions,
-                  const double* const max_positions) {
+                  const double min_position,
+                  const double max_position) {
   double* init = (double*)malloc(population*dim*sizeof(double));
   for (size_t particle=0; particle < population; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      init[idx] = random_min_max(min_positions[d],max_positions[d]);
+      init[idx] = random_min_max(min_position,max_position);
     }
   }
   return init;
@@ -113,8 +113,8 @@ double sqr_gliding_dist(){
 void sqr_move_to_hickory(double* positions,
                     size_t population,
                     size_t dim,
-                    const double* const min_positions,
-                    const double* const max_positions){
+                    const double min_position,
+                    const double max_position){
   // pop > 0 && pop < 4
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
@@ -129,7 +129,7 @@ void sqr_move_to_hickory(double* positions,
     for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*population ; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
-        positions[idx] = random_min_max(min_positions[d],max_positions[d]);
+        positions[idx] = random_min_max(min_position,max_position);
       }
     }
   }
@@ -139,8 +139,8 @@ void sqr_move_to_hickory(double* positions,
 void sqr_move_normal_to_acorn(double* positions,
                           size_t population,
                           size_t dim,
-                          const double* const min_positions,
-                          const double* const  max_positions){
+                          const double min_position,
+                          const double max_position){
 // pop >= 4+ NUM_JUMP_HICK*population
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
@@ -156,7 +156,7 @@ void sqr_move_normal_to_acorn(double* positions,
     for (size_t pop_idx = 4+NUM_JUMP_HICK*population; pop_idx < population; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
-        positions[idx] = random_min_max(min_positions[d],max_positions[d]);
+        positions[idx] = random_min_max(min_position,max_position);
       }
     }
   }
@@ -201,12 +201,12 @@ double sqr_levy_flight(){
   return 0.01*random_0_to_1()*sigma/pow( random_0_to_1(),( 1/BETA) );
 }
 
-void random_restart(double* positions,size_t population, size_t dim, const double* const min_positions, const double* const max_positions){
+void random_restart(double* positions,size_t population, size_t dim, const double min_position, const double max_position){
   for (size_t pop_idx = 4+NUM_JUMP_HICK*population; pop_idx < population; pop_idx ++){
     for (size_t d = 0; d < dim; d++){
       size_t idx = pop_idx*dim + d;
-      positions[idx] =  min_positions[d] +
-                      sqr_levy_flight()*(max_positions[d]-min_positions[d]);
+      positions[idx] =  min_position +
+                      sqr_levy_flight()*(max_position-min_position);
     }
   }
   return;
@@ -217,14 +217,14 @@ double* squirrel (obj_func_t obj_func,
                   size_t population,
                   size_t dim,
                   size_t max_iter,
-                  const double* const min_positions,
-                  const double* const max_positions) {
+                  const double min_position,
+                  const double max_position) {
   srand(100);
 
   double p_dp = PREDATOR_PROB;
   size_t num_jump_hick = ceil(NUM_JUMP_HICK*population);
 
-  double* positions = sqr_rand_init(population,dim,min_positions,max_positions);
+  double* positions = sqr_rand_init(population,dim,min_position,max_position);
   size_t sizeof_position = dim*population*sizeof(double);
 
   size_t sizeof_fitness = population*sizeof(double);
@@ -245,12 +245,12 @@ double* squirrel (obj_func_t obj_func,
   while (iter < max_iter) {
     iter++;
 
-    sqr_move_to_hickory(positions,population,dim,min_positions,max_positions);
-    sqr_move_normal_to_acorn(positions,population,dim,min_positions,max_positions);
+    sqr_move_to_hickory(positions,population,dim,min_position,max_position);
+    sqr_move_normal_to_acorn(positions,population,dim,min_position,max_position);
 
     s_c = sqr_eval_seasonal_cons(positions, dim);
     if (s_c < s_min){
-      random_restart(positions,population,dim,min_positions,max_positions);
+      random_restart(positions,population,dim,min_position,max_position);
     }
     s_min = sqr_eval_smin(iter);
 

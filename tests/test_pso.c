@@ -16,18 +16,12 @@ Test(pso_unit,pso_rand_init){
   srand((unsigned) time(NULL));
   size_t swarm_size = 10;
   size_t dim = 4;
-  double mins[] = {0.0 , -1 , 1.0 , -10.0};
-  double maxs[] = {1.0 , 1.0, 3.0 , 25.0};
-  double* const pos = pso_rand_init(swarm_size, dim, mins, maxs);
-  for (size_t s=0;s<swarm_size;s++){
-    cr_assert_leq(pos[s * dim], maxs[0], "first dimension should be bound above");
-    cr_assert_geq(pos[s * dim], mins[0], "first dimension should be bound below");
-    cr_assert_leq(pos[s * dim + 1], maxs[1], "second dimension should be bound above");
-    cr_assert_geq(pos[s * dim + 1], mins[1], "second dimension should be bound below");
-    cr_assert_leq(pos[s * dim + 2], maxs[2], "third dimension should be bound above");
-    cr_assert_geq(pos[s * dim + 2], mins[2], "third dimension should be bound below");
-    cr_assert_leq(pos[s * dim + 3], maxs[3], "fourth dimension should be bound above");
-    cr_assert_geq(pos[s * dim + 3], mins[3], "fourth dimension should be bound below");
+  double min = 0.0;
+  double max = 1.0;
+  double* const pos = pso_rand_init(swarm_size, dim, min, max);
+  for (size_t s=0;s<swarm_size * dim;s++){
+    cr_assert_leq(pos[s], max, "dimension should be bound above");
+    cr_assert_geq(pos[s], min, "dimension should be bound below");
   }
   free(pos);
 }
@@ -56,17 +50,19 @@ Test(pso_unit,pso_gen_init_velocity){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double mins[] = {0.0 , -1 , 1.0 , -10.0};
-  double maxs[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
+  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min = 0.0;
+  double max = 1.0;
 
-  double* const x = pso_rand_init(swarm_size, dim, mins, maxs);
+  double* const x = pso_rand_init(swarm_size, dim, min, max);
   double* vel = (double*)malloc(sizeof(double)*swarm_size*dim);
-  vel = pso_gen_init_velocity(x, swarm_size, dim, mins, maxs);
+  vel = pso_gen_init_velocity(x, swarm_size, dim, min, max);
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++){
       size_t idx = s*dim + d;
-      cr_assert_leq(vel[idx], (maxs[d] - x[idx])*0.5, "%ld dimension should be bound above",d);
-      cr_assert_geq(vel[idx], (mins[d] - x[idx])*0.5, "%ld dimension should be bound below",d);
+      cr_assert_leq(vel[idx], (max_vel[d] - x[idx])*0.5, "%ld dimension should be bound above",d);
+      cr_assert_geq(vel[idx], (min_vel[d] - x[idx])*0.5, "%ld dimension should be bound below",d);
     }
   }
   free(x);
@@ -103,22 +99,23 @@ Test(pso_unit,pso_update_velocity){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double mins[] = {0.0 , -1 , 1.0 , -10.0};
-  double maxs[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
+  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min = 0.0;
+  double max = 1.0;
 
-  double* const x = pso_rand_init(swarm_size, dim, mins, maxs);
-  double* const y = pso_rand_init(swarm_size, dim, mins, maxs);
-  double* const best = pso_rand_init(1, dim, mins, maxs);
+  double* const x = pso_rand_init(swarm_size, dim, min, max);
+  double* const y = pso_rand_init(swarm_size, dim, min, max);
+  double* const best = pso_rand_init(1, dim, min, max);
 
   double* vel = (double*)malloc(sizeof(double)*swarm_size*dim);
-  vel = pso_gen_init_velocity(x, swarm_size, dim, mins, maxs);
-  pso_update_velocity(vel, x, y, best, swarm_size, dim,
-  mins, maxs);
+  vel = pso_gen_init_velocity(x, swarm_size, dim, min, max);
+  pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++) {
       size_t idx = s*dim + d;
-        cr_assert_leq(vel[idx], maxs[d] ,"%ld dimension'd velocity should be bound above",d);
-        cr_assert_geq(vel[idx], mins[d] ,"%ld dimension'd velocity should be bound below",d);
+        cr_assert_leq(vel[idx], max_vel[d] ,"%ld dimension'd velocity should be bound above",d);
+        cr_assert_geq(vel[idx], min_vel[d] ,"%ld dimension'd velocity should be bound below",d);
     }
   }
   free(vel);
@@ -131,23 +128,24 @@ Test(pso_basic,pso_update_position){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double mins[] = {0.0 , -1 , 1.0 , -10.0};
-  double maxs[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min = 0.0;
+  double max = 1.0;
+  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
+  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
 
-  double* const x = pso_rand_init(swarm_size, dim, mins, maxs);
-  double* const y = pso_rand_init(swarm_size, dim, mins, maxs);
-  double* const best = pso_rand_init(1, dim, mins, maxs);
+  double* const x = pso_rand_init(swarm_size, dim, min, max);
+  double* const y = pso_rand_init(swarm_size, dim, min, max);
+  double* const best = pso_rand_init(1, dim, min, max);
 
   double* vel = (double*)malloc(sizeof(double)*swarm_size*dim);
-  vel = pso_gen_init_velocity(x, swarm_size, dim, mins, maxs);
-  pso_update_velocity(vel, x, y, best, swarm_size, dim,
-  mins, maxs);
-  pso_update_position( x, vel, swarm_size, dim, mins, maxs);
+  vel = pso_gen_init_velocity(x, swarm_size, dim, min, max);
+  pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
+  pso_update_position( x, vel, swarm_size, dim, min, max);
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++) {
       size_t idx = s*dim + d;
-      cr_assert_leq(x[idx], maxs[d] ,"%ld dimension'd position should be bound above",d);
-      cr_assert_geq(x[idx], mins[d] ,"%ld dimension'd position should be bound below",d);
+      cr_assert_leq(x[idx], max ,"%ld dimension'd position should be bound above",d);
+      cr_assert_geq(x[idx], min ,"%ld dimension'd position should be bound below",d);
     }
   }
   free(vel);

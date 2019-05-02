@@ -19,12 +19,12 @@
 void pen_initialise_population(double* const population,
                                 size_t colony_size,
                                 size_t dim,
-                                const double *const min_positions,
-                                const double *const max_positions) {
+                                const double min_position,
+                                const double max_position) {
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
     for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
       size_t idx = (pengu_idx * dim) + dim_idx;
-      population[idx] = random_min_max(min_positions[dim_idx], max_positions[dim_idx]);
+      population[idx] = random_min_max(min_position, max_position);
     }
   }
 }
@@ -122,11 +122,11 @@ void pen_mutate(size_t dim, double *const spiral, double mutation_coef) {
    Clamps the solution in the possible range. This is done in place.
  */
 void pen_clamp_position(size_t dim, double *const position,
-                        const double *const min_positions,
-                        const double *const max_positions) {
+                        const double min_position,
+                        const double max_position) {
   for (size_t idx = 0; idx < dim; idx++) {
-    position[idx] = pen_max(position[idx], min_positions[idx]);
-    position[idx] = pen_min(position[idx], max_positions[idx]);
+    position[idx] = pen_max(position[idx], min_position);
+    position[idx] = pen_min(position[idx], max_position);
   }
 }
 
@@ -188,8 +188,8 @@ void pen_init_rotation_matrix(double* const matrix, size_t dim, const double the
      - obj_func: the objective function accepting an array of doubles and the dimension.
      - dim: the dimension count of a solution (penguin).
      - max_iterations: the maximal count of iterations to be run.
-     - min_positions: an array of the minimum values for each dimension.
-     - max_positions: an array of the maximum values for each dimension.
+     - min_position: the minimum value for each dimension
+     - max_position: the maximum value for each dimension.
    Returns:
      An array of doubles representing a solution. The length of the array is
      `dim`.
@@ -198,8 +198,8 @@ double *pen_emperor_penguin(obj_func_t obj_func,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,
-                            const double *const min_positions,
-                            const double *const max_positions) {
+                            const double min_position,
+                            const double max_position) {
   srand(100);
 
   // initialise data
@@ -210,7 +210,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   double mean_pos[dim];
   int n_updates_per_pengu[colony_size];
   double updated_positions[colony_size * colony_size * dim];
-  pen_initialise_population(population, colony_size, dim, min_positions, max_positions);
+  pen_initialise_population(population, colony_size, dim, min_position, max_position);
   pen_update_fitness(fitness, colony_size, dim, population, obj_func);
   pen_init_rotation_matrix(r_matrix, dim, B);
   double base_heat_radiation = pen_heat_radiation();
@@ -259,7 +259,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
           vva(dim, spiral, &population[penguin_j * dim], spiral);
 
           // clamp
-          pen_clamp_position(dim, spiral, min_positions, max_positions);
+          pen_clamp_position(dim, spiral, min_position, max_position);
 
           // add movement to updated position
           memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],

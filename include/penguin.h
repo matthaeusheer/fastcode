@@ -59,8 +59,8 @@ double *pen_emperor_penguin(obj_func_t obj_func,
                             size_t colony_size,
                             size_t dim,
                             size_t max_iterations,
-                            const double * min_positions,
-                            const double * max_positions);
+                            const double min_position,
+                            const double max_position);
 
 /**
    Generate a full random penguin population of size `colony_size`,
@@ -71,8 +71,8 @@ double *pen_emperor_penguin(obj_func_t obj_func,
 void pen_initialise_population(double* population,
                                size_t colony_size,
                                size_t dim,
-                               const double * min_positions,
-                               const double * max_positions);
+                               const double min_position,
+                               const double max_position);
 
 /**
    Get the initial fitness values for each penguin in the population. This will
@@ -132,8 +132,8 @@ void pen_mutate(size_t dim, double * spiral, double mutation_coef);
    Clamps the solution in the possible range. This is done in place.
  */
 void pen_clamp_position(size_t dim, double * position,
-                        const double * min_positions,
-                        const double * max_positions);
+                        const double min_position,
+                        const double max_position);
 
 /**
    Gets the index of the fittest penguin in the population. Note that the less fit, the better.
