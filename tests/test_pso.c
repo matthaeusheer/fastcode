@@ -99,8 +99,8 @@ Test(pso_unit,pso_update_velocity){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
-  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min_vel = -1.;
+  double max_vel =  1.;
   double min = 0.0;
   double max = 1.0;
 
@@ -114,8 +114,8 @@ Test(pso_unit,pso_update_velocity){
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++) {
       size_t idx = s*dim + d;
-        cr_assert_leq(vel[idx], max_vel[d] ,"%ld dimension'd velocity should be bound above",d);
-        cr_assert_geq(vel[idx], min_vel[d] ,"%ld dimension'd velocity should be bound below",d);
+        cr_assert_leq(vel[idx], max_vel ,"%ld dimension'd velocity should be bound above",d);
+        cr_assert_geq(vel[idx], min_vel ,"%ld dimension'd velocity should be bound below",d);
     }
   }
   free(vel);
@@ -130,8 +130,8 @@ Test(pso_basic,pso_update_position){
   dim = 2;
   double min = 0.0;
   double max = 1.0;
-  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
-  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
+  double min_vel = -1.;
+  double max_vel =  1.;
 
   double* const x = pso_rand_init(swarm_size, dim, min, max);
   double* const y = pso_rand_init(swarm_size, dim, min, max);
