@@ -213,6 +213,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   pen_initialise_population(population, colony_size, dim, min_positions, max_positions);
   pen_update_fitness(fitness, colony_size, dim, population, obj_func);
   pen_init_rotation_matrix(r_matrix, dim, B);
+  double base_heat_radiation = pen_heat_radiation();
 
   #ifdef DEBUG
     print_population(colony_size, dim, population); // printing the initial status of the population
@@ -231,15 +232,12 @@ double *pen_emperor_penguin(obj_func_t obj_func,
     // number of updates for each pengu
     fill_int_array(n_updates_per_pengu, colony_size, 0);
 
-    // actual updates for every pengu, we can select the values by taking all updates up fo n_updates_per_pengu[idx]
-    fill_double_array(updated_positions, colony_size * colony_size * dim, 0.0);
-
     for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
       for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
-        if (fitness[penguin_j] > fitness[penguin_i]) {  // high fitness = high heat radiation = low cost
+        if (fitness[penguin_j] > fitness[penguin_i]) {   // high fitness = high heat radiation = low cost // high fitness = high heat radiation = low cost
 
           // calculate heat radiation
-          double heat_rad = heat_absorption_coef * pen_heat_radiation();
+          double heat_rad = heat_absorption_coef * base_heat_radiation;
 
           // calculate attractiveness
           double attract = pen_attractiveness(heat_rad,
@@ -263,19 +261,14 @@ double *pen_emperor_penguin(obj_func_t obj_func,
           // clamp
           pen_clamp_position(dim, spiral, min_positions, max_positions);
 
-
           // add movement to updated position
           memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],
                   spiral, dim * sizeof(double));
           n_updates_per_pengu[penguin_j] += 1;
-
-          // printf("# (i, j) (%lu, %lu): (%f, %f)\n", penguin_i, penguin_j, fitness[penguin_i], fitness[penguin_j]);
-
         }
       }
     }
 
-    // TODO: Factor out this part to own function.
     // accumulate changes for every pengu during this iteration
     for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
       fill_double_array(mean_pos, dim, 0.0);
@@ -292,7 +285,6 @@ double *pen_emperor_penguin(obj_func_t obj_func,
         // finally positions and fitness for a whole iteration
         memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(double));
         fitness[pengu_idx] = (*obj_func)(&population[pengu_idx * dim], dim);
-
       }
     }
 
