@@ -16,18 +16,17 @@
  * Returns a pointer to a double array which is of size colony_size * dim.
  * The stride over penguins is dim since every penguin (representing possible solution) is of size dim.
  */
-double *pen_generate_population(size_t colony_size,
+void pen_initialise_population(double* const population,
+                                size_t colony_size,
                                 size_t dim,
                                 const double *const min_positions,
                                 const double *const max_positions) {
-  double *population = (double *) malloc(colony_size * dim * sizeof(double));
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
     for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
       size_t idx = (pengu_idx * dim) + dim_idx;
       population[idx] = random_min_max(min_positions[dim_idx], max_positions[dim_idx]);
     }
   }
-  return population;
 }
 
 /**
@@ -35,16 +34,15 @@ double *pen_generate_population(size_t colony_size,
  * into the objective function. The returned fitness array is of size colony_size.
  * High objective function value = high fitness = high heat radiation = LOW cost as defined in the paper.
  */
-double *pen_get_initial_fitness(size_t colony_size,
-                                size_t dim,
-                                const double *const population,
-                                obj_func_t obj_func) {
-  double *fitness = (double *) malloc(colony_size * sizeof(double));
+void pen_update_fitness(double* const fitness,
+                        size_t colony_size,
+                        size_t dim,
+                        const double *const population,
+                        obj_func_t obj_func) {
   for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
     size_t idx = pengu_idx * dim;
     fitness[pengu_idx] = (*obj_func)(&population[idx], dim);
   }
-  return fitness;
 }
 
 
@@ -91,26 +89,21 @@ double pen_attractiveness(double heat_rad,
    Compute spiral movement of the penguin towards the centre. See paper on SPO for
    clarification.
  */
-double* pen_get_spiral_like_movement(double attract,
-                                     size_t dim,
-                                     const double *const centre,
-                                     const double *const penguin,
-                                     const double *const rotation_matrix) {
-  double *spiral = (double *) malloc(dim * sizeof(double));
-  double* centre_cpy = (double*)malloc(dim * sizeof(double));
+void pen_get_spiral_like_movement(double* const spiral,
+                                  double attract,
+                                  size_t dim,
+                                  const double *const centre,
+                                  const double *const penguin,
+                                  const double *const rotation_matrix) {
+  double centre_cpy[dim];
   memcpy(centre_cpy, centre, dim * sizeof(double));
 
   negate(dim, centre_cpy);
-  double* tmp = (double*)malloc(dim * sizeof(double));
+  double tmp[dim];
   vva(dim, penguin, centre_cpy, tmp);
   mvm(dim, rotation_matrix, tmp, spiral);
 
-  free(tmp);
-  free(centre_cpy);
-
   scalar_mul(dim, attract, spiral);
-
-  return spiral;
 }
 
 
@@ -161,10 +154,9 @@ size_t pen_get_fittest_idx(size_t colony_size, const double *const fitness) {
    Initialise the rotation matrix of size `dim` times `dim`. Its rotation rate is given by
    `theta` (between -pi and pi).
  */
-double* pen_init_rotation_matrix(size_t dim, const double theta) {
-  double* matrix = (double*)malloc(dim * dim * sizeof(double));
-  double* tmp = (double*)malloc(dim * dim * sizeof(double));
-  double* basic_rotation = (double*)malloc(dim * dim * sizeof(double));
+void pen_init_rotation_matrix(double* const matrix, size_t dim, const double theta) {
+  double tmp[dim * dim];
+  double basic_rotation[dim * dim];
   identity(dim, matrix);
   identity(dim, tmp);
   identity(dim, basic_rotation);
@@ -186,10 +178,7 @@ double* pen_init_rotation_matrix(size_t dim, const double theta) {
       basic_rotation[runner * dim + runner] = 1.0;
     }
   }
-  free(tmp);
-  free(basic_rotation);
   scalar_mul(dim * dim, A, matrix);
-  return matrix;
 }
 
 
@@ -213,8 +202,17 @@ double *pen_emperor_penguin(obj_func_t obj_func,
                             const double *const max_positions) {
   srand(100);
 
-  double *population = pen_generate_population(colony_size, dim, min_positions, max_positions);
-  double *const fitness = pen_get_initial_fitness(colony_size, dim, population, obj_func);
+  // initialise data
+  double population[colony_size * dim];
+  double fitness[colony_size];
+  double spiral[dim];
+  double r_matrix[dim * dim];
+  double mean_pos[dim];
+  int n_updates_per_pengu[colony_size];
+  double updated_positions[colony_size * colony_size * dim];
+  pen_initialise_population(population, colony_size, dim, min_positions, max_positions);
+  pen_update_fitness(fitness, colony_size, dim, population, obj_func);
+  pen_init_rotation_matrix(r_matrix, dim, B);
 
   #ifdef DEBUG
     print_population(colony_size, dim, population); // printing the initial status of the population
@@ -222,7 +220,6 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   #endif
 
   // initialise rotation matrix
-  const double *const r_matrix = pen_init_rotation_matrix(dim, B);
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
 
@@ -232,10 +229,10 @@ double *pen_emperor_penguin(obj_func_t obj_func,
     double attenuation_coef = linear_scale(ATT_COEF_START, ATT_COEF_END, max_iterations, iter);
 
     // number of updates for each pengu
-    int *const n_updates_per_pengu = filled_int_array(colony_size, 0);
+    fill_int_array(n_updates_per_pengu, colony_size, 0);
 
     // actual updates for every pengu, we can select the values by taking all updates up fo n_updates_per_pengu[idx]
-    double *const updated_positions = filled_double_array(colony_size * colony_size * dim, 0.0);
+    fill_double_array(updated_positions, colony_size * colony_size * dim, 0.0);
 
     for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
       for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
@@ -252,10 +249,10 @@ double *pen_emperor_penguin(obj_func_t obj_func,
                                               attenuation_coef);
 
           // calculate spiral movement
-          double *const spiral = pen_get_spiral_like_movement(attract, dim,
-                                                              &population[penguin_i * dim],
-                                                              &population[penguin_j * dim],
-                                                              r_matrix);
+          pen_get_spiral_like_movement(spiral, attract, dim,
+                                       &population[penguin_i * dim],
+                                       &population[penguin_j * dim],
+                                       r_matrix);
 
           // mutate movement
           pen_mutate(dim, spiral, mutation_coef);
@@ -274,7 +271,6 @@ double *pen_emperor_penguin(obj_func_t obj_func,
 
           // printf("# (i, j) (%lu, %lu): (%f, %f)\n", penguin_i, penguin_j, fitness[penguin_i], fitness[penguin_j]);
 
-          free(spiral);
         }
       }
     }
@@ -282,7 +278,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
     // TODO: Factor out this part to own function.
     // accumulate changes for every pengu during this iteration
     for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
-      double *const mean_pos = filled_double_array(dim, 0.0);
+      fill_double_array(mean_pos, dim, 0.0);
 
       if (n_updates_per_pengu[pengu_idx] > 0) {
         for (size_t dim_idx = 0; dim_idx < dim; dim_idx++) {
@@ -298,11 +294,7 @@ double *pen_emperor_penguin(obj_func_t obj_func,
         fitness[pengu_idx] = (*obj_func)(&population[pengu_idx * dim], dim);
 
       }
-      free(mean_pos);
     }
-
-    free(n_updates_per_pengu);
-    free(updated_positions);
 
     #ifdef DEBUG
         print_population(colony_size, dim, population);
@@ -315,9 +307,6 @@ double *pen_emperor_penguin(obj_func_t obj_func,
   size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
   double *const final_solution = (double *) malloc(dim * sizeof(double));
   memcpy(final_solution, &population[best_solution], dim * sizeof(double));
-
-  free(population);
-  free(fitness);
 
   return final_solution;
 }

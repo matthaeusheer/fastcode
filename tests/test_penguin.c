@@ -13,13 +13,15 @@ Test(macro_tests, min_and_max) {
 }
 
 
-Test(penguin_unit, generate_population) {
+Test(penguin_unit, initialise_population) {
   // Generating the max and min values allowed for every dimension.
   double max[] = {100.0, 0.0, 11.0, -2.0};
   double min[] = {-100.0, -5.0, 10.0, -4.0};
 
+  double population[100 * 4];
+
   // Generating population of size 100 with dim 4.
-  double *population = pen_generate_population(100, 4, min, max);
+  pen_initialise_population(population, 100, 4, min, max);
 
   // Checking if the initial values of the penguin population are within the specified bounds.
   for (size_t idx = 0; idx < 4 * 100; idx += 4) {
@@ -32,22 +34,21 @@ Test(penguin_unit, generate_population) {
     cr_assert(population[idx + 3] <= -2.0, "fourth dimension upper bound check");
     cr_assert(population[idx + 3] >= -4.0, "fourth dimension lower bound check");
   }
-  free(population);
 }
 
 
 Test(penguin_unit, get_initial_fitness) {
   double population[] = {1.0, 2.0, 3.0, 4.0, 5.0, -5.0, 10, -1.0};
 
+  double fitness[4];
   // Getting the initial fitness of population of size 4 and dim 2 by using the summation function.
-  double *fitness = pen_get_initial_fitness(4, 2, population, sum);
+  pen_update_fitness(fitness, 4, 2, population, sum);
 
   cr_assert_eq(fitness[0], 3.0, "Fitness of penguin 0 incorrect.");
   cr_assert_eq(fitness[1], 7.0, "Fitness of penguin 1 incorrect.");
   cr_assert_eq(fitness[2], 0.0, "Fitness of penguin 2 incorrect.");
   cr_assert_eq(fitness[3], 9.0, "Fitness of penguin 3 incorrect.");
 
-  free(fitness);
 }
 
 
