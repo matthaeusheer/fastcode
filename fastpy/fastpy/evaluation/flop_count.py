@@ -72,7 +72,7 @@ class FlopCounter:
                 4 * dimension * pop_size,
                 pop_size * obj_func_flops + 5,
                 n_iter * (pop_size * obj_func_flops + 5 + 9 * dimension +
-                          ((pop_size - 1) * 0.2 - 4) * dimension * 26 + 1 +
+                          ((pop_size - 1) * 0.2 - 4) * dimension * 26 +
                           2 * (1 + 0.9 * 11 * dimension * (3 + 0.1 * pop_size) +
                                0.1 * 4 * (3 + 0.1 * pop_size) * dimension
                                )
