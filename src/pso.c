@@ -87,12 +87,9 @@ size_t pso_best_fitness(double* fitness,size_t dim, size_t swarm_size) {
 void pso_generate_vel_limit(const double min_position,
                             const double max_position,
                             double* min_vel,
-                            double* max_vel,
-                            size_t dim) {
-  for (size_t d=0;d<dim;d++){
-    min_vel[d] = min_position/VEL_LIMIT_SCALE;
-    max_vel[d] = max_position/VEL_LIMIT_SCALE;
-  }
+                            double* max_vel) {
+    *min_vel = min_position/VEL_LIMIT_SCALE;
+    *max_vel = max_position/VEL_LIMIT_SCALE;
 }
 
   // updates velocities, works on array returned by gen_velocity
@@ -100,14 +97,14 @@ void pso_generate_vel_limit(const double min_position,
 void pso_update_velocity(double* velocity, double* positions,
                          double* local_best_position,
                          double* best, size_t swarm_size, size_t dim,
-                         const double* const min_vel,
-                         const double* const max_vel) {
+                         const double min_vel,
+                         const double max_vel) {
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
       velocity[idx] = INERTIA*velocity[idx] + COG*random_0_to_1()*(local_best_position[idx] - positions[idx]) +
       SOCIAL*random_0_to_1()*(best[d] - positions[idx]);
-      velocity[idx] = min(max(min_vel[d],velocity[idx]),max_vel[d]);
+      velocity[idx] = min(max(min_vel,velocity[idx]),max_vel);
     }
   }
   return ;
@@ -141,9 +138,9 @@ double * pso_basic(obj_func_t obj_func,
                    const double max_position) {
   srand(100);
 
-  double* min_vel = (double*)malloc(dim*sizeof(double));
-  double* max_vel = (double*)malloc(dim*sizeof(double));
-  pso_generate_vel_limit(min_position,max_position,min_vel,max_vel,dim);
+  double min_vel = 0;
+  double max_vel = 0;
+  pso_generate_vel_limit(min_position,max_position,&min_vel,&max_vel);
 
   size_t sizeof_position = dim*swarm_size*sizeof(double);
   // randomly initialise postions of swarm particles
@@ -209,8 +206,6 @@ double * pso_basic(obj_func_t obj_func,
   double *const best_solution = (double *const) malloc(dim * sizeof(double));
   memcpy(best_solution, global_best_position , dim * sizeof(double));
 
-  free(min_vel);
-  free(max_vel);
   free(current_positions);
   free(local_best_position);
   free(current_fitness);

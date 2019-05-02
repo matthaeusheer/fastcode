@@ -40,8 +40,7 @@ size_t pso_best_fitness(double* fitness,size_t dim, size_t swarm_size);
 void pso_generate_vel_limit(const double min_position,
                             const double max_position,
                             double* min_vel,
-                            double* max_vel,
-                            size_t dim);
+                            double* max_vel);
 
 // updates velocities, works on array returned by gen_velocity
 void pso_update_velocity(double* velocity,
@@ -50,8 +49,8 @@ void pso_update_velocity(double* velocity,
                          double* best,
                          size_t swarm_size,
                          size_t dim,
-                         const double* min_vel,
-                         const double* max_vel);
+                         const double min_vel,
+                         const double max_vel);
 
 void pso_update_position(double* positions,
                          double* velocity,
