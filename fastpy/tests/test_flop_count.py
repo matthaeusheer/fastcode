@@ -21,4 +21,16 @@ class TestFlopCount(unittest.TestCase):
         self.assertEqual(flop_counter.flop_count(), expected)
 
     def test_squirrel_flop_count(self):
-        pass
+        run_config = {
+            "algorithm": "squirrel",
+            "obj_func": "rastigrin",
+            "dimension": 10,
+            "n_iter": 3,
+            "n_rep": 1,
+            "population": 100,
+            "min_val": -10,
+            "max_val": 10
+        }
+        flop_counter = FlopCounter(run_config)
+        expected = 52654
+        self.assertEqual(flop_counter.flop_count(), expected)
