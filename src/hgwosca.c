@@ -22,13 +22,13 @@
  */
 double *gwo_init_population(size_t wolf_count,
                             size_t dim,
-                            const double *const min_positions,
-                            const double *const max_positions) {
+                            const double min_position,
+                            const double max_position) {
   double *population = (double *) malloc(wolf_count * dim * sizeof(double));
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       size_t idx = wolf * dim + dimension;
-      population[idx] = random_min_max(min_positions[dimension], max_positions[dimension]);
+      population[idx] = random_min_max(min_position, max_position);
     }
   }
   return population;
@@ -183,13 +183,13 @@ double gwo_clamp(double val, double min, double max) {
  */
 void gwo_clamp_all_positions(size_t wolf_count, size_t dim,
                              double *const population,
-                             const double *const min_positions,
-                             const double *const max_positions) {
+                             const double min_position,
+                             const double max_position) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       population[wolf * dim + dimension] = gwo_clamp(population[wolf * dim + dimension],
-                                                     min_positions[dimension],
-                                                     max_positions[dimension]);
+                                                     min_position,
+                                                     max_position);
     }
   }
 }
@@ -224,11 +224,11 @@ double *gwo_hgwosca(obj_func_t obj_func,
                     size_t wolf_count,
                     size_t dim,
                     size_t max_iterations,
-                    const double *const min_positions,
-                    const double *const max_positions) {
+                    const double min_position,
+                    const double max_position) {
   srand(100);
 
-  double *const population = gwo_init_population(wolf_count, dim, min_positions, max_positions);
+  double *const population = gwo_init_population(wolf_count, dim, min_position, max_position);
   double *const fitness = gwo_init_fitness(wolf_count, dim, obj_func, population);
   size_t alpha = 0, beta = 0, delta = 0;
 
@@ -241,7 +241,7 @@ double *gwo_hgwosca(obj_func_t obj_func,
     gwo_update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
     double a = 2 - iter * ((double) 2 / max_iterations);
     gwo_update_all_positions(wolf_count, dim, a, population, alpha, beta, delta);
-    gwo_clamp_all_positions(wolf_count, dim, population, min_positions, max_positions);
+    gwo_clamp_all_positions(wolf_count, dim, population, min_position, max_position);
     gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
 
     #ifdef DEBUG

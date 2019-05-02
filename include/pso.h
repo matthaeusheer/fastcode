@@ -9,14 +9,14 @@ extern "C" {
 double * pso_basic (obj_func_t obj_func,
                     size_t swarm_size,
                     size_t dim, size_t max_iter,
-                    const double* min_positions,
-                    const double* max_positions);
+                    const double min_position,
+                    const double max_position);
 
 //returns swarm_size * dim size array
 double* pso_rand_init(size_t swarm_size,
                   size_t dim,
-                  const double* min_positions,
-                  const double* max_positions);
+                  const double min_position,
+                  const double max_position);
 
 //returns swarm_size size array
 void pso_eval_fitness(obj_func_t obj_func,
@@ -29,16 +29,16 @@ void pso_eval_fitness(obj_func_t obj_func,
 // velocity at every posize_t of every particle
 double* pso_gen_init_velocity(const double* positions,
                               size_t swarm_size, size_t dim,
-                              const double* min_positions,
-                              const double* max_positions);
+                              const double min_position,
+                              const double max_position);
 
 // sorts the population in decreasing order of fitness /
 // i.e pop[0] posize_ts to best location yet.
 size_t pso_best_fitness(double* fitness,size_t dim, size_t swarm_size);
 
 
-void pso_generate_vel_limit(const double* min_positions,
-                            const double* max_positions,
+void pso_generate_vel_limit(const double min_position,
+                            const double max_position,
                             double* min_vel,
                             double* max_vel,
                             size_t dim);
@@ -57,8 +57,8 @@ void pso_update_position(double* positions,
                          double* velocity,
                          size_t swarm_size,
                          size_t dim,
-                         const double* min_positions,
-                         const double* max_positions);
+                         const double min_position,
+                         const double max_position);
 #ifdef __cplusplus
 }
 #endif

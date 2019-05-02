@@ -26,17 +26,14 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
     throw std::invalid_argument("There is no registered algorithm called " + cfg.algorithm);
   }
 
-  double *mins = filled_double_array((size_t) cfg.dimension, cfg.min_position);
-  double *maxs = filled_double_array((size_t) cfg.dimension, cfg.max_position);
-
   // Bind the parameters such that we have one generic algorithm function to run and benchmark
   auto algo_func = std::bind(algo_func_map[cfg.algorithm],
                              obj_func_map[cfg.obj_func],
                              cfg.population,
                              cfg.dimension,
                              cfg.n_iterations,
-                             mins,
-                             maxs);
+                             cfg.min_position,
+                             cfg.max_position);
 
   std::vector<timeInt64> cycles_vec;
   double *solution;
@@ -62,8 +59,6 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
   }
 
   free(solution);
-  free(mins);
-  free(maxs);
 
   return cycles_vec;
 }

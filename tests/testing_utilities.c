@@ -12,9 +12,7 @@ void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
                size_t max_iter, algo_func_t algo,
                double target, double tolerance,
                bool debug) {
-  double* mins = filled_double_array(dim, min_bound);
-  double* maxs = filled_double_array(dim, max_bound);
-  double* solution = (*algo)(obj_func, pop_size, dim, max_iter, mins, maxs);
+  double* solution = (*algo)(obj_func, pop_size, dim, max_iter, min_bound, max_bound);
   if(debug) {
     print_solution(dim, solution);
     printf("Objective function value = %f\n", (*obj_func)(solution, dim));
@@ -22,6 +20,4 @@ void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
   cr_assert(fabs((*obj_func)(solution, dim) - target) < tolerance,
             "objective should be minimised at %f", target);
   free(solution);
-  free(mins);
-  free(maxs);
 }
