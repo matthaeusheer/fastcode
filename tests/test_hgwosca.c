@@ -13,7 +13,8 @@ Test(hgwosca_unit, init_population) {
     size_t dim = 4;
     double min = 0.0;
     double max = 10.0;
-    double* const population = gwo_init_population(wolf_count, dim, min, max);
+    double population[wolf_count * dim];
+    gwo_init_population(population, wolf_count, dim, min, max);
     for(size_t wolf = 0; wolf < wolf_count * dim; wolf++) {
         cr_assert(population[wolf] <= max, "dimension should be bound above");
         cr_assert(population[wolf] >= min, "dimension should be bound below");
@@ -48,7 +49,8 @@ Test(hgwosca_unit, init_fitness) {
             5.0, 0.0,
             2.0, 3.0
     };
-    double* const fitness = gwo_init_fitness(wolf_count, dim, sum_of_squares, population);
+    double fitness[wolf_count];
+    gwo_init_fitness(fitness, wolf_count, dim, sum_of_squares, population);
     gwo_update_fitness(wolf_count, dim, sum_of_squares, population, fitness);
     cr_assert(fabs(fitness[0] - 0.0) < DBL_EPSILON, "first wolf's fitness should be 0");
     cr_assert(fabs(fitness[1] - 17.0) < DBL_EPSILON, "second wolf's fitness should be 17");
