@@ -23,18 +23,17 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
   //returns swarm_size * dim size array
-double* pso_rand_init(size_t swarm_size,
-                      size_t dim,
-                      const double min_position,
-                      const double max_position) {
-  double* init = (double*)malloc(swarm_size*dim*sizeof(double));
+void pso_rand_init(double* const population,
+                   size_t swarm_size,
+                   size_t dim,
+                   const double min_position,
+                   const double max_position) {
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      init[idx] = random_min_max(min_position,max_position);
+      population[idx] = random_min_max(min_position,max_position);
     }
   }
-  return init;
 }
 
   //returns swarm_size size array
@@ -49,20 +48,19 @@ void pso_eval_fitness(obj_func_t obj_func,
 
   //returns swarm_size x dim size array
   // velocity at every posize_t of every particle
-double* pso_gen_init_velocity(const double* const positions,
-                              size_t swarm_size, size_t dim,
-                              const double min_position,
-                              const double max_position) {
-  double* u = pso_rand_init(swarm_size,dim,min_position,max_position);
-  double* velocity = (double *)malloc(swarm_size*dim*sizeof(double));
+void pso_gen_init_velocity(double* const velocity,
+                            const double* const positions,
+                            size_t swarm_size, size_t dim,
+                            const double min_position,
+                            const double max_position) {
+  double u[swarm_size*dim*sizeof(double)];
+  pso_rand_init(u,swarm_size,dim,min_position,max_position);
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
       velocity[idx] = 0.25*(u[idx] - positions[idx]);
     }
   }
-  free(u);
-  return velocity;
 }
 
   // sorts the population in decreasing order of fitness /
@@ -144,15 +142,16 @@ double * pso_basic(obj_func_t obj_func,
 
   size_t sizeof_position = dim*swarm_size*sizeof(double);
   // randomly initialise postions of swarm particles
-  double* current_positions = pso_rand_init(swarm_size, dim,min_position,max_position);
-  double* local_best_position = (double*)malloc(sizeof_position);
+  double current_positions[sizeof_position];
+  pso_rand_init(current_positions,swarm_size, dim,min_position,max_position);
+  double local_best_position[sizeof_position];
   memcpy(local_best_position,current_positions, sizeof_position);
 
   // calculate the fitness at every position of the swarm
   size_t sizeof_fitness = swarm_size*sizeof(double);
-  double* current_fitness = (double*)malloc(sizeof_fitness);
+  double current_fitness[sizeof_fitness];
   pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
-  double* local_best_fitness = (double*)malloc(sizeof_fitness);
+  double local_best_fitness[sizeof_fitness];
   memcpy(local_best_fitness,current_fitness, sizeof_fitness );
 
   #ifdef DEBUG
@@ -160,8 +159,8 @@ double * pso_basic(obj_func_t obj_func,
       printf("# AVG FITNESS: %f\n", average_value(swarm_size, current_fitness));
   #endif
 
-  double* p_velocity = pso_gen_init_velocity(current_positions,swarm_size,dim,
-  min_position,max_position);
+  double p_velocity[sizeof_position];
+  pso_gen_init_velocity(p_velocity,current_positions,swarm_size,dim,min_position,max_position);
 
   size_t global_best_idx = pso_best_fitness(local_best_fitness,dim,swarm_size);
 
@@ -203,14 +202,8 @@ double * pso_basic(obj_func_t obj_func,
 
   }
 
-  double *const best_solution = (double *const) malloc(dim * sizeof(double));
+  double* const best_solution = (double *const) malloc(dim * sizeof(double));
   memcpy(best_solution, global_best_position , dim * sizeof(double));
-
-  free(current_positions);
-  free(local_best_position);
-  free(current_fitness);
-  free(local_best_fitness);
-  free(p_velocity);
 
   return best_solution;
 }

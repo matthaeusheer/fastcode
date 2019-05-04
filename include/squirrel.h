@@ -16,7 +16,8 @@ double* squirrel (obj_func_t obj_func,
 /**
 * Randomly initialize squirrel population
 **/
-double* sqr_rand_init(size_t population,
+void sqr_rand_init(double* const positions,
+                  size_t population,
                   size_t dim,
                   const double min_position,
                   const double max_position);
