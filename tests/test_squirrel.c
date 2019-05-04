@@ -16,8 +16,8 @@ BASIC SQUIRREL UNIT TESTS
 #endif
 
 Test(squirrel_unit,sqr_eval_fitness){
-  size_t population, dim;
-  population = 4;
+  size_t pop_size, dim;
+  pop_size = 4;
   dim = 2;
   double x[] = {
     0.0,  0.0,
@@ -25,14 +25,12 @@ Test(squirrel_unit,sqr_eval_fitness){
    10.0,  3.0,
   -10.0, -3.0
   };
-  double * fitness = (double*)malloc(sizeof(double)*population);
-  sqr_eval_fitness(sum_of_squares, population, dim, x, fitness);
+  double fitness[dim*pop_size*sizeof(double)];
+  sqr_eval_fitness(sum_of_squares, pop_size, dim, x, fitness);
   cr_assert_float_eq(fitness[0], 0.0, DBL_EPSILON, "first particle fitness should be 0.0");
   cr_assert_float_eq(fitness[1], 22.25, DBL_EPSILON, "second particle fitness should be 22.5");
   cr_assert_float_eq(fitness[2], 109.0, DBL_EPSILON, "third particle's fitness should be 109");
   cr_assert_float_eq(fitness[3], 109.0, DBL_EPSILON, "fourth particle's fitness should be 109");
-
-  free(fitness);
 }
 
 Test(squirrel_unit,sqr_lowest_val_to_front){

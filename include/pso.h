@@ -13,7 +13,8 @@ double * pso_basic (obj_func_t obj_func,
                     const double max_position);
 
 //returns swarm_size * dim size array
-double* pso_rand_init(size_t swarm_size,
+void pso_rand_init(double* const population,
+                  size_t swarm_size,
                   size_t dim,
                   const double min_position,
                   const double max_position);
@@ -27,10 +28,11 @@ void pso_eval_fitness(obj_func_t obj_func,
 
 //returns swarm_size x dim size array
 // velocity at every posize_t of every particle
-double* pso_gen_init_velocity(const double* positions,
-                              size_t swarm_size, size_t dim,
-                              const double min_position,
-                              const double max_position);
+void pso_gen_init_velocity(double* const velocity,
+                          const double* positions,
+                          size_t swarm_size, size_t dim,
+                          const double min_position,
+                          const double max_position);
 
 // sorts the population in decreasing order of fitness /
 // i.e pop[0] posize_ts to best location yet.

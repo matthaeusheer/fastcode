@@ -32,18 +32,17 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
 
-double* sqr_rand_init(size_t population,
-                  size_t dim,
-                  const double min_position,
-                  const double max_position) {
-  double* init = (double*)malloc(population*dim*sizeof(double));
-  for (size_t particle=0; particle < population; particle++){
+void sqr_rand_init(double* const positions,
+                      size_t pop_size,
+                      size_t dim,
+                      const double min_position,
+                      const double max_position) {
+  for (size_t particle=0; particle < pop_size; particle++){
     for (size_t d=0; d<dim; d++){
       size_t idx = (particle*dim) + d;
-      init[idx] = random_min_max(min_position,max_position);
+      positions[idx] = random_min_max(min_position,max_position);
     }
   }
-  return init;
 }
 
 
@@ -55,21 +54,21 @@ int sqr_bernoulli_distribution(double probability){
 }
 
 void sqr_eval_fitness(obj_func_t obj_func,
-                      size_t population, size_t dim,
+                      size_t pop_size, size_t dim,
                       const double* const positions,
                       double* fitness) {
-  for (size_t pop=0; pop<population; pop++){
+  for (size_t pop=0; pop<pop_size; pop++){
     fitness[pop] = obj_func(positions+(pop*dim),dim);
   }
   return ;
 }
 
 
-void sqr_lowest_val_to_front(double* fitness,double* positions, size_t population, size_t dim){
+void sqr_lowest_val_to_front(double* fitness,double* positions, size_t pop_size, size_t dim){
   double best_yet = fitness[0];
   size_t best_idx = 0;
 
-  for (size_t pop_idx=1; pop_idx<population; pop_idx++){
+  for (size_t pop_idx=1; pop_idx<pop_size; pop_idx++){
     if (fitness[pop_idx] < best_yet){
       best_yet = fitness[pop_idx];
       best_idx = pop_idx;
@@ -81,15 +80,11 @@ void sqr_lowest_val_to_front(double* fitness,double* positions, size_t populatio
   fitness[best_idx] = temp;
 
   // careful
-  double* temp_pos = (double*)malloc( dim*sizeof(double));
+  double temp_pos[dim*sizeof(double)];
 
   memcpy(temp_pos, positions, dim*sizeof(double));
   memcpy(positions, positions+(dim*best_idx), dim*sizeof(double));
   memcpy(positions +(dim*best_idx), temp_pos, dim*sizeof(double));
-
-
-  free(temp_pos);
-  return;
 }
 
   /**
@@ -97,9 +92,9 @@ void sqr_lowest_val_to_front(double* fitness,double* positions, size_t populatio
   *   so that the best four squirrels
   *   are the first four elements
   **/
-void sqr_lowest4_vals_to_front(double* fitness,double* positions, size_t population, size_t dim){
+void sqr_lowest4_vals_to_front(double* fitness,double* positions, size_t pop_size, size_t dim){
   for (size_t i = 0; i < 4; i++) {
-    sqr_lowest_val_to_front(fitness+i,positions+i*dim,population-i,dim);
+    sqr_lowest_val_to_front(fitness+i,positions+i*dim,pop_size-i,dim);
   }
 }
 
@@ -111,14 +106,14 @@ double sqr_gliding_dist(){
 }
 
 void sqr_move_to_hickory(double* positions,
-                    size_t population,
+                    size_t pop_size,
                     size_t dim,
                     const double min_position,
                     const double max_position){
   // pop > 0 && pop < 4
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
-    for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*population ; pop_idx ++){
+    for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         positions[idx] = positions[idx] +
@@ -126,7 +121,7 @@ void sqr_move_to_hickory(double* positions,
       }
     }
   } else {
-    for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*population ; pop_idx ++){
+    for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         positions[idx] = random_min_max(min_position,max_position);
@@ -137,14 +132,14 @@ void sqr_move_to_hickory(double* positions,
 }
 
 void sqr_move_normal_to_acorn(double* positions,
-                          size_t population,
+                          size_t pop_size,
                           size_t dim,
                           const double min_position,
                           const double max_position){
-// pop >= 4+ NUM_JUMP_HICK*population
+// pop >= 4+ NUM_JUMP_HICK*pop_size
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
-    for (size_t pop_idx = 4+NUM_JUMP_HICK*population; pop_idx < population; pop_idx ++){
+    for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         size_t acorn_idx = ( 1 + ( idx % 3))*dim + d;
@@ -153,7 +148,7 @@ void sqr_move_normal_to_acorn(double* positions,
       }
     }
   } else {
-    for (size_t pop_idx = 4+NUM_JUMP_HICK*population; pop_idx < population; pop_idx ++){
+    for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         positions[idx] = random_min_max(min_position,max_position);
@@ -201,8 +196,8 @@ double sqr_levy_flight(){
   return 0.01*random_0_to_1()*sigma/pow( random_0_to_1(),( 1/BETA) );
 }
 
-void random_restart(double* positions,size_t population, size_t dim, const double min_position, const double max_position){
-  for (size_t pop_idx = 4+NUM_JUMP_HICK*population; pop_idx < population; pop_idx ++){
+void random_restart(double* positions,size_t pop_size, size_t dim, const double min_position, const double max_position){
+  for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
     for (size_t d = 0; d < dim; d++){
       size_t idx = pop_idx*dim + d;
       positions[idx] =  min_position +
@@ -214,7 +209,7 @@ void random_restart(double* positions,size_t population, size_t dim, const doubl
 
 
 double* squirrel (obj_func_t obj_func,
-                  size_t population,
+                  size_t pop_size,
                   size_t dim,
                   size_t max_iter,
                   const double min_position,
@@ -222,21 +217,22 @@ double* squirrel (obj_func_t obj_func,
   srand(100);
 
   double p_dp = PREDATOR_PROB;
-  size_t num_jump_hick = ceil(NUM_JUMP_HICK*population);
+  size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
 
-  double* positions = sqr_rand_init(population,dim,min_position,max_position);
-  size_t sizeof_position = dim*population*sizeof(double);
+  double positions[pop_size*dim*sizeof(double)];
+  sqr_rand_init(positions,pop_size,dim,min_position,max_position);
+  size_t sizeof_position = dim*pop_size*sizeof(double);
 
-  size_t sizeof_fitness = population*sizeof(double);
-  double* fitness = (double*)malloc(sizeof_fitness);
-  sqr_eval_fitness(obj_func,population,dim,positions,fitness);
+  size_t sizeof_fitness = pop_size*sizeof(double);
+  double fitness[dim*pop_size*sizeof(double)];
+  sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
 
   // positions[0] is hickory, positions[1:3] are acorn, rest are normal.
-  sqr_lowest4_vals_to_front(fitness,positions,population,dim);
+  sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
   #ifdef DEBUG
-    print_population(population, dim, positions); // printing the initial status of the population
-    printf("# AVG FITNESS: %f\n", average_value(population, fitness));
+    print_population(pop_size, dim, positions); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
   #endif
 
   double s_c = 0;
@@ -245,36 +241,30 @@ double* squirrel (obj_func_t obj_func,
   while (iter < max_iter) {
     iter++;
 
-    sqr_move_to_hickory(positions,population,dim,min_position,max_position);
-    sqr_move_normal_to_acorn(positions,population,dim,min_position,max_position);
+    sqr_move_to_hickory(positions,pop_size,dim,min_position,max_position);
+    sqr_move_normal_to_acorn(positions,pop_size,dim,min_position,max_position);
 
     s_c = sqr_eval_seasonal_cons(positions, dim);
     if (s_c < s_min){
-      random_restart(positions,population,dim,min_position,max_position);
+      random_restart(positions,pop_size,dim,min_position,max_position);
     }
     s_min = sqr_eval_smin(iter);
 
-    sqr_eval_fitness(obj_func,population,dim,positions,fitness);
-    sqr_lowest4_vals_to_front(fitness,positions,population,dim);
+    sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
+    sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
     #ifdef DEBUG
     #endif
 
     #ifdef DEBUG
-      print_population(population, dim, positions); // printing the initial status of the population
-      printf("# AVG FITNESS: %f\n", average_value(population, fitness));
+      print_population(pop_size, dim, positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
       printf("\n # iter: %lu best val: %f\n", iter, fitness[0] );
     #endif
   }
 
-
-
-
   double* const best_solution = (double *const) malloc(dim * sizeof(double));
   memcpy(best_solution, positions , dim * sizeof(double));
-
-  free(fitness);
-  free(positions);
 
   return best_solution;
 }
