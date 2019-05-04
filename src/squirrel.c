@@ -47,9 +47,11 @@ void sqr_rand_init(double* const positions,
 
 
 int sqr_bernoulli_distribution(double probability){
-  if (probability < 0 || probability > 1) return -1;
+  if (probability < 0 || probability > 1)
+    return -1;
 
-  if (random_0_to_1() < probability ) return 1;
+  if (random_0_to_1() < probability )
+    return 1;
   return 0;
 }
 
@@ -101,7 +103,6 @@ void sqr_lowest4_vals_to_front(double* fitness,double* positions, size_t pop_siz
 double sqr_gliding_dist(){
   double lift = random_min_max(CL_MIN,CL_MAX);
   double drag = CD;
-  //double phi = atan(drag/lift);
   return DROP/(SF*drag/lift);
 }
 
@@ -111,13 +112,14 @@ void sqr_move_to_hickory(double* positions,
                     const double min_position,
                     const double max_position){
   // pop > 0 && pop < 4
+  double gliding_dist = sqr_gliding_dist();
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
     for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         positions[idx] = positions[idx] +
-                        sqr_gliding_dist()*GLIDING_CONST*(positions[d]-positions[idx]);
+                        gliding_dist*GLIDING_CONST*(positions[d]-positions[idx]);
       }
     }
   } else {
@@ -137,6 +139,7 @@ void sqr_move_normal_to_acorn(double* positions,
                           const double min_position,
                           const double max_position){
 // pop >= 4+ NUM_JUMP_HICK*pop_size
+  double gliding_dist = sqr_gliding_dist();
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
     for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
@@ -144,7 +147,7 @@ void sqr_move_normal_to_acorn(double* positions,
         size_t idx = pop_idx*dim + d;
         size_t acorn_idx = ( 1 + ( idx % 3))*dim + d;
         positions[idx] = positions[idx] +
-                    sqr_gliding_dist()*GLIDING_CONST*(positions[acorn_idx]-positions[idx]);
+                        gliding_dist*GLIDING_CONST*(positions[acorn_idx]-positions[idx]);
       }
     }
   } else {
@@ -197,11 +200,11 @@ double sqr_levy_flight(){
 }
 
 void random_restart(double* positions,size_t pop_size, size_t dim, const double min_position, const double max_position){
+  double range = max_position - min_position;
   for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
     for (size_t d = 0; d < dim; d++){
       size_t idx = pop_idx*dim + d;
-      positions[idx] =  min_position +
-                      sqr_levy_flight()*(max_position-min_position);
+      positions[idx] =  min_position + sqr_levy_flight()*(range);
     }
   }
   return;
@@ -237,7 +240,7 @@ double* squirrel (obj_func_t obj_func,
 
   double s_c = 0;
   size_t iter = 0;
-  double s_min = sqr_eval_smin(iter);                                // seasonal constant
+  double s_min = sqr_eval_smin(iter); // seasonal constant
   while (iter < max_iter) {
     iter++;
 
@@ -252,9 +255,6 @@ double* squirrel (obj_func_t obj_func,
 
     sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
     sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
-
-    #ifdef DEBUG
-    #endif
 
     #ifdef DEBUG
       print_population(pop_size, dim, positions); // printing the initial status of the population
