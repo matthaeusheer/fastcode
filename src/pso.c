@@ -53,7 +53,7 @@ void pso_gen_init_velocity(double* const velocity,
                             size_t swarm_size, size_t dim,
                             const double min_position,
                             const double max_position) {
-  double u[swarm_size*dim*sizeof(double)];
+  double u[swarm_size*dim];
   pso_rand_init(u,swarm_size,dim,min_position,max_position);
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
@@ -140,19 +140,19 @@ double * pso_basic(obj_func_t obj_func,
   double max_vel = 0;
   pso_generate_vel_limit(min_position,max_position,&min_vel,&max_vel);
 
-  size_t sizeof_position = dim*swarm_size*sizeof(double);
+  size_t sizeof_position = dim*swarm_size;
   // randomly initialise postions of swarm particles
   double current_positions[sizeof_position];
   pso_rand_init(current_positions,swarm_size, dim,min_position,max_position);
   double local_best_position[sizeof_position];
-  memcpy(local_best_position,current_positions, sizeof_position);
+  memcpy(local_best_position,current_positions, sizeof_position*sizeof(double));
 
   // calculate the fitness at every position of the swarm
-  size_t sizeof_fitness = swarm_size*sizeof(double);
+  size_t sizeof_fitness = swarm_size;
   double current_fitness[sizeof_fitness];
   pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
   double local_best_fitness[sizeof_fitness];
-  memcpy(local_best_fitness,current_fitness, sizeof_fitness );
+  memcpy(local_best_fitness,current_fitness, sizeof_fitness*sizeof(double) );
 
   #ifdef DEBUG
       print_population(swarm_size, dim, current_positions); // printing the initial status of the population
@@ -202,8 +202,8 @@ double * pso_basic(obj_func_t obj_func,
 
   }
 
-  double* const best_solution = (double *const) malloc(dim * sizeof(double));
-  memcpy(best_solution, global_best_position , dim * sizeof(double));
+  double* const best_solution = (double *const) malloc(dim);
+  memcpy(best_solution, global_best_position , dim*sizeof(double));
 
   return best_solution;
 }

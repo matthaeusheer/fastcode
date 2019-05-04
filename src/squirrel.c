@@ -82,7 +82,7 @@ void sqr_lowest_val_to_front(double* fitness,double* positions, size_t pop_size,
   fitness[best_idx] = temp;
 
   // careful
-  double temp_pos[dim*sizeof(double)];
+  double temp_pos[dim];
 
   memcpy(temp_pos, positions, dim*sizeof(double));
   memcpy(positions, positions+(dim*best_idx), dim*sizeof(double));
@@ -222,12 +222,12 @@ double* squirrel (obj_func_t obj_func,
   double p_dp = PREDATOR_PROB;
   size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
 
-  double positions[pop_size*dim*sizeof(double)];
+  double positions[pop_size*dim];
   sqr_rand_init(positions,pop_size,dim,min_position,max_position);
-  size_t sizeof_position = dim*pop_size*sizeof(double);
+  size_t sizeof_position = dim*pop_size;
 
-  size_t sizeof_fitness = pop_size*sizeof(double);
-  double fitness[dim*pop_size*sizeof(double)];
+  size_t sizeof_fitness = pop_size;
+  double fitness[dim*pop_size];
   sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
 
   // positions[0] is hickory, positions[1:3] are acorn, rest are normal.
@@ -263,8 +263,8 @@ double* squirrel (obj_func_t obj_func,
     #endif
   }
 
-  double* const best_solution = (double *const) malloc(dim * sizeof(double));
-  memcpy(best_solution, positions , dim * sizeof(double));
+  double* const best_solution = (double *const) malloc(dim);
+  memcpy(best_solution, positions , dim*sizeof(double));
 
   return best_solution;
 }
