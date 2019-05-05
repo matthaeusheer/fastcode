@@ -11,16 +11,16 @@ double * gwo_hgwosca(obj_func_t obj_func,
                      size_t wolf_count,
                      size_t dim,
                      size_t max_iterations,
-                     const double min_position,
-                     const double max_position);
+                     double min_position,
+                     double max_position);
 
 /**
    Initialise population of `wolf_count` wolves, each with `dim` dimensions, where
    each dimension is bound by `min_positions` and `max_positions`.
  */
-double *gwo_init_population(double *population,
-                            size_t wolf_count, size_t dim,
-                            const double min_position, const double  max_position);
+void gwo_init_population(double *population,
+                         size_t wolf_count, size_t dim,
+                         double min_position, double max_position);
 
 /**
    Update the fitness of all wolves.
@@ -39,8 +39,8 @@ void gwo_update_leaders(size_t wolf_count, double *fitness, size_t *alpha, size_
 /**
    Initialise the fitness for all wolves.
  */
-double *gwo_init_fitness(double *fitness, size_t wolf_count,
-                          size_t dim, obj_func_t obj_func, double *population);
+void gwo_init_fitness(double *fitness, size_t wolf_count,
+                      size_t dim, obj_func_t obj_func, double *population);
 
 /**
    Get recommended position of `dimension` for `wolf` with respect to `leader`, for a given
@@ -89,9 +89,9 @@ double gwo_clamp(double val, double min, double max);
    Clamp solutions into feasible space.
  */
 void gwo_clamp_all_positions(size_t wolf_count, size_t dim, double *population,
-                             const double min_position, const double max_position);
+                             double min_position, double max_position);
 
-size_t gwo_get_fittest_idx(size_t colony_size, const double * fitness);
+size_t gwo_get_fittest_idx(size_t colony_size, const double *fitness);
 
 #ifdef __cplusplus
 }
