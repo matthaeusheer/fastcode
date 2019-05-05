@@ -20,11 +20,11 @@
    Initialise population of `wolf_count` wolves, each with `dim` dimensions, where
    each dimension is bound by `min_positions` and `max_positions`.
  */
-double *gwo_init_population(double* const population,
-                            size_t wolf_count,
-                            size_t dim,
-                            const double min_position,
-                            const double max_position) {
+void gwo_init_population(double* const population,
+                         size_t wolf_count,
+                         size_t dim,
+                         const double min_position,
+                         const double max_position) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       size_t idx = wolf * dim + dimension;
@@ -76,11 +76,11 @@ void gwo_update_leaders(size_t wolf_count,
 /**
    Initialise the fitness for all wolves.
  */
-double *gwo_init_fitness(double *const fitness,
-                         size_t wolf_count,
-                         size_t dim,
-                         obj_func_t obj_func,
-                         double *const population) {
+void gwo_init_fitness(double *const fitness,
+                      size_t wolf_count,
+                      size_t dim,
+                      obj_func_t obj_func,
+                      double *const population) {
   gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
 }
 
