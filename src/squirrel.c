@@ -111,15 +111,13 @@ void sqr_move_to_hickory(double* positions,
                     size_t dim,
                     const double min_position,
                     const double max_position){
-  // pop > 0 && pop < 4
-  double gliding_dist = sqr_gliding_dist();
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
     for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
       for (size_t d = 0; d < dim; d++){
         size_t idx = pop_idx*dim + d;
         positions[idx] = positions[idx] +
-                        gliding_dist*GLIDING_CONST*(positions[d]-positions[idx]);
+                        sqr_gliding_dist()*GLIDING_CONST*(positions[d]-positions[idx]);
       }
     }
   } else {
@@ -138,8 +136,6 @@ void sqr_move_normal_to_acorn(double* positions,
                           size_t dim,
                           const double min_position,
                           const double max_position){
-// pop >= 4+ NUM_JUMP_HICK*pop_size
-  double gliding_dist = sqr_gliding_dist();
   double p = PREDATOR_PROB;
   if (!sqr_bernoulli_distribution(p)){
     for (size_t pop_idx = 4+NUM_JUMP_HICK*pop_size; pop_idx < pop_size; pop_idx ++){
@@ -147,7 +143,7 @@ void sqr_move_normal_to_acorn(double* positions,
         size_t idx = pop_idx*dim + d;
         size_t acorn_idx = ( 1 + ( idx % 3))*dim + d;
         positions[idx] = positions[idx] +
-                        gliding_dist*GLIDING_CONST*(positions[acorn_idx]-positions[idx]);
+                        sqr_gliding_dist()*GLIDING_CONST*(positions[acorn_idx]-positions[idx]);
       }
     }
   } else {
