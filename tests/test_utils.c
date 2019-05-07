@@ -7,7 +7,7 @@
 
 Test(utils_unit, random_0_to_1) {
   for(size_t iter = 0; iter < 20; iter++) {
-    double r = random_0_to_1();
+    float r = random_0_to_1();
     cr_assert(r <= 1, "random_0_to_1 should be bound above by 1");
     cr_assert(r >= 0, "random_0_to_1 should be bound below by 0");
   }
@@ -15,8 +15,8 @@ Test(utils_unit, random_0_to_1) {
 
 
 Test(utils_unit, linear_scale) {
-  double start = 1.0;
-  double end = 10.0;
+  float start = 1.0;
+  float end = 10.0;
   size_t iter_count = 9;
   cr_assert_eq(linear_scale(start, end, iter_count, 0), 1.0, "iteration 0 should be at start");
   cr_assert_eq(linear_scale(start, end, iter_count, 2), 3.0, "iteration 2 should be scaled");
@@ -36,7 +36,7 @@ Test(utils_unit, random_min_max) {
   srand((unsigned) time(NULL));
 
 
-  double r = random_min_max(0.0, 1.0);
+  float r = random_min_max(0.0, 1.0);
   cr_assert(r <= 1.0, "random_min_max upper bound 1");
   cr_assert(r >= 0.0, "random_min_max lower bound 1");
 
@@ -56,7 +56,7 @@ Test(utils_unit, random_min_max) {
 
 Test(utils_unit, identity) {
   size_t dim = 10;
-  double* const matrix = (double*)malloc(dim * dim * sizeof(double));
+  float* const matrix = (float*)malloc(dim * dim * sizeof(float));
   identity(dim, matrix);
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {
@@ -69,9 +69,9 @@ Test(utils_unit, identity) {
 
 Test(utils_unit, mmm_ident) {
   size_t dim = 10;
-  double* const res = (double*)malloc(dim * dim * sizeof(double));
-  double* const random = (double*)malloc(dim * dim * sizeof(double));
-  double* const ident = (double*)malloc(dim * dim * sizeof(double));
+  float* const res = (float*)malloc(dim * dim * sizeof(float));
+  float* const random = (float*)malloc(dim * dim * sizeof(float));
+  float* const ident = (float*)malloc(dim * dim * sizeof(float));
   identity(dim, ident);
   for(size_t idx = 0; idx < dim * dim; idx++) {
     random[idx] = random_0_to_1();
@@ -86,10 +86,10 @@ Test(utils_unit, mmm_ident) {
 
 Test(utils_unit, mmm_rotation) {
   size_t dim = 2;
-  double res[] = {0.0, 0.0, 0.0, 0.0};
-  double a[] = {1.0, 2.0, 3.0, 4.0};
-  double b[] = {0.0, -1.0, 1.0, 0.0};
-  double expected[] = {3.0, 1.0, 4.0, 2.0};
+  float res[] = {0.0, 0.0, 0.0, 0.0};
+  float a[] = {1.0, 2.0, 3.0, 4.0};
+  float b[] = {0.0, -1.0, 1.0, 0.0};
+  float expected[] = {2.0, -1.0, 4.0, -3.0};
   mmm(dim, a, b, res);
   cr_assert_arr_eq(expected, res, dim * dim, "matrix should be rotated by 90 degrees");
 }
@@ -97,9 +97,9 @@ Test(utils_unit, mmm_rotation) {
 
 Test(utils_unit, mvm_zero) {
   size_t dim = 100;
-  double* zeros = filled_double_array(dim, 0.0);
-  double* res = filled_double_array(dim, 1.0);
-  double* const random = (double*)malloc(dim * dim * sizeof(double));
+  float* zeros = filled_float_array(dim, 0.0);
+  float* res = filled_float_array(dim, 1.0);
+  float* const random = (float*)malloc(dim * dim * sizeof(float));
   for(size_t idx = 0; idx < dim * dim; idx++) {
     random[idx] = random_0_to_1();
   }
@@ -113,10 +113,10 @@ Test(utils_unit, mvm_zero) {
 
 Test(utils_unit, vva) {
   size_t dim = 100;
-  double* a = filled_double_array(dim, 1.5);
-  double* b = filled_double_array(dim, 0.1);
-  double* res = filled_double_array(dim, 1.0);
-  double* expected = filled_double_array(dim, 1.6);
+  float* a = filled_float_array(dim, 1.5);
+  float* b = filled_float_array(dim, 0.1);
+  float* res = filled_float_array(dim, 1.0);
+  float* expected = filled_float_array(dim, 1.6);
   vva(dim, a, b, res);
   cr_assert_arr_eq(expected, res, dim, "vector should be 1.6 everywhere");
   free(res);
@@ -128,12 +128,12 @@ Test(utils_unit, vva) {
 
 Test(utils_unit, negate) {
   size_t dim = 100;
-  double* const array = (double*)malloc(dim * sizeof(double));
-  double* const copy = (double*)malloc(dim * sizeof(double));
+  float* const array = (float*)malloc(dim * sizeof(float));
+  float* const copy = (float*)malloc(dim * sizeof(float));
   for(size_t idx = 0; idx < dim; idx++) {
     array[idx] = random_0_to_1();
   }
-  memcpy(copy, array, dim * sizeof(double));
+  memcpy(copy, array, dim * sizeof(float));
   negate(dim, array);
   for(size_t idx = 0; idx < dim; idx++) {
     cr_assert(array[idx] == -copy[idx], "array value should be negated");
@@ -144,9 +144,9 @@ Test(utils_unit, negate) {
 Test(utils_unit, mean_value_in_strides_simple) {
   size_t stride = 2;
   size_t length = 10;
-  double test_array[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2};
+  float test_array[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2};
   for (size_t offset = 0; offset < 2; offset++) {
-    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    float mean = mean_value_in_strides(length, test_array, offset, stride);
     cr_assert_eq(mean, offset + 1);
   }
 }
@@ -155,10 +155,10 @@ Test(utils_unit, mean_value_in_strides_simple) {
 Test(utils_unit, mean_value_in_strides_complex) {
   size_t stride = 3;
   size_t length = 6;
-  double test_array[] = {1, 2, 3, 4, 5, 6};
-  double expected[] = {5.0 / 2, 7.0 / 2, 9.0 / 2};
+  float test_array[] = {1, 2, 3, 4, 5, 6};
+  float expected[] = {5.0 / 2, 7.0 / 2, 9.0 / 2};
   for (size_t offset = 0; offset < 3; offset++) {
-    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    float mean = mean_value_in_strides(length, test_array, offset, stride);
     cr_assert_eq(mean, expected[offset]);
   }
 }
@@ -166,11 +166,11 @@ Test(utils_unit, mean_value_in_strides_complex) {
 Test(utils_unit, mean_value_in_strides_complex_2) {
   size_t stride = 2;
   size_t length = 6;
-  double test_array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  float test_array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   // basically take the inner 6 most items with stride equals 2
-  double expected[] = {(3.0 + 5.0 + 7.0) / 3, (4.0 + 6.0 + 8.0) / 3};
+  float expected[] = {(3.0 + 5.0 + 7.0) / 3, (4.0 + 6.0 + 8.0) / 3};
   for (size_t offset = 0; offset < 2; offset++) {
-    double mean = mean_value_in_strides(length, &test_array[2], offset, stride);
+    float mean = mean_value_in_strides(length, &test_array[2], offset, stride);
     cr_assert_eq(mean, expected[offset]);
   }
 }
@@ -178,11 +178,11 @@ Test(utils_unit, mean_value_in_strides_complex_2) {
 Test(utils_unit, mean_value_in_strides_single) {
   size_t stride = 2;
   size_t length = 3;
-  double test_array[] = {1, 2, 3};
+  float test_array[] = {1, 2, 3};
   // basically take the inner 6 most items with stride equals 2
-  double expected[] = {2.0, 2.0};
+  float expected[] = {2.0, 2.0};
   for (size_t offset = 0; offset < 2; offset++) {
-    double mean = mean_value_in_strides(length, test_array, offset, stride);
+    float mean = mean_value_in_strides(length, test_array, offset, stride);
     cr_assert_eq(mean, expected[offset]);
   }
 }

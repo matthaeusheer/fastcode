@@ -171,7 +171,7 @@ void store_timings(const std::vector<unsigned long long> &cycles_vec, std::strin
   }
 }
 
-void store_solutions(double *solution, int dimension, std::string file_path) {
+void store_solutions(float *solution, int dimension, std::string file_path) {
 
   if (file_path != "") {
     std::ofstream outfile;

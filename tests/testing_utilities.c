@@ -8,11 +8,11 @@
 #include "testing_utilities.h"
 
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
-               double min_bound, double max_bound,
+               float min_bound, float max_bound,
                size_t max_iter, algo_func_t algo,
-               double target, double tolerance,
+               float target, float tolerance,
                bool debug) {
-  double* solution = (*algo)(obj_func, pop_size, dim, max_iter, min_bound, max_bound);
+  float* solution = (*algo)(obj_func, pop_size, dim, max_iter, min_bound, max_bound);
   if(debug) {
     print_solution(dim, solution);
     printf("Objective function value = %f\n", (*obj_func)(solution, dim));

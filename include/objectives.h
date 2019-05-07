@@ -10,34 +10,34 @@ extern "C" {
   OBJECTIVE FUNCTIONS PROTOTYPES
 ******************************************************************************/
 
-double sum_of_squares (const double * args, size_t dim);
+float sum_of_squares (const float * args, size_t dim);
 
-double sum            (const double * args, size_t dim);
+float sum            (const float * args, size_t dim);
 
-double sum_negative   (const double * args, size_t dim);
+float sum_negative   (const float * args, size_t dim);
 
-double rastigrin      (const double * args, size_t dim);
+float rastigrin      (const float * args, size_t dim);
 
-double rosenbrock     (const double * args, size_t dim);
+float rosenbrock     (const float * args, size_t dim);
 
-double rosenbrock_neg (const double * args, size_t dim);
+float rosenbrock_neg (const float * args, size_t dim);
 
-double sphere         (const double * args, size_t dim);
+float sphere         (const float * args, size_t dim);
 
-double egghol2d       (const double * args, size_t dim);
+float egghol2d       (const float * args, size_t dim);
 
-double schaf2d        (const double * args, size_t dim);
+float schaf2d        (const float * args, size_t dim);
 
-double griewank       (const double * args, size_t dim);
+float griewank       (const float * args, size_t dim);
 
 
 /*******************************************************************************
   UTILITIES
 ******************************************************************************/
 
-void print_solution(size_t dim, const double * solution);
+void print_solution(size_t dim, const float * solution);
 
-double *filled_double_array(size_t length, double val);
+float *filled_float_array(size_t length, float val);
 
 #ifdef __cplusplus
 }

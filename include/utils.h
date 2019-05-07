@@ -8,27 +8,27 @@ extern "C" {
 
 
 // Objective function type
-typedef double (*obj_func_t)(const double *, size_t);
+typedef float (*obj_func_t)(const float *, size_t);
 
 // Algorithm function type
-typedef double * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const double, const double);
+typedef float * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const float, const float);
 
 /**
  *  Prints the solution array of one algorithm output to console.
  */
-void print_solution(size_t dim, const double * solution);
+void print_solution(size_t dim, const float * solution);
 
 /**
    Prints the population to standard output.
  */
-void print_population(size_t colony_size, size_t dim, const double *population);
+void print_population(size_t colony_size, size_t dim, const float *population);
 
 /**
- * Fills an double array with a given length and unique value for all entries.
+ * Fills an float array with a given length and unique value for all entries.
  */
-double *filled_double_array(size_t length, double val);
+float *filled_float_array(size_t length, float val);
 
-void fill_double_array(double* array, size_t length, double val);
+void fill_float_array(float* array, size_t length, float val);
 
 size_t *filled_size_t_array(size_t length, size_t val);
 
@@ -37,69 +37,69 @@ int *filled_int_array(size_t length, int val);
 void fill_int_array(int* array, size_t length, int val);
 
 /**
-   Generate a random double between min and max.
+   Generate a random float between min and max.
  */
-double random_min_max(double min, double max);
+float random_min_max(float min, float max);
 
 /**
-   Generate a random double 0 and 1.
+   Generate a random float 0 and 1.
  */
-double random_0_to_1();
+float random_0_to_1();
 
 /**
     Linearly scale a value between `start` and `end` by a ratio of `iter_max`/`iter`.
  */
-double linear_scale(double start, double end, size_t iter_max, size_t iter);
+float linear_scale(float start, float end, size_t iter_max, size_t iter);
 
 /**
  * Get average value of an array.
  */
-double average_value(size_t arr_length, const double * arr);
+float average_value(size_t arr_length, const float * arr);
 
 /**
  * Get lowest value of an array.
  */
-double lowest_value(size_t arr_length, const double * arr);
+float lowest_value(size_t arr_length, const float * arr);
 
 /**
    Compute matrix matrix multiplication between `a` and `b`, both square matrices of size
    `dim` times `dim` and store the result in `res`.
  */
-void mmm(size_t dim, const double* a, const double* b, double* res);
+void mmm(size_t dim, const float* a, const float* b, float* res);
 
 /**
    Compute matrix vector multiplication between `m` (matrix) and `v` (vector), where `m` is
    `dim` times `dim` and store the result in `res`.
  */
-void mvm(size_t dim, const double* m, const double* v, double* res);
+void mvm(size_t dim, const float* m, const float* v, float* res);
 
 /**
    Compute vector vector addition between `a` and `b`, both having a length of size `dim`
    and store the result in `res`.
  */
-void vva(size_t dim, const double* a, const double* b, double* res);
+void vva(size_t dim, const float* a, const float* b, float* res);
 
 /**
    Overwrites `matrix` of size `dim` times `dim` to be an identity matrix.
  */
-void identity(size_t dim, double* matrix);
+void identity(size_t dim, float* matrix);
 
 /**
    Negates all values within `array` of size `size`.
  */
-void negate(size_t size, double* array);
+void negate(size_t size, float* array);
 
 /**
    Scalar multiplication of an array.
  */
-void scalar_mul(size_t size, double scalar, double* array);
+void scalar_mul(size_t size, float scalar, float* array);
  /*
  * Calc mean values in strides and offset. Assumes length of input is divisible by stride.
  */
-double mean_value_in_strides(size_t length, const double * input, size_t offset, size_t stride);
+float mean_value_in_strides(size_t length, const float * input, size_t offset, size_t stride);
 
 void print_size_t_array(size_t length, const size_t * arr);
-void print_double_array(size_t length, const double * arr);
+void print_float_array(size_t length, const float * arr);
 void print_int_array(size_t length, const int * arr);
 
 

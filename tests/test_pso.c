@@ -16,9 +16,9 @@ Test(pso_unit,pso_rand_init){
   srand((unsigned) time(NULL));
   size_t swarm_size = 10;
   size_t dim = 4;
-  double min = 0.0;
-  double max = 1.0;
-  double pos[swarm_size*dim];
+  float min = 0.0;
+  float max = 1.0;
+  float pos[swarm_size*dim];
   pso_rand_init(pos, swarm_size, dim, min, max);
   for (size_t s=0;s<swarm_size * dim;s++){
     cr_assert_leq(pos[s], max, "dimension should be bound above");
@@ -30,13 +30,13 @@ Test(pso_unit,pso_eval_fitness){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double x[] = {
+  float x[] = {
     0.0,  0.0,
     2.5,  4.0,
    10.0,  3.0,
   -10.0, -3.0
   };
-  double fitness[swarm_size];
+  float fitness[swarm_size];
   pso_eval_fitness(sum_of_squares, swarm_size, dim, x, fitness);
   cr_assert_float_eq(fitness[0], 0.0, DBL_EPSILON, "first particle fitness should be 0.0");
   cr_assert_float_eq(fitness[1], 22.25, DBL_EPSILON, "second particle fitness should be 22.5");
@@ -48,14 +48,14 @@ Test(pso_unit,pso_gen_init_velocity){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double min_vel[] = {0.0 , -1 , 1.0 , -10.0};
-  double max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
-  double min = 0.0;
-  double max = 1.0;
+  float min_vel[] = {0.0 , -1 , 1.0 , -10.0};
+  float max_vel[] = {1.0 , 1.0, 3.0 , 25.0};
+  float min = 0.0;
+  float max = 1.0;
 
-  double x[swarm_size*dim];
+  float x[swarm_size*dim];
   pso_rand_init(x, swarm_size, dim, min, max);
-  double vel[swarm_size*dim];
+  float vel[swarm_size*dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++){
@@ -70,17 +70,17 @@ Test(pso_unit,pso_best_fitness){
   size_t swarm_size,dim;
   swarm_size = 4;
   dim = 2;
-  double local_best_position[] = {
+  float local_best_position[] = {
     100.0,  0.0,
       2.5,  4.0,
      10.0,  3.0,
     -10.0, -3.0
   };
 
-  double fitness[swarm_size];
+  float fitness[swarm_size];
   pso_eval_fitness(sum_of_squares, swarm_size, dim, local_best_position, fitness);
 
-  double* global_best_position;
+  float* global_best_position;
   size_t best_index;
   best_index = pso_best_fitness(fitness, dim, swarm_size);
   cr_assert(best_index == 1, "the optima is at local_best_position[1]");
@@ -94,19 +94,19 @@ Test(pso_unit,pso_update_velocity){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double min_vel = -1.;
-  double max_vel =  1.;
-  double min = 0.0;
-  double max = 1.0;
+  float min_vel = -1.;
+  float max_vel =  1.;
+  float min = 0.0;
+  float max = 1.0;
 
-  double x[swarm_size*dim];
+  float x[swarm_size*dim];
   pso_rand_init(x, swarm_size, dim, min, max);
-  double y[swarm_size*dim];
+  float y[swarm_size*dim];
   pso_rand_init(y, swarm_size, dim, min, max);
-  double best[swarm_size*dim];
+  float best[swarm_size*dim];
   pso_rand_init(best, 1, dim, min, max);
 
-  double vel[swarm_size*dim];
+  float vel[swarm_size*dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
   for (size_t s=0;s<swarm_size;s++){
@@ -122,19 +122,19 @@ Test(pso_basic,pso_update_position){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
-  double min = 0.0;
-  double max = 1.0;
-  double min_vel = -1.;
-  double max_vel =  1.;
+  float min = 0.0;
+  float max = 1.0;
+  float min_vel = -1.;
+  float max_vel =  1.;
 
-  double x[swarm_size*dim];
+  float x[swarm_size*dim];
   pso_rand_init(x, swarm_size, dim, min, max);
-  double y[swarm_size*dim];
+  float y[swarm_size*dim];
   pso_rand_init(y, swarm_size, dim, min, max);
-  double best[swarm_size*dim];
+  float best[swarm_size*dim];
   pso_rand_init(best, 1, dim, min, max);
 
-  double vel[swarm_size*dim];
+  float vel[swarm_size*dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
   pso_update_position( x, vel, swarm_size, dim, min, max);

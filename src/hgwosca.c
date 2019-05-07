@@ -20,11 +20,11 @@
    Initialise population of `wolf_count` wolves, each with `dim` dimensions, where
    each dimension is bound by `min_positions` and `max_positions`.
  */
-void gwo_init_population(double* const population,
+void gwo_init_population(float* const population,
                          size_t wolf_count,
                          size_t dim,
-                         const double min_position,
-                         const double max_position) {
+                         const float min_position,
+                         const float max_position) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       size_t idx = wolf * dim + dimension;
@@ -40,7 +40,7 @@ void gwo_init_population(double* const population,
 void gwo_update_fitness(size_t wolf_count,
                         size_t dim,
                         obj_func_t obj_func,
-                        double *const population, double *const fitness) {
+                        float *const population, float *const fitness) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     fitness[wolf] = (*obj_func)(&population[wolf * dim], dim);
   }
@@ -51,7 +51,7 @@ void gwo_update_fitness(size_t wolf_count,
    Find the new wolf leaders.
  */
 void gwo_update_leaders(size_t wolf_count,
-                        double *const fitness,
+                        float *const fitness,
                         size_t *const alpha,
                         size_t *const beta,
                         size_t *const delta) {
@@ -76,11 +76,11 @@ void gwo_update_leaders(size_t wolf_count,
 /**
    Initialise the fitness for all wolves.
  */
-void gwo_init_fitness(double *const fitness,
+void gwo_init_fitness(float *const fitness,
                       size_t wolf_count,
                       size_t dim,
                       obj_func_t obj_func,
-                      double *const population) {
+                      float *const population) {
   gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
 }
 
@@ -90,15 +90,15 @@ void gwo_init_fitness(double *const fitness,
    value of `a`.
    TODO: test
  */
-double gwo_get_wolf_pos_update_dim_leader(size_t dimension,
-                                          double a,
-                                          const double *const wolf,
-                                          const double *const leader_pos) {
-  double r1 = random_0_to_1();
-  double r2 = random_0_to_1();
-  double A = 2 * a * r1 - a;                // see equation 3.3
-  double C = 2 * r2;                        // see equation 3.4
-  double D = fabs(C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
+float gwo_get_wolf_pos_update_dim_leader(size_t dimension,
+                                          float a,
+                                          const float *const wolf,
+                                          const float *const leader_pos) {
+  float r1 = random_0_to_1();
+  float r2 = random_0_to_1();
+  float A = 2 * a * r1 - a;                // see equation 3.3
+  float C = 2 * r2;                        // see equation 3.4
+  float D = fabs(C * leader_pos[dimension] - wolf[dimension]);     // see equation 3.1
   return leader_pos[dimension] - A * D;     // see equation 3.2
 }
 
@@ -108,15 +108,15 @@ double gwo_get_wolf_pos_update_dim_leader(size_t dimension,
    value of `a`. See equ (12) on the Hybrid paper.
    TODO: test
  */
-double gwo_get_wolf_pos_update_dim_alpha(size_t dimension,
-                                         double a,
-                                         const double *const wolf,
-                                         const double *const alpha_pos) {
-  double r1 = random_0_to_1();
-  double r2 = random_0_to_1();
-  double A = 2 * a * r1 - a;                // see equation 3.3
-  double C = 2 * r2;                        // see equation 3.4
-  double D;
+float gwo_get_wolf_pos_update_dim_alpha(size_t dimension,
+                                         float a,
+                                         const float *const wolf,
+                                         const float *const alpha_pos) {
+  float r1 = random_0_to_1();
+  float r2 = random_0_to_1();
+  float A = 2 * a * r1 - a;                // see equation 3.3
+  float C = 2 * r2;                        // see equation 3.4
+  float D;
   if (random_0_to_1() < 0.5) {
     D = random_0_to_1() * sin(random_0_to_1()) * fabs(C * alpha_pos[dimension] - wolf[dimension]);
   } else {
@@ -132,13 +132,13 @@ double gwo_get_wolf_pos_update_dim_alpha(size_t dimension,
    TODO: test
  */
 void gwo_update_wolf_position(size_t dim,
-                              double a,
-                              double *const wolf,
-                              const double *const alpha_pos,
-                              const double *const beta_pos,
-                              const double *const delta_pos) {
+                              float a,
+                              float *const wolf,
+                              const float *const alpha_pos,
+                              const float *const beta_pos,
+                              const float *const delta_pos) {
   for (size_t idx = 0; idx < dim; idx++) {
-    double new_pos = 0.0;
+    float new_pos = 0.0;
     new_pos += gwo_get_wolf_pos_update_dim_alpha(idx, a, wolf, alpha_pos);
     new_pos += gwo_get_wolf_pos_update_dim_leader(idx, a, wolf, beta_pos);
     new_pos += gwo_get_wolf_pos_update_dim_leader(idx, a, wolf, delta_pos);
@@ -153,12 +153,12 @@ void gwo_update_wolf_position(size_t dim,
  */
 void gwo_update_all_positions(size_t wolf_count,
                               size_t dim,
-                              double a,
-                              double *const population,
+                              float a,
+                              float *const population,
                               size_t alpha, size_t beta, size_t delta) {
-  const double *const alpha_pos = &population[alpha * dim];
-  const double *const beta_pos = &population[beta * dim];
-  const double *const delta_pos = &population[delta * dim];
+  const float *const alpha_pos = &population[alpha * dim];
+  const float *const beta_pos = &population[beta * dim];
+  const float *const delta_pos = &population[delta * dim];
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     if (wolf == alpha || wolf == beta || wolf == delta) {
       continue;
@@ -171,7 +171,7 @@ void gwo_update_all_positions(size_t wolf_count,
 /**
    Clamp `val` between `min` and `max`.
  */
-double gwo_clamp(double val, double min, double max) {
+float gwo_clamp(float val, float min, float max) {
   return val < min ? min : (val > max ? max : val);
 }
 
@@ -180,9 +180,9 @@ double gwo_clamp(double val, double min, double max) {
    Clamp solutions into feasible space.
  */
 void gwo_clamp_all_positions(size_t wolf_count, size_t dim,
-                             double *const population,
-                             const double min_position,
-                             const double max_position) {
+                             float *const population,
+                             const float min_position,
+                             const float max_position) {
   for (size_t wolf = 0; wolf < wolf_count; wolf++) {
     for (size_t dimension = 0; dimension < dim; dimension++) {
       population[wolf * dim + dimension] = gwo_clamp(population[wolf * dim + dimension],
@@ -192,8 +192,8 @@ void gwo_clamp_all_positions(size_t wolf_count, size_t dim,
   }
 }
 
-size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
-  double max = -INFINITY;
+size_t gwo_get_fittest_idx(size_t colony_size, const float *const fitness) {
+  float max = -INFINITY;
   size_t max_idx = 0;
   for (size_t idx = 0; idx < colony_size; idx++) {
     if (fitness[idx] < max) {
@@ -218,16 +218,16 @@ size_t gwo_get_fittest_idx(size_t colony_size, const double *const fitness) {
    Returns:
      The position minimising the objective function. This array has size `dim`.
  */
-double *gwo_hgwosca(obj_func_t obj_func,
+float *gwo_hgwosca(obj_func_t obj_func,
                     size_t wolf_count,
                     size_t dim,
                     size_t max_iterations,
-                    const double min_position,
-                    const double max_position) {
+                    const float min_position,
+                    const float max_position) {
   srand(100);
 
-  double population[wolf_count * dim];
-  double fitness[wolf_count];
+  float population[wolf_count * dim];
+  float fitness[wolf_count];
   gwo_init_population(population, wolf_count, dim, min_position, max_position);
   gwo_init_fitness(fitness, wolf_count, dim, obj_func, population);
   size_t alpha = 0, beta = 0, delta = 0;
@@ -240,7 +240,7 @@ double *gwo_hgwosca(obj_func_t obj_func,
 
   for (size_t iter = 0; iter < max_iterations; iter++) {
     gwo_update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
-    double a = 2 - iter * ((double) 2 / max_iterations);
+    float a = 2 - iter * ((float) 2 / max_iterations);
     gwo_update_all_positions(wolf_count, dim, a, population, alpha, beta, delta);
     gwo_clamp_all_positions(wolf_count, dim, population, min_position, max_position);
     gwo_update_fitness(wolf_count, dim, obj_func, population, fitness);
@@ -253,8 +253,8 @@ double *gwo_hgwosca(obj_func_t obj_func,
   }
 
   gwo_update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
-  double *const best_solution = (double *const) malloc(dim * sizeof(double));
-  memcpy(best_solution, &population[alpha * dim], dim * sizeof(double));
+  float *const best_solution = (float *const) malloc(dim * sizeof(float));
+  memcpy(best_solution, &population[alpha * dim], dim * sizeof(float));
 
   return best_solution;
 }

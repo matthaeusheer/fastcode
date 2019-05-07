@@ -15,10 +15,10 @@ Test(macro_tests, min_and_max) {
 
 Test(penguin_unit, initialise_population) {
   // Generating the max and min values allowed for every dimension.
-  double max = 100.0;
-  double min = -100.0;
+  float max = 100.0;
+  float min = -100.0;
 
-  double population[100 * 4];
+  float population[100 * 4];
 
   // Generating population of size 100 with dim 4.
   pen_initialise_population(population, 100, 4, min, max);
@@ -32,9 +32,9 @@ Test(penguin_unit, initialise_population) {
 
 
 Test(penguin_unit, get_initial_fitness) {
-  double population[] = {1.0, 2.0, 3.0, 4.0, 5.0, -5.0, 10, -1.0};
+  float population[] = {1.0, 2.0, 3.0, 4.0, 5.0, -5.0, 10, -1.0};
 
-  double fitness[4];
+  float fitness[4];
   // Getting the initial fitness of population of size 4 and dim 2 by using the summation function.
   pen_update_fitness(fitness, 4, 2, population, sum);
 
@@ -47,9 +47,9 @@ Test(penguin_unit, get_initial_fitness) {
 
 
 Test(penguin_unit, eucledian_distance) {
-  double point1[] = {10.0, 10.0};
-  double point2[] = {10.0, 11.0};
-  double dist = pen_eucledian_distance(2, point1, point2);
+  float point1[] = {10.0, 10.0};
+  float point2[] = {10.0, 11.0};
+  float dist = pen_eucledian_distance(2, point1, point2);
   cr_assert_eq(dist, 1.0, "Distance test 1 failed.");
 
   point1[0] = 0.0;
@@ -62,9 +62,9 @@ Test(penguin_unit, eucledian_distance) {
 
 
 Test(penguin_unit, clamp_position) {
-  double position[] = {-105, -90,   100,  1000, 0  };
-  double max = 100;
-  double min = -100;
+  float position[] = {-105, -90,   100,  1000, 0  };
+  float max = 100;
+  float min = -100;
   pen_clamp_position(5, position, min, max);
 
   cr_assert_eq(position[0], -100, "1st dimension clamp failed.");
@@ -76,12 +76,12 @@ Test(penguin_unit, clamp_position) {
 
 
 Test(penguin_unit, mutate) {
-  double original[] = {0.0, 0.0, 0.0, 0.0};
+  float original[] = {0.0, 0.0, 0.0, 0.0};
   size_t dim = 4;
 
   // Test whether permutation happens even though mutation_coef = 0.
-  double mutation_coef = 0.0;
-  double expected[] = {0.0, 0.0, 0.0, 0.0};
+  float mutation_coef = 0.0;
+  float expected[] = {0.0, 0.0, 0.0, 0.0};
   pen_mutate(dim, original, mutation_coef);
   cr_assert_arr_eq(original, expected, dim, "For mutation coef zero, no mutation should happen.");
 
@@ -110,12 +110,12 @@ Test(penguin_unit, mutate) {
 
 Test(penguin_unit, attractiveness) {
   size_t dim = 2;
-  double penguins[] = {
+  float penguins[] = {
     0.0, 0.0,
     4.0, 4.0,
     2.0, 1.0
   };
-  double heat_rad = 2.3;
+  float heat_rad = 2.3;
   cr_assert_eq(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
                pen_attractiveness(heat_rad, dim, &penguins[2], &penguins[0], 0.5),
                "attractiveness should not be affected by the order of the penguins");
