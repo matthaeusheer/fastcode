@@ -37,7 +37,7 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
                              cfg.max_position);
 
   std::vector<timeInt64> cycles_vec;
-  double *solution;
+  float *solution;
 
   // Run the actual algorithm and time it for n_iterations
   for (int rep = 0; rep < cfg.n_repetitions; ++rep) {
@@ -91,6 +91,3 @@ algo_map_t create_algo_map() {
                          {"squirrel", &squirrel}};
   return algo_map;
 }
-
-
-

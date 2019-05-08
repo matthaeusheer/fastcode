@@ -22,7 +22,7 @@
                 value at that best solution
  */
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
-               double min_bound, double max_bound,
+               float min_bound, float max_bound,
                size_t max_iter, algo_func_t algo,
-               double target, double tolerance,
+               float target, float tolerance,
                bool debug);
