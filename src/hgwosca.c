@@ -226,9 +226,13 @@ float *gwo_hgwosca(obj_func_t obj_func,
                     const float max_position) {
   srand(100);
 
-  float population[wolf_count * dim];
-  float fitness[wolf_count];
+  // float population[wolf_count * dim];
+  size_t sizeof_population = wolf_count * dim * sizeof(float);
+  float* population = (float*)malloc(sizeof_population);
   gwo_init_population(population, wolf_count, dim, min_position, max_position);
+
+  // float fitness[wolf_count];
+  float* fitness = (float*)malloc(wolf_count*sizeof(float));
   gwo_init_fitness(fitness, wolf_count, dim, obj_func, population);
   size_t alpha = 0, beta = 0, delta = 0;
 
@@ -255,6 +259,9 @@ float *gwo_hgwosca(obj_func_t obj_func,
   gwo_update_leaders(wolf_count, fitness, &alpha, &beta, &delta);
   float *const best_solution = (float *const) malloc(dim * sizeof(float));
   memcpy(best_solution, &population[alpha * dim], dim * sizeof(float));
+
+  free(population);
+  free(fitness);
 
   return best_solution;
 }

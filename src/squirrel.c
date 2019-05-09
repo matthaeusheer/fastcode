@@ -62,7 +62,6 @@ void sqr_eval_fitness(obj_func_t obj_func,
   for (size_t pop=0; pop<pop_size; pop++){
     fitness[pop] = obj_func(positions+(pop*dim),dim);
   }
-  return ;
 }
 
 
@@ -82,11 +81,14 @@ void sqr_lowest_val_to_front(float* fitness,float* positions, size_t pop_size, s
   fitness[best_idx] = temp;
 
   // careful
-  float temp_pos[dim];
+  // float temp_pos[dim];
+  float* temp_pos = (float*)malloc(dim*sizeof(float));
 
   memcpy(temp_pos, positions, dim*sizeof(float));
   memcpy(positions, positions+(dim*best_idx), dim*sizeof(float));
   memcpy(positions +(dim*best_idx), temp_pos, dim*sizeof(float));
+
+  free(temp_pos);
 }
 
   /**
@@ -218,12 +220,14 @@ float* squirrel (obj_func_t obj_func,
   float p_dp = PREDATOR_PROB;
   size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
 
-  float positions[pop_size*dim];
+  size_t sizeof_position = pop_size*dim*sizeof(float);
+  // float positions[pop_size*dim];
+  float* positions = (float*)malloc(sizeof_position);
   sqr_rand_init(positions,pop_size,dim,min_position,max_position);
-  size_t sizeof_position = dim*pop_size;
 
-  size_t sizeof_fitness = pop_size;
-  float fitness[dim*pop_size];
+  size_t sizeof_fitness = pop_size*sizeof(float);
+  // float fitness[dim*pop_size];
+  float* fitness = (float*)malloc(sizeof_fitness);
   sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
 
   // positions[0] is hickory, positions[1:3] are acorn, rest are normal.
@@ -262,6 +266,9 @@ float* squirrel (obj_func_t obj_func,
 
   float* const best_solution = (float *const) malloc(dim);
   memcpy(best_solution, positions , dim*sizeof(float));
+
+  // free(fitness);
+  free(positions);
 
   return best_solution;
 }

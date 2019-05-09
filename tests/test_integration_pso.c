@@ -16,10 +16,6 @@ Test(pso_basic_integration, sphere) {
   test_algo(sphere, SWARM_SIZE, DIM, -10, 10, 1000, pso_basic, 0, 0.1, false);
 }
 
-Test(pso_basic_integration, rastigrin) {
-  test_algo(rastigrin, SWARM_SIZE, DIM, -5, 5, 1000, pso_basic, 0, 0.1, false);
-}
-
 Test(pso_integration, rosenbrock) {
   test_algo(rosenbrock, SWARM_SIZE, DIM, -30, 30, 1000, pso_basic, 0, 0.01, false);
 }
