@@ -95,15 +95,18 @@ void pen_get_spiral_like_movement(float* const spiral,
                                   const float *const centre,
                                   const float *const penguin,
                                   const float *const rotation_matrix) {
-  float centre_cpy[dim];
+  float* centre_cpy = (float*)malloc(dim*sizeof(float));
   memcpy(centre_cpy, centre, dim * sizeof(float));
 
   negate(dim, centre_cpy);
-  float tmp[dim];
+  float* tmp = (float*)malloc(dim*sizeof(float));
   vva(dim, penguin, centre_cpy, tmp);
   mvm(dim, rotation_matrix, tmp, spiral);
 
   scalar_mul(dim, attract, spiral);
+
+  free(tmp);
+  free(centre_cpy);
 }
 
 
@@ -155,8 +158,10 @@ size_t pen_get_fittest_idx(size_t colony_size, const float *const fitness) {
    `theta` (between -pi and pi).
  */
 void pen_init_rotation_matrix(float* const matrix, size_t dim, const float theta) {
-  float tmp[dim * dim];
-  float basic_rotation[dim * dim];
+
+  float* tmp = (float*)malloc(dim*dim*sizeof(float));
+  float* basic_rotation = (float*)malloc(dim*dim*sizeof(float));
+
   identity(dim, matrix);
   identity(dim, tmp);
   identity(dim, basic_rotation);
@@ -179,8 +184,10 @@ void pen_init_rotation_matrix(float* const matrix, size_t dim, const float theta
     }
   }
   scalar_mul(dim * dim, A, matrix);
-}
 
+  free(tmp);
+  free(basic_rotation);
+}
 
 /**
    Run the emperor penguin metaheuristic.
@@ -203,16 +210,16 @@ float *pen_emperor_penguin(obj_func_t obj_func,
   srand(100);
 
   // initialise data
-  float population[colony_size * dim];
-  float fitness[colony_size];
-  float spiral[dim];
-  float r_matrix[dim * dim];
-  float mean_pos[dim];
-  int n_updates_per_pengu[colony_size];
-  float updated_positions[colony_size * colony_size * dim];
+  float* population = (float*)malloc(colony_size*dim*sizeof(float));
   pen_initialise_population(population, colony_size, dim, min_position, max_position);
+
+  // float fitness[colony_size];
+  float* fitness = (float*)malloc(colony_size*sizeof(float));
   pen_update_fitness(fitness, colony_size, dim, population, obj_func);
+
+  float* r_matrix = (float*)malloc(dim*dim*sizeof(float));
   pen_init_rotation_matrix(r_matrix, dim, B);
+
   float base_heat_radiation = pen_heat_radiation();
 
   #ifdef DEBUG
@@ -231,7 +238,13 @@ float *pen_emperor_penguin(obj_func_t obj_func,
     float attenuation_coef = linear_scale(ATT_COEF_START, ATT_COEF_END, max_iterations, iter);
 
     // number of updates for each pengu
+    int* n_updates_per_pengu = (int*)malloc(colony_size*sizeof(int));
     fill_int_array(n_updates_per_pengu, colony_size, 0);
+
+    // float updated_positions[colony_size * colony_size * dim];
+    float* updated_positions = (float*)malloc(colony_size*colony_size*dim*sizeof(float));
+    fill_float_array(updated_positions, colony_size * colony_size * dim, 0.0);
+
 
     for (size_t penguin_j = 0; penguin_j < colony_size; penguin_j++) {
       for (size_t penguin_i = 0; penguin_i < colony_size; penguin_i++) {
@@ -248,6 +261,7 @@ float *pen_emperor_penguin(obj_func_t obj_func,
                                               attenuation_coef);
 
           // calculate spiral movement
+          float* spiral = (float*)malloc(dim*sizeof(float));
           pen_get_spiral_like_movement(spiral, attract, dim,
                                        &population[penguin_i * dim],
                                        &population[penguin_j * dim],
@@ -266,12 +280,15 @@ float *pen_emperor_penguin(obj_func_t obj_func,
           memcpy(&updated_positions[penguin_j * dim * colony_size + n_updates_per_pengu[penguin_j] * dim],
                   spiral, dim * sizeof(float));
           n_updates_per_pengu[penguin_j] += 1;
+
+          free(spiral);
         }
       }
     }
 
     // accumulate changes for every pengu during this iteration
     for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
+      float* mean_pos = (float*)malloc(dim*sizeof(float));
       fill_float_array(mean_pos, dim, 0.0);
 
       if (n_updates_per_pengu[pengu_idx] > 0) {
@@ -287,20 +304,27 @@ float *pen_emperor_penguin(obj_func_t obj_func,
         memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(float));
         fitness[pengu_idx] = (*obj_func)(&population[pengu_idx * dim], dim);
       }
+      free(mean_pos);
     }
+
+    free(n_updates_per_pengu);
+    free(updated_positions);
 
     #ifdef DEBUG
       print_population(colony_size, dim, population);
       printf("# AVG FITNESS: %f\n", average_value(colony_size, fitness));
       printf("# BEST FITNESS: %f\n", lowest_value(colony_size, fitness));
     #endif
-
   } // end loop on iterations
 
   // final selection and cleanup
   size_t best_solution = pen_get_fittest_idx(colony_size, fitness);
   float *const final_solution = (float *) malloc(dim * sizeof(float));
   memcpy(final_solution, &population[best_solution], dim * sizeof(float));
+
+  free(r_matrix);
+  free(population);
+  free(fitness);
 
   return final_solution;
 }

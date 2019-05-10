@@ -217,16 +217,14 @@ float* squirrel (obj_func_t obj_func,
                   const float max_position) {
   srand(100);
 
-  float p_dp = PREDATOR_PROB;
-  size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
+  // float p_dp = PREDATOR_PROB;
+  // size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
 
   size_t sizeof_position = pop_size*dim*sizeof(float);
-  // float positions[pop_size*dim];
   float* positions = (float*)malloc(sizeof_position);
   sqr_rand_init(positions,pop_size,dim,min_position,max_position);
 
   size_t sizeof_fitness = pop_size*sizeof(float);
-  // float fitness[dim*pop_size];
   float* fitness = (float*)malloc(sizeof_fitness);
   sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
 
@@ -234,9 +232,9 @@ float* squirrel (obj_func_t obj_func,
   sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
   #ifdef DEBUG
-    print_population(population, dim, positions); // printing the initial status of the population
-    printf("# AVG FITNESS: %f\n", average_value(population, fitness));
-    printf("# BEST FITNESS: %f\n", lowest_value(population, fitness));
+    print_population(pop_size, dim, positions); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
+    printf("# BEST FITNESS: %f\n", lowest_value(pop_size, fitness));
   #endif
 
   float s_c = 0;
@@ -258,9 +256,9 @@ float* squirrel (obj_func_t obj_func,
     sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
     #ifdef DEBUG
-      print_population(population, dim, positions); // printing the initial status of the population
-      printf("# AVG FITNESS: %f\n", average_value(population, fitness));
-      printf("# BEST FITNESS: %f\n", lowest_value(population, fitness));
+      print_population(pop_size, dim, positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(pop_size, fitness));
     #endif
   }
 
