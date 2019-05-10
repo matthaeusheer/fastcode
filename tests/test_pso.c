@@ -21,8 +21,8 @@ Test(pso_unit,pso_rand_init){
   float pos[swarm_size*dim];
   pso_rand_init(pos, swarm_size, dim, min, max);
   for (size_t s=0;s<swarm_size * dim;s++){
-    cr_assert_leq(pos[s], max, "dimension should be bound above");
-    cr_assert_geq(pos[s], min, "dimension should be bound below");
+    cr_expect_leq(pos[s], max, "dimension should be bound above");
+    cr_expect_geq(pos[s], min, "dimension should be bound below");
   }
 }
 
@@ -38,10 +38,14 @@ Test(pso_unit,pso_eval_fitness){
   };
   float fitness[swarm_size];
   pso_eval_fitness(sum_of_squares, swarm_size, dim, x, fitness);
-  cr_assert_float_eq(fitness[0], 0.0, DBL_EPSILON, "first particle fitness should be 0.0");
-  cr_assert_float_eq(fitness[1], 22.25, DBL_EPSILON, "second particle fitness should be 22.5");
-  cr_assert_float_eq(fitness[2], 109.0, DBL_EPSILON, "third particle's fitness should be 109");
-  cr_assert_float_eq(fitness[3], 109.0, DBL_EPSILON, "fourth particle's fitness should be 109");
+  cr_expect_float_eq(fitness[0], 0.0, FLT_EPSILON,
+                     "first particle fitness should be 0.0");
+  cr_expect_float_eq(fitness[1], 22.25, FLT_EPSILON,
+                     "second particle fitness should be 22.5");
+  cr_expect_float_eq(fitness[2], 109.0, FLT_EPSILON,
+                     "third particle's fitness should be 109");
+  cr_expect_float_eq(fitness[3], 109.0, FLT_EPSILON,
+                     "fourth particle's fitness should be 109");
 }
 
 Test(pso_unit,pso_gen_init_velocity){
@@ -60,8 +64,10 @@ Test(pso_unit,pso_gen_init_velocity){
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++){
       size_t idx = s*dim + d;
-      cr_assert_leq(vel[idx], (max_vel[d] - x[idx])*0.5, "%ld dimension should be bound above",d);
-      cr_assert_geq(vel[idx], (min_vel[d] - x[idx])*0.5, "%ld dimension should be bound below",d);
+      cr_expect_leq(vel[idx], (max_vel[d] - x[idx])*0.5,
+                    "%ld dimension should be bound above",d);
+      cr_expect_geq(vel[idx], (min_vel[d] - x[idx])*0.5,
+                    "%ld dimension should be bound below",d);
     }
   }
 }
@@ -83,11 +89,13 @@ Test(pso_unit,pso_best_fitness){
   float* global_best_position;
   size_t best_index;
   best_index = pso_best_fitness(fitness, dim, swarm_size);
-  cr_assert(best_index == 1, "the optima is at local_best_position[1]");
+  cr_expect_eq(best_index, 1, "the optima is at local_best_position[1]");
 
   global_best_position = local_best_position+(dim*best_index);
-  cr_assert(global_best_position[0] == 2.5, "first dim of global best is 2.5");
-  cr_assert(global_best_position[1] == 4.0, "second dim of global best is 4.0");
+  cr_expect_float_eq(global_best_position[0], 2.5, FLT_EPSILON,
+                     "first dim of global best is 2.5");
+  cr_expect_float_eq(global_best_position[1], 4.0, FLT_EPSILON,
+                     "second dim of global best is 4.0");
 }
 
 Test(pso_unit,pso_update_velocity){
@@ -112,13 +120,15 @@ Test(pso_unit,pso_update_velocity){
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++) {
       size_t idx = s*dim + d;
-        cr_assert_leq(vel[idx], max_vel ,"%ld dimension'd velocity should be bound above",d);
-        cr_assert_geq(vel[idx], min_vel ,"%ld dimension'd velocity should be bound below",d);
+        cr_expect_leq(vel[idx], max_vel,
+                      "%ld dimension'd velocity should be bound above",d);
+        cr_expect_geq(vel[idx], min_vel,
+                      "%ld dimension'd velocity should be bound below",d);
     }
   }
 }
 
-Test(pso_basic,pso_update_position){
+Test(pso_unit,pso_update_position){
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -141,8 +151,10 @@ Test(pso_basic,pso_update_position){
   for (size_t s=0;s<swarm_size;s++){
     for (size_t d = 0; d < dim; d++) {
       size_t idx = s*dim + d;
-      cr_assert_leq(x[idx], max ,"%ld dimension'd position should be bound above",d);
-      cr_assert_geq(x[idx], min ,"%ld dimension'd position should be bound below",d);
+      cr_expect_leq(x[idx], max,
+                    "%ld dimension'd position should be bound above",d);
+      cr_expect_geq(x[idx], min,
+                    "%ld dimension'd position should be bound below",d);
     }
   }
 }
