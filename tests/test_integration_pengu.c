@@ -18,7 +18,7 @@ Test(pengu_integration, rosenbrock) {
 }
 
 Test(pengu_integration, rastigrin) {
-  test_algo(rastigrin, 100, 4, -5, 5, 200, pen_emperor_penguin, 0, 0.1, false);
+  test_algo(rastigrin, 100, 2, -5, 5, 2000, pen_emperor_penguin, 0, 0.1, false);
 }
 
 Test(pengu_integration, sphere) {

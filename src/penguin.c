@@ -95,18 +95,20 @@ void pen_get_spiral_like_movement(float* const spiral,
                                   const float *const centre,
                                   const float *const penguin,
                                   const float *const rotation_matrix) {
-  float* centre_cpy = (float*)malloc(dim*sizeof(float));
+  // float* centre_cpy = (float*)malloc(dim*sizeof(float));
+  float centre_cpy[dim];
   memcpy(centre_cpy, centre, dim * sizeof(float));
 
   negate(dim, centre_cpy);
-  float* tmp = (float*)malloc(dim*sizeof(float));
+  // float* tmp = (float*)malloc(dim*sizeof(float));
+  float tmp[dim];
   vva(dim, penguin, centre_cpy, tmp);
   mvm(dim, rotation_matrix, tmp, spiral);
 
   scalar_mul(dim, attract, spiral);
 
-  free(tmp);
-  free(centre_cpy);
+  // free(tmp);
+  // free(centre_cpy);
 }
 
 
@@ -261,7 +263,8 @@ float *pen_emperor_penguin(obj_func_t obj_func,
                                               attenuation_coef);
 
           // calculate spiral movement
-          float* spiral = (float*)malloc(dim*sizeof(float));
+          // float* spiral = (float*)malloc(dim*sizeof(float));
+          float spiral[dim];
           pen_get_spiral_like_movement(spiral, attract, dim,
                                        &population[penguin_i * dim],
                                        &population[penguin_j * dim],
@@ -281,14 +284,15 @@ float *pen_emperor_penguin(obj_func_t obj_func,
                   spiral, dim * sizeof(float));
           n_updates_per_pengu[penguin_j] += 1;
 
-          free(spiral);
+          // free(spiral);
         }
       }
     }
 
     // accumulate changes for every pengu during this iteration
     for (size_t pengu_idx = 0; pengu_idx < colony_size; pengu_idx++) {
-      float* mean_pos = (float*)malloc(dim*sizeof(float));
+      // float* mean_pos = (float*)malloc(dim*sizeof(float));
+      float mean_pos[dim];
       fill_float_array(mean_pos, dim, 0.0);
 
       if (n_updates_per_pengu[pengu_idx] > 0) {
@@ -299,12 +303,11 @@ float *pen_emperor_penguin(obj_func_t obj_func,
                                                       dim);
           mean_pos[dim_idx] = mean_pos_dim;
         }
-
         // finally positions and fitness for a whole iteration
         memcpy(&population[pengu_idx * dim], mean_pos, dim * sizeof(float));
         fitness[pengu_idx] = (*obj_func)(&population[pengu_idx * dim], dim);
       }
-      free(mean_pos);
+      // free(mean_pos);
     }
 
     free(n_updates_per_pengu);
