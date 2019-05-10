@@ -17,7 +17,7 @@ void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
     print_solution(dim, solution);
     printf("Objective function value = %f\n", (*obj_func)(solution, dim));
   }
-  cr_assert(fabs((*obj_func)(solution, dim) - target) < tolerance,
-            "objective should be minimised at %f", target);
+  cr_expect_float_eq((*obj_func)(solution, dim), target, tolerance,
+                     "objective should be minimised at %f", target);
   free(solution);
 }
