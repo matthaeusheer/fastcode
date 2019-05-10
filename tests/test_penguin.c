@@ -31,10 +31,14 @@ Test(penguin_unit, get_initial_fitness) {
   float population[] = {1.0, 2.0, 3.0, 4.0, 5.0, -5.0, 10, -1.0};
   float fitness[4];
   pen_update_fitness(fitness, 4, 2, population, sum);
-  cr_expect_float_eq(fitness[0], 3.0, 0.001, "fitness of penguin 0 incorrect");
-  cr_expect_float_eq(fitness[1], 7.0, 0.001, "fitness of penguin 1 incorrect");
-  cr_expect_float_eq(fitness[2], 0.0, 0.001, "fitness of penguin 2 incorrect");
-  cr_expect_float_eq(fitness[3], 9.0, 0.001, "fitness of penguin 3 incorrect");
+  cr_expect_float_eq(fitness[0], 3.0, FLT_EPSILON,
+                     "fitness of penguin 0 incorrect");
+  cr_expect_float_eq(fitness[1], 7.0, FLT_EPSILON,
+                     "fitness of penguin 1 incorrect");
+  cr_expect_float_eq(fitness[2], 0.0, FLT_EPSILON,
+                     "fitness of penguin 2 incorrect");
+  cr_expect_float_eq(fitness[3], 9.0, FLT_EPSILON,
+                     "fitness of penguin 3 incorrect");
 
 }
 
@@ -43,13 +47,13 @@ Test(penguin_unit, eucledian_distance) {
   float point1[] = {10.0, 10.0};
   float point2[] = {10.0, 11.0};
   float dist = pen_eucledian_distance(2, point1, point2);
-  cr_expect_float_eq(dist, 1.0, 0.001, "distance test 1 failed");
+  cr_expect_float_eq(dist, 1.0, FLT_EPSILON, "distance test 1 failed");
   point1[0] = 0.0;
   point1[1] = 0.0;
   point2[0] = 3.0;
   point2[1] = 4.0;
   dist = pen_eucledian_distance(2, point1, point2);
-  cr_expect_float_eq(dist, 5.0, 0.001, "distance test 2 failed");
+  cr_expect_float_eq(dist, 5.0, FLT_EPSILON, "distance test 2 failed");
 }
 
 
@@ -58,11 +62,16 @@ Test(penguin_unit, clamp_position) {
   float max = 100;
   float min = -100;
   pen_clamp_position(5, position, min, max);
-  cr_expect_float_eq(position[0], -100, 0.001, "1st dimension clamp failed");
-  cr_expect_float_eq(position[1], -90, 0.001, "2nd dimension clamp failed");
-  cr_expect_float_eq(position[2], 100, 0.001, "3rd dimension clamp failed");
-  cr_expect_float_eq(position[3], 100, 0.001, "4th dimension clamp failed");
-  cr_expect_float_eq(position[4], 0, 0.001, "5th dimension clamp failed");
+  cr_expect_float_eq(position[0], -100, FLT_EPSILON,
+                     "1st dimension clamp failed");
+  cr_expect_float_eq(position[1], -90, FLT_EPSILON,
+                     "2nd dimension clamp failed");
+  cr_expect_float_eq(position[2], 100, FLT_EPSILON,
+                     "3rd dimension clamp failed");
+  cr_expect_float_eq(position[3], 100, FLT_EPSILON,
+                     "4th dimension clamp failed");
+  cr_expect_float_eq(position[4], 0, FLT_EPSILON,
+                     "5th dimension clamp failed");
 }
 
 
@@ -73,7 +82,7 @@ Test(penguin_unit, mutate) {
   float expected[] = {0.0, 0.0, 0.0, 0.0};
   pen_mutate(dim, original, mutation_coef);
   for(size_t idx = 0; idx < dim; idx++) {
-    cr_expect_float_eq(original[idx], expected[idx], 0.001,
+    cr_expect_float_eq(original[idx], expected[idx], FLT_EPSILON,
                        "no mutation should happen at index %ld", idx);
   }
   mutation_coef = 1.0;
@@ -108,14 +117,14 @@ Test(penguin_unit, attractiveness) {
   float heat_rad = 2.3;
   cr_expect_float_eq(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
                      pen_attractiveness(heat_rad, dim, &penguins[2], &penguins[0], 0.5),
-                     0.001,
+                     FLT_EPSILON,
                      "attractiveness should not be affected by the order of the penguins");
   cr_expect_lt(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
                pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[4], 0.5),
                "penguins 1 should attract penguin 3 more than it attracts penguin 2");
   cr_expect_float_eq(pen_attractiveness(0, dim, &penguins[0], &penguins[2], 0.5),
                      0.0,
-                     0.001,
+                     FLT_EPSILON,
                      "attractiveness should linearly scale with heat radiation");
   cr_expect_lt(pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.5),
                pen_attractiveness(heat_rad, dim, &penguins[0], &penguins[2], 0.1),
