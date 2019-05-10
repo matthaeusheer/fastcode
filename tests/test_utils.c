@@ -56,31 +56,37 @@ Test(utils_unit, random_min_max) {
 
 Test(utils_unit, identity) {
   size_t dim = 10;
-  float* const matrix = (float*)malloc(dim * dim * sizeof(float));
+  float matrix[dim * dim];
   identity(dim, matrix);
   for(size_t row = 0; row < dim; row++) {
     for(size_t col = 0; col < dim; col++) {
-      cr_assert(matrix[row * dim + col] == (row == col ? 1.0 : 0.0), "matrix should be an identity matrix");
+      cr_expect_float_eq(matrix[row * dim + col],
+                         (row == col ? 1.0 : 0.0),
+                         0.0001,
+                         "entry [%ld, %ld] should be correct", row, col);
     }
   }
-  free(matrix);
 }
 
 
 Test(utils_unit, mmm_ident) {
   size_t dim = 10;
-  float* const res = (float*)malloc(dim * dim * sizeof(float));
-  float* const random = (float*)malloc(dim * dim * sizeof(float));
-  float* const ident = (float*)malloc(dim * dim * sizeof(float));
+  float res[dim * dim];
+  float random[dim * dim];
+  float ident[dim * dim];
   identity(dim, ident);
   for(size_t idx = 0; idx < dim * dim; idx++) {
     random[idx] = random_0_to_1();
   }
   mmm(dim, random, ident, res);
-  cr_assert_arr_eq(random, res, dim * dim, "multiplying by identity should not change the matrix");
-  free(res);
-  free(random);
-  free(ident);
+  for(size_t row = 0; row < dim; row++) {
+    for(size_t col = 0; col < dim; col++) {
+      cr_expect_float_eq(random[row * dim + col],
+                         res[row * dim + col],
+                         0.0001,
+                         "entry [%ld, %ld] should be the same", row, col);
+    }
+  }
 }
 
 
@@ -91,7 +97,14 @@ Test(utils_unit, mmm_rotation) {
   float b[] = {0.0, -1.0, 1.0, 0.0};
   float expected[] = {2.0, -1.0, 4.0, -3.0};
   mmm(dim, a, b, res);
-  cr_assert_arr_eq(expected, res, dim * dim, "matrix should be rotated by 90 degrees");
+  for(size_t col = 0; col < dim; col++) {
+    for(size_t row = 0; row < dim; row++) {
+      cr_expect_float_eq(expected[row * dim + col],
+                         res[row * dim + col],
+                         0.001,
+                         "entry [%ld, %ld] should be correct", row, col);
+    }
+  }
 }
 
 
@@ -104,7 +117,12 @@ Test(utils_unit, mvm_zero) {
     random[idx] = random_0_to_1();
   }
   mvm(dim, random, zeros, res);
-  cr_assert_arr_eq(zeros, res, dim, "vector should be zeros everywhere");
+  for(size_t idx = 0; idx < dim; idx++) {
+    cr_expect_float_eq(zeros[idx],
+                       res[idx],
+                       0.001,
+                       "entry [%ld] should be zero", idx);
+  }
   free(res);
   free(zeros);
   free(random);
@@ -118,7 +136,12 @@ Test(utils_unit, vva) {
   float* res = filled_float_array(dim, 1.0);
   float* expected = filled_float_array(dim, 1.6);
   vva(dim, a, b, res);
-  cr_assert_arr_eq(expected, res, dim, "vector should be 1.6 everywhere");
+  for(size_t idx = 0; idx < dim; idx++) {
+    cr_expect_float_eq(expected[idx],
+                       res[idx],
+                       0.001,
+                       "entry [%ld] should be 1.6", idx);
+  }
   free(res);
   free(a);
   free(b);
@@ -147,7 +170,8 @@ Test(utils_unit, mean_value_in_strides_simple) {
   float test_array[] = {1, 2, 1, 2, 1, 2, 1, 2, 1, 2};
   for (size_t offset = 0; offset < 2; offset++) {
     float mean = mean_value_in_strides(length, test_array, offset, stride);
-    cr_assert_eq(mean, offset + 1);
+    cr_expect_eq(mean, offset + 1,
+                 "mean value at offset %ld should be %ld", offset, offset + 1);
   }
 }
 
@@ -159,7 +183,8 @@ Test(utils_unit, mean_value_in_strides_complex) {
   float expected[] = {5.0 / 2, 7.0 / 2, 9.0 / 2};
   for (size_t offset = 0; offset < 3; offset++) {
     float mean = mean_value_in_strides(length, test_array, offset, stride);
-    cr_assert_eq(mean, expected[offset]);
+    cr_expect_float_eq(mean, expected[offset], 0.001,
+                       "mean value at offset %ld should be correct", offset);
   }
 }
 
@@ -167,11 +192,11 @@ Test(utils_unit, mean_value_in_strides_complex_2) {
   size_t stride = 2;
   size_t length = 6;
   float test_array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  // basically take the inner 6 most items with stride equals 2
   float expected[] = {(3.0 + 5.0 + 7.0) / 3, (4.0 + 6.0 + 8.0) / 3};
   for (size_t offset = 0; offset < 2; offset++) {
     float mean = mean_value_in_strides(length, &test_array[2], offset, stride);
-    cr_assert_eq(mean, expected[offset]);
+    cr_expect_float_eq(mean, expected[offset], 0.001,
+                       "mean value at offset %ld should be correct", offset);
   }
 }
 
@@ -179,10 +204,10 @@ Test(utils_unit, mean_value_in_strides_single) {
   size_t stride = 2;
   size_t length = 3;
   float test_array[] = {1, 2, 3};
-  // basically take the inner 6 most items with stride equals 2
   float expected[] = {2.0, 2.0};
   for (size_t offset = 0; offset < 2; offset++) {
     float mean = mean_value_in_strides(length, test_array, offset, stride);
-    cr_assert_eq(mean, expected[offset]);
+    cr_expect_float_eq(mean, expected[offset], 0.001,
+                       "mean value at offset %ld should be correct", offset);
   }
 }
