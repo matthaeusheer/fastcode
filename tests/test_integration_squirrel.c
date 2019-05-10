@@ -4,7 +4,7 @@
 #include "objectives.h"
 #include "squirrel.h"
 
-#define POPULATION 10000
+#define POPULATION 1000
 #define DIM 2
 
 
@@ -18,4 +18,8 @@ Test(squirrel_integration, rosenbrock) {
 
 Test(squirrel_integration, sphere) {
   test_algo(sphere, POPULATION, DIM, -5, 5, 500, squirrel, 0, 0.1, false);
+}
+
+Test(pso_basic_integration, rastigrin) {
+  test_algo(rastigrin, POPULATION, DIM, -5, 5, 1000, squirrel, 0, 0.1, false);
 }

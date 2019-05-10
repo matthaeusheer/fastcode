@@ -10,7 +10,7 @@
 #include "utils.h"
 
 #define NUM_JUMP_HICK 0.2
-#define T_MAX 20
+#define T_MAX 100
 #define PREDATOR_PROB 0.1
 #define BETA 1.5
 #define GLIDING_CONST 1.9
@@ -82,13 +82,14 @@ void sqr_lowest_val_to_front(float* fitness,float* positions, size_t pop_size, s
 
   // careful
   // float temp_pos[dim];
-  float* temp_pos = (float*)malloc(dim*sizeof(float));
+  // float* temp_pos = (float*)malloc(dim*sizeof(float));
+  float temp_pos[dim];
 
   memcpy(temp_pos, positions, dim*sizeof(float));
   memcpy(positions, positions+(dim*best_idx), dim*sizeof(float));
   memcpy(positions +(dim*best_idx), temp_pos, dim*sizeof(float));
 
-  free(temp_pos);
+  // free(temp_pos);
 }
 
   /**
