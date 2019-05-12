@@ -11,4 +11,8 @@ script:
   - cd build
   - cmake ..
   - make
-  - make test
+  - ./test_units --tap
+  - ./test_integration_pengu --tap
+  - ./test_integration_pso --tap
+  - ./test_integration_squirrel --tap
+  - ./test_integration_hgwosca --tap
