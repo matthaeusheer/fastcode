@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
+#include <immintrin.h>
 
 #include "objectives.h"
+#include "utils.h"
 
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
@@ -18,10 +20,22 @@
  * optimal solution is 0s everywhere
  */
 float sum_of_squares(const float *const args, size_t dim) {
-  float sum = 0.0;
-  for (size_t idx = 0; idx < dim; idx++) {
+  __m256 v_sum = _mm256_setzero_ps();
+  size_t idx = 0;
+
+  if(dim > 7) {
+    __m256 v_args;
+    for(idx; idx < dim - 8; idx += 8) {
+      v_args = _mm256_load_ps(&args[idx]);
+      v_sum = _mm256_fmadd_ps(v_args, v_args, v_sum);
+    }
+  }
+
+  float sum = horizontal_add(v_sum);
+  for(; idx < dim; idx++) {
     sum += args[idx] * args[idx];
   }
+
   return sum;
 }
 

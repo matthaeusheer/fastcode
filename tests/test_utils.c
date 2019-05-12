@@ -1,10 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <immintrin.h>
 
 #include "float.h"
 #include "utils.h"
 
 #include <criterion/criterion.h>
+
+Test(utils_unit, horizontal_add) {
+  __m256 v_zero = _mm256_setzero_ps();
+  float sum = horizontal_add(v_zero);
+  cr_expect_float_eq(sum, 0.0, FLT_EPSILON, "sum of zeros should be zero");
+
+  __m256 v_ones = _mm256_set1_ps(1.0);
+  sum = horizontal_add(v_ones);
+  cr_expect_float_eq(sum, 8.0, FLT_EPSILON, "sum of ones should be 8");
+}
 
 Test(utils_unit, random_0_to_1) {
   for(size_t iter = 0; iter < 20; iter++) {
