@@ -25,7 +25,7 @@ float sum_of_squares(const float *const args, size_t dim) {
 
   if(dim > 7) {
     __m256 v_args;
-    for(idx; idx < dim - 8; idx += 8) {
+    for(; idx < dim - 8; idx += 8) {
       v_args = _mm256_load_ps(&args[idx]);
       v_sum = _mm256_fmadd_ps(v_args, v_args, v_sum);
     }
