@@ -44,7 +44,7 @@ size_t *filled_size_t_array(size_t length, size_t val) {
 float random_min_max(const float min, const float max) {
   float x = (float) rand() / RAND_MAX;
   return min + x * (max - min);
-}
+} // 5 flops // rand = flop 
 
 float random_0_to_1() {
   return (float) rand() / RAND_MAX;

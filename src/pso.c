@@ -34,7 +34,7 @@ void pso_rand_init(float* const population,
       population[idx] = random_min_max(min_position,max_position);
     }
   }
-}
+}  // 5 swarm_size*dim flops
 
   //returns swarm_size size array
 void pso_eval_fitness(obj_func_t obj_func,
@@ -44,7 +44,7 @@ void pso_eval_fitness(obj_func_t obj_func,
     fitness[pop] = obj_func(positions+(pop*dim),dim);
   }
   return ;
-}
+} // swarm_size*obj_func_flops
 
   //returns swarm_size x dim size array
   // velocity at every posize_t of every particle
@@ -62,7 +62,7 @@ void pso_gen_init_velocity(float* const velocity,
     }
   }
   free(u);
-}
+} // 5 + swarm_size*dim*2
 
   // sorts the population in decreasing order of fitness /
   // i.e pop[0] posize_ts to best location yet.
@@ -80,7 +80,7 @@ size_t pso_best_fitness(float* fitness,size_t dim, size_t swarm_size) {
   }
   // global_best_position = local_best_position+(dim*minima_idx);
   return minima_idx;
-}
+} // 0 flops
 
   // limit max and min velocity values to ensure no boundary overflow
 void pso_generate_vel_limit(const float min_position,
@@ -89,7 +89,7 @@ void pso_generate_vel_limit(const float min_position,
                             float* max_vel) {
     *min_vel = min_position/VEL_LIMIT_SCALE;
     *max_vel = max_position/VEL_LIMIT_SCALE;
-}
+} // 2 flops
 
   // updates velocities, works on array returned by gen_velocity
   //REMOVE VNEW WORK WITH VELOCITY
@@ -107,7 +107,7 @@ void pso_update_velocity(float* velocity, float* positions,
     }
   }
   return ;
-}
+} // swarm_size*dim*11
 
 void pso_update_position(float* positions, float* velocity,
                          size_t swarm_size, size_t dim,
@@ -124,7 +124,7 @@ void pso_update_position(float* positions, float* velocity,
     }
   }
   return;
-}
+}  // swarm_size*dim*1
 
   /**
   Particle Swarm Algorithm to find the global minima of objective function using a nature mimicking swarm
@@ -140,11 +140,13 @@ float * pso_basic(obj_func_t obj_func,
   float min_vel = 0;
   float max_vel = 0;
   pso_generate_vel_limit(min_position,max_position,&min_vel,&max_vel);
+  // tot = 2 flops
 
   size_t sizeof_position = dim*swarm_size*sizeof(float);
   // randomly initialise postions of swarm particles
   float* current_positions = (float*)malloc(sizeof_position);
   pso_rand_init(current_positions,swarm_size, dim,min_position,max_position);
+  // tot = 2 + 5*n flops
   float* local_best_position = (float*)malloc(sizeof_position);
   memcpy(local_best_position,current_positions, sizeof_position);
 
@@ -152,6 +154,7 @@ float * pso_basic(obj_func_t obj_func,
   size_t sizeof_fitness = swarm_size*sizeof(float);
   float* current_fitness = (float*)malloc(sizeof_fitness);
   pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
+  // tot = 2 + 5*n + swarm_size*obj_func_flops flops
   float* local_best_fitness = (float*)malloc(sizeof_fitness);
   memcpy(local_best_fitness, current_fitness, sizeof_fitness);
 
@@ -163,6 +166,7 @@ float * pso_basic(obj_func_t obj_func,
 
   float* p_velocity = (float*)malloc(sizeof_position);
   pso_gen_init_velocity(p_velocity,current_positions,swarm_size,dim,min_position,max_position);
+  /// tot = 7 + 7n + swarm_size*obj_func_flops flops
 
   size_t global_best_idx = pso_best_fitness(local_best_fitness,dim,swarm_size);
 
@@ -174,12 +178,17 @@ float * pso_basic(obj_func_t obj_func,
 
     pso_update_velocity(p_velocity,current_positions,
     local_best_position,global_best_position,swarm_size,
-    dim,min_vel,max_vel);
+    dim,min_vel,max_vel); // 11n*max_iter flops
+    // tot = 7 + 7n + swarm_size*obj_func_flops flops + max_iter*(11n)
 
     pso_update_position(current_positions,p_velocity,swarm_size,
-        dim,min_position,max_position);
+        dim,min_position,max_position); // max_iter*n
+    // tot = 7 + 7n + swarm_size*obj_func_flops flops + max_iter*(12n)
 
-    pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness);
+
+    pso_eval_fitness(obj_func,swarm_size,dim,current_positions,current_fitness); // max_iter*swarm_size*obj_func
+    //tot = 7 + 7n + swarm_size*obj_func_flops flops + max_iter*(12n + swarm_size*obj_func_flops)
+
 
     // check local best fitness
     for (size_t p=0;p<swarm_size;p++){
@@ -203,6 +212,7 @@ float * pso_basic(obj_func_t obj_func,
       printf("# BEST FITNESS: %f\n", lowest_value(swarm_size, local_best_fitness));
   #endif
 
+  //tot = 7 + 7n + swarm_size*obj_func_flops flops + max_iter*(12n + swarm_size*obj_func_flops)
   }
 
   float* const best_solution = (float *const) malloc(dim);
@@ -216,3 +226,5 @@ float * pso_basic(obj_func_t obj_func,
 
   return best_solution;
 }
+
+//tot = 7 + 7n + swarm_size*obj_func_flops + max_iter*(12n + swarm_size*obj_func_flops)
