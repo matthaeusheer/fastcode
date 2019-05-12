@@ -6,14 +6,16 @@
 extern "C" {
 #endif
 
+
 /**
-   PSO algorithm.
+   Seed a parallel floating point RNG.
  */
-float *pso_basic(obj_func_t obj_func,
-                 size_t swarm_size,
-                 size_t dim, size_t max_iter,
-                 const float min_position,
-                 const float max_position);
+inline void seed_simd_rng();
+
+/**
+   Generate a vector of random floats between `min` and `max`.
+ */
+inline __m256 simd_rand_min_max(float min, float max);
 
 /**
     Initialise an array to random numbers between `min` and `max`.
@@ -120,6 +122,16 @@ void pso_update_position(float *positions, float *velocity,
                          size_t swarm_size, size_t dim,
                          const float min_position,
                          const float max_position);
+
+/**
+   PSO algorithm.
+ */
+float *pso_basic(obj_func_t obj_func,
+                  size_t swarm_size,
+                  size_t dim, size_t max_iter,
+                  const float min_position,
+                  const float max_position);
+
 #ifdef __cplusplus
 }
 #endif

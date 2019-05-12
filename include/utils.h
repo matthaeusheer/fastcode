@@ -7,14 +7,23 @@ extern "C" {
 #include <stddef.h>
 #include <immintrin.h>
 
-
 // Objective function type
 typedef float (*obj_func_t)(const float *, size_t);
 
 // Algorithm function type
 typedef float * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const float, const float);
 
+/**
+   Perform a horizontal addition of a AVX register containing 8 floats.
+
+   Arguments:
+     a   the AVX register
+
+   Returns:
+     A single float representing the sum of all floats in the register.
+ */
 float horizontal_add(__m256 a);
+
 
 /**
  *  Prints the solution array of one algorithm output to console.

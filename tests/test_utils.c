@@ -17,6 +17,7 @@ Test(utils_unit, horizontal_add) {
   cr_expect_float_eq(sum, 8.0, FLT_EPSILON, "sum of ones should be 8");
 }
 
+
 Test(utils_unit, random_0_to_1) {
   for(size_t iter = 0; iter < 20; iter++) {
     float r = random_0_to_1();

@@ -5,6 +5,7 @@
 
 #include <time.h>
 #include <float.h>
+#include <limits.h>
 
 #include "pso.h"
 #include "utils.h"
@@ -21,6 +22,43 @@
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
+
+__m256i seed_a;
+__m256i seed_b;
+__m256 max_rng;
+
+/**
+   Seed a parallel floating point RNG.
+ */
+inline void seed_simd_rng(size_t seed) {
+  srand(seed);
+  seed_a = _mm256_set_epi32(rand(), rand(), rand(), rand(),
+                            rand(), rand(), rand(), rand());
+  seed_b = _mm256_set_epi32(rand(), rand(), rand(), rand(),
+                            rand(), rand(), rand(), rand());
+  max_rng = _mm256_cvtepi32_ps(_mm256_set1_epi32(INT_MIN));
+}
+
+/**
+   Generate a vector of random floats between `min` and `max`.
+ */
+inline __m256 simd_rand_min_max(float min, float max) {
+  float factor = (max - min) / 2;
+  float middle = min + factor;
+
+  __m256i s1 = seed_a;
+	const __m256i s0 = seed_b;
+	seed_a = seed_b;
+	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
+	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
+                                             _mm256_srli_epi64(s1, 18)),
+                            _mm256_srli_epi64(s0, 5));
+  __m256i rands = _mm256_add_epi64(seed_b, s0);
+  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng); // [0, 1]
+  __m256 factors = _mm256_set1_ps(factor);
+  __m256 middles = _mm256_set1_ps(middle);
+  return _mm256_fmadd_ps(factors, frands, middles);
+}
 
 /**
    Initialise an array to random numbers between `min` and `max`.
@@ -189,7 +227,7 @@ float *pso_basic(obj_func_t obj_func,
                  size_t max_iter,
                  const float min_position,
                  const float max_position) {
-  srand(100);
+  seed_simd_rng(100);
 
   float min_vel = min_position/VEL_LIMIT_SCALE;
   float max_vel = max_position/VEL_LIMIT_SCALE;
