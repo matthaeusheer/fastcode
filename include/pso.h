@@ -10,7 +10,7 @@ extern "C" {
 /**
    Seed a parallel floating point RNG.
  */
-inline void seed_simd_rng();
+void seed_simd_rng();
 
 /**
    Generate a vector of random floats between `min` and `max`.
