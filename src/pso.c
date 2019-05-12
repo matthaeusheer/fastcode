@@ -53,7 +53,7 @@ void pso_gen_init_velocity(float* const velocity,
                             size_t swarm_size, size_t dim,
                             const float min_position,
                             const float max_position) {
-  float* u = (float*)malloc(swarm_size*dim*sizeof(float));
+  float u[swarm_size * dim];
   pso_rand_init(u,swarm_size,dim,min_position,max_position);
   for (size_t particle=0; particle < swarm_size; particle++){
     for (size_t d=0; d<dim; d++){
@@ -61,7 +61,6 @@ void pso_gen_init_velocity(float* const velocity,
       velocity[idx] = 0.25*(u[idx] - positions[idx]);
     }
   }
-  free(u);
 }
 
   // sorts the population in decreasing order of fitness /

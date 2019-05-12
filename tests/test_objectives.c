@@ -13,7 +13,12 @@
 */
 Test(obj_unit, sum_of_squares) {
   float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(sum_of_squares(args, 6), 55.0,  FLT_EPSILON, "sum of squares function works as expected.");
+  cr_expect_float_eq(sum_of_squares(args, 6), 55.0, FLT_EPSILON,
+                     "sum_of_squares should work on small dimensions");
+
+  float *args_2 = filled_float_array(100, 2.0);
+  cr_expect_float_eq(sum_of_squares(args_2, 100), 400.0, FLT_EPSILON,
+                     "sum_of_squares should work on larger dimensions");
 }
 
 /*
@@ -23,16 +28,6 @@ Test(obj_unit, sum) {
   float args[] = {0, 1, 2, 3, 4, 5};
   cr_expect_float_eq(sum(args, 6), 15.0, FLT_EPSILON,
                      "sum function should work as expected");
-}
-
-Test(obj_unit, sum_of_squares) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(sum_of_squares(args, 6), 55.0, FLT_EPSILON,
-                     "sum_of_squares should work on small dimensions");
-
-  float *args_2 = filled_float_array(100, 2.0);
-  cr_expect_float_eq(sum_of_squares(args_2, 100), 400.0, FLT_EPSILON,
-                     "sum_of_squares should work on larger dimensions");
 }
 
 /*
