@@ -19,6 +19,6 @@ Test(pso_integration, sphere) {
 }
 
 Test(pso_integration, rosenbrock) {
-  test_algo(rosenbrock, SWARM_SIZE, DIM, -30, 30, 1000, pso_basic, 0, 0.01,
+  test_algo(rosenbrock, 6000, DIM, -30, 30, 3000, pso_basic, 0, 6,
             true, "PSO", "rosenbrock");
 }
