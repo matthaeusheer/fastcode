@@ -25,7 +25,7 @@ Test(squirrel_unit,sqr_eval_fitness){
    10.0,  3.0,
   -10.0, -3.0
   };
-  float fitness[dim*pop_size];
+  float fitness[pop_size];
   sqr_eval_fitness(sum_of_squares, pop_size, dim, x, fitness);
   cr_expect_float_eq(fitness[0], 0.0, FLT_EPSILON,
                      "first particle fitness should be 0.0");

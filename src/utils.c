@@ -1,9 +1,28 @@
-
+#include <immintrin.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "utils.h"
 
+float horizontal_add(__m256 a) {
+  __m256 t1 = _mm256_hadd_ps(a,a);
+  __m256 t2 = _mm256_hadd_ps(t1,t1);
+  __m128 t3 = _mm256_extractf128_ps(t2,1);
+  __m128 t4 = _mm_add_ss(_mm256_castps256_ps128(t2),t3);
+  return _mm_cvtss_f32(t4);
+}
+
+// Possibly more efficient solution than above
+/* float horizontal_add(__m256 x) { */
+/*   __m128 hi = _mm256_extractf128_ps(x, 1); */
+/*   __m128 lo = _mm256_extractf128_ps(x, 0); */
+/*   lo = _mm_add_ps(hi, lo); */
+/*   hi = _mm_movehl_ps(hi, lo); */
+/*   lo = _mm_add_ps(hi, lo); */
+/*   hi = _mm_shuffle_ps(lo, lo, 1); */
+/*   lo = _mm_add_ss(hi, lo); */
+/*   return _mm_cvtss_f32(lo); */
+/* } */
 
 float *filled_float_array(size_t length, float val) {
   float *res = (float *) malloc(length * sizeof(float));
