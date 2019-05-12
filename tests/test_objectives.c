@@ -11,7 +11,7 @@
 */
 Test(obj_unit, sum_of_squares) {
   float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(sum_of_squares(args, 6),  - 55.0,  FLT_EPSILON, "sum of squares function works as expected.");
+  cr_expect_float_eq(sum_of_squares(args, 6), 55.0,  FLT_EPSILON, "sum of squares function works as expected.");
 }
 
 /*
@@ -26,16 +26,16 @@ Test(obj_unit, sum) {
   Testing the Rastingrin function
 */
 Test(obj_unit, rastigrin) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(rastigrin(args, 6), -50, FLT_EPSILON, "rastigrin function works as expected.");
+  float args[] = {0.0, 0.0};
+  cr_expect_float_eq(rastigrin(args, 2), 0.0, FLT_EPSILON, "rastigrin function works as expected.");
 }
 
 /*
   Testing Multidimensional Rosenbrock Function
 */
 Test(obj_unit, rosenbrock) {
-  float args[] = {0, 1, 2, 3, 4, 5, 6};
-  cr_expect_float_eq(rosenbrock(args, 7), - 51031, FLT_EPSILON, "rosenbrock function works as expected.");
+  float args[] = {1, 1, 1};
+  cr_expect_float_eq(rosenbrock(args,3), 0.0, FLT_EPSILON, "rosenbrock function works as expected.");
 }
 
 /*
@@ -43,56 +43,49 @@ Test(obj_unit, rosenbrock) {
 */
 Test(obj_unit, sphere) {
   float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(sphere(args, 6), - 55, FLT_EPSILON, "sphere function works as expected.");
+  cr_expect_float_eq(sphere(args, 6), 55.0, FLT_EPSILON, "sphere function works as expected.");
 }
 
 /*2D Schaffer Function
   Testing
 */
 Test(obj_unit, schaf2d) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(schaf2d(args, 6), - 0.7077, FLT_EPSILON, "schaf2d function works as expected.");
+  float args[] = {0.0, 0.0};
+  cr_expect_float_eq(schaf2d(args, 2), 0.0, FLT_EPSILON, "schaf2d function works as expected.");
 }
+
 
 /*
   Testing Griewank function
 */
 Test(obj_unit, griewank) {
-  float args[] = {1, 2, 3, 4, 5};
-  cr_expect_float_eq(griewank(args, 5), - 1.0172 , FLT_EPSILON, "griewank function works as expected.");
+  float args[] = {0.0, 0.0, 0.0, 0.0};
+  cr_expect_float_eq(griewank(args, 4), 0.0 , FLT_EPSILON, "griewank function works as expected.");
 }
 
 /*
  *Testing Schwefel 1
  */
 Test(obj_unit, schwefel01) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(schwefel01(args, 6), - 293434.139229145, FLT_EPSILON, "schwefel01 function works as expected.");
+  float args[] = {0.0, 0.0, 0.0, 0.0};
+  cr_expect_float_eq(schwefel01(args, 4), 0.0, FLT_EPSILON, "schwefel01 function works as expected.");
 }
 
-
-/*
- *Testing cosmix
- */
-Test(obj_unit, cosinemixture) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(cosinemixture(args, 6), - 55, FLT_EPSILON, "cosinemixture function works as expected.");
-}
 
 /*
  *Testing powel
  */
 Test(obj_unit, powel) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(powel(args, 4), - 50, FLT_EPSILON, "powel function works as expected.");
+  float args[] = {3, -1, 0, 1};
+  cr_expect_float_eq(powel(args, 4), 0.0, FLT_EPSILON, "powel function works as expected.");
 }
 
 /*
  *Testing freundschtein and roth
  */
 Test(obj_unit, freundsteinroth) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(freundsteinroth(args, 4), - 1802, FLT_EPSILON, "freundschtein and roth function works as expected.");
+  float args[] = {5.0, 4.0};
+  cr_expect_float_eq(freundsteinroth(args, 2), 0.0, FLT_EPSILON, "freundschtein and roth function works as expected.");
 }
 
 /*
@@ -100,6 +93,6 @@ Test(obj_unit, freundsteinroth) {
  */
 
 Test(obj_unit, beale) {
-  float args[] = {0, 1, 2, 3, 4, 5};
-  cr_expect_float_eq(beale(args, 3), - 14.2031, FLT_EPSILON, "Beale function works as expected.");
+  float args[] = {3.0, 0.5};
+  cr_expect_float_eq(beale(args, 2), 0, FLT_EPSILON, "Beale function works as expected.");
 }

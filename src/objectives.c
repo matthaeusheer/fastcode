@@ -46,9 +46,9 @@ float sum_negative(const float *const args, size_t dim) {
  * optimal solution is 0s everywhere
  */
 float rastigrin(const float *const args, size_t dim) {
-  float rstgnND = 10 * dim;
+  float rstgnND = 10.0 * dim;
   for (size_t idx = 0; idx < dim; idx++) {
-    rstgnND += pow(args[dim], 2.0) - 10 * cos(2.0 * M_PI * args[dim]);
+    rstgnND += pow(args[idx], 2) - 10.0 * cos(2 * M_PI * args[idx]);
   }
   return rstgnND;
 }
@@ -58,22 +58,19 @@ float rastigrin(const float *const args, size_t dim) {
  * global minima f(x1,.....,xN) = 0 at (x1,.....,xN) = (1,.....,1)
  */
 float rosenbrock(const float *const args, size_t dim) {
-  float rNd = 0.;
+  float rNd = 0.0;
   for (size_t idx = 0; idx < dim - 1; idx++)
-    rNd += (100 * (pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
+    rNd += (100.0 * (pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
   return rNd;
 }
 
-float rosenbrock_neg(const float *const args, size_t dim) {
-  return -1.0 * rosenbrock(args, dim);
-}
 
 /**
  * Multi Dimensional Sphere Function
  * global minima at f(x1,.....,xN) = 0 at (x1,......,xN) = (0,......,0)
  */
 float sphere(const float *const args, size_t dim) {
-  float sph = 0;
+  float sph = 0.0;
   for (size_t idx = 0; idx < dim; idx++)
     sph += pow(args[idx], 2);
   return sph;
@@ -86,8 +83,8 @@ float sphere(const float *const args, size_t dim) {
 float egghol2d(const float *const args, size_t dim) {
   //assert(dim == 2);
   //assert( fabs(args[0])<=512 && fabs(args[1])<=512 );
-  float eggh = -1 * (args[1] + 47) * sin(sqrt(fabs(args[0] + (args[1] + 47))))
-                - args[0] * sin(sqrt(fabs(args[0] - (args[1] + 47))));
+  float eggh = -1.0 * (args[1] + 47.0) * sin(sqrt(fabs(args[0] + (args[1] + 47.0))))
+                - args[0] * sin(sqrt(fabs(args[0] - (args[1] + 47.0))));
   return eggh;
 }
 
@@ -95,8 +92,10 @@ float egghol2d(const float *const args, size_t dim) {
  * 2D Schaffer Function
  */
 float schaf2d(const float *const args, size_t dim) {
-  float sch = 0.5 + (pow(cos(pow(sin(fabs(args[0] * args[0] - args[1] * args[1])), 2)), 2) - 0.5) /
-                     pow((1 + 0.001 * ((args[0] * args[0]) + (args[1] * args[1]))), 2);
+  //float sch = 0.5 + (pow(cos(pow(sin(fabs(args[0] * args[0] - args[1] * args[1])), 2)), 2) - 0.5) /
+                    // pow((1 + 0.001 * ((args[0] * args[0]) + (args[1] * args[1]))), 2);
+  float sch = 0.5 + (pow(sin(args[0] * args[0] - args[1] * args[1]), 2) - 0.5) /
+                    pow((1 + 0.001 * ((args[0] * args[0]) + (args[1] * args[1]))), 2);
   return sch;
 }
 
@@ -104,19 +103,19 @@ float schaf2d(const float *const args, size_t dim) {
  * Griewank function
  */
 float griewank(const float *const args, size_t dim) {
-  float sum = 0, prod = 1;
-  for (size_t idx = 0; idx < dim; idx++) {
-    sum += pow(args[idx], 2) / 4000;
+  float sum = 0.0, prod = 1.0;
+  for (size_t idx = 1; idx < dim; idx++) {
+    sum += pow(args[idx], 2) / 4000.0;
     prod *= cos(args[idx] / sqrt(idx));
   }
-  return sum - prod + 1;
+  return sum - prod + 1.0;
 }
 
 /**This class defines the Schwefel 1 global optimization problem.
  *This is a unimodal minimization problem defined as follows:
  */
 float schwefel01(const float *const args, size_t dim){
-  float sch00 = 0;
+  float sch00 = 0.0;
   float alpha = sqrt(M_PI);
   for (size_t idx = 0; idx < dim; idx++) {
     sch00 += pow(args[idx],2);
@@ -125,25 +124,12 @@ float schwefel01(const float *const args, size_t dim){
 }
 
 
-/* Sum of cosines
- * will always converge*/
-float cosinemixture(const float *const args, size_t dim){
-  float cosmix = 0.0;
-  float cosmix1 = 0.0;
-  for(size_t idx = 0; idx < dim; idx++) {
-    cosmix += - args[idx] * args[idx];
-    cosmix1 += - 0.1*cos(5*M_PI*args[idx]);
-  }
-  return cosmix + cosmix1;
-}
-
-
 /**
    This class defines the Powell global optimization problem. 	N=4,	32.58%
    This is a multimodal minimization problem defined as follows */
 
 float powel(const float *const args, size_t dim){
-  float powel = pow((args[2] + 10 * args[0]), 2) + 5 * pow((args[1] - args[3]), 2) + pow((args[0] - 2 * args[1]), 4) + 10 * pow((args[2] - args[3]), 4);
+  float powel = pow((args[2] + 10.0 * args[0]), 2) + 5.0 * pow((args[1] - args[3]), 2) + pow((args[0] - 2 * args[1]), 4) + 10.0 * pow((args[2] - args[3]), 4);
   return powel;
 }
 
@@ -155,7 +141,7 @@ float powel(const float *const args, size_t dim){
 */
 
 float freundsteinroth(const float *const args, size_t dim) {
-  float fr = pow((args[0] - 13 + ((5 - args[1]) * args[1] - 2) * args[1]), 2) + pow((args[0] - 29 + ((args[1] + 1) * args[1] - 14) * args[1]), 2);
+  float fr = pow((args[0] - 13.0 + ((5.0 - args[1]) * args[1] - 2) * args[1]), 2) + pow((args[0] - 29.0 + ((args[1] + 1.0) * args[1] - 14.0) * args[1]), 2);
   return fr;
 }
 
