@@ -12,6 +12,7 @@ float horizontal_add(__m256 a) {
   return _mm_cvtss_f32(t4);
 }
 
+
 // Possibly more efficient solution than above
 /* float horizontal_add(__m256 x) { */
 /*   __m128 hi = _mm256_extractf128_ps(x, 1); */

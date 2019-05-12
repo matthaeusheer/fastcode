@@ -30,7 +30,7 @@ __m256 max_rng;
 /**
    Seed a parallel floating point RNG.
  */
-inline void seed_simd_rng(size_t seed) {
+void seed_simd_rng(size_t seed) {
   srand(seed);
   seed_a = _mm256_set_epi32(rand(), rand(), rand(), rand(),
                             rand(), rand(), rand(), rand());
@@ -54,7 +54,7 @@ inline __m256 simd_rand_min_max(float min, float max) {
                                              _mm256_srli_epi64(s1, 18)),
                             _mm256_srli_epi64(s0, 5));
   __m256i rands = _mm256_add_epi64(seed_b, s0);
-  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng); // [0, 1]
+  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
   __m256 factors = _mm256_set1_ps(factor);
   __m256 middles = _mm256_set1_ps(middle);
   return _mm256_fmadd_ps(factors, frands, middles);
@@ -71,7 +71,13 @@ inline __m256 simd_rand_min_max(float min, float max) {
  */
 void pso_rand_init(float *const array, size_t length,
                    const float min, const float max) {
-  for(size_t idx = 0; idx < length; idx++) {
+  size_t idx = 0;
+  if(length > 7) {
+    for(; idx < length - 8; idx += 8) {
+      _mm256_store_ps(&array[idx], simd_rand_min_max(min, max));
+    }
+  }
+  for(; idx < length; idx++) {
     array[idx] = random_min_max(min, max);
   }
 }
