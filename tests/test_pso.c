@@ -12,29 +12,29 @@ BASIC PSO UNIT TESTS
 #include <criterion/criterion.h>
 
 
-Test(pso_unit,pso_rand_init){
+Test(pso_unit, pso_rand_init) {
   srand((unsigned) time(NULL));
   size_t swarm_size = 10;
   size_t dim = 4;
   float min = 0.0;
   float max = 1.0;
-  float pos[swarm_size*dim];
-  pso_rand_init(pos, swarm_size, dim, min, max);
-  for (size_t s=0;s<swarm_size * dim;s++){
+  float pos[swarm_size * dim];
+  pso_rand_init(pos, swarm_size * dim, min, max);
+  for(size_t s = 0; s < swarm_size * dim; s++) {
     cr_expect_leq(pos[s], max, "dimension should be bound above");
     cr_expect_geq(pos[s], min, "dimension should be bound below");
   }
 }
 
-Test(pso_unit,pso_eval_fitness){
+Test(pso_unit, pso_eval_fitness) {
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
   float x[] = {
-    0.0,  0.0,
-    2.5,  4.0,
-   10.0,  3.0,
-  -10.0, -3.0
+      0.0, 0.0,
+      2.5, 4.0,
+      10.0, 3.0,
+      -10.0, -3.0
   };
   float fitness[swarm_size];
   pso_eval_fitness(sum_of_squares, swarm_size, dim, x, fitness);
@@ -48,7 +48,7 @@ Test(pso_unit,pso_eval_fitness){
                      "fourth particle's fitness should be 109");
 }
 
-Test(pso_unit,pso_gen_init_velocity){
+Test(pso_unit, pso_gen_init_velocity) {
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -57,30 +57,30 @@ Test(pso_unit,pso_gen_init_velocity){
   float min = 0.0;
   float max = 1.0;
 
-  float x[swarm_size*dim];
-  pso_rand_init(x, swarm_size, dim, min, max);
+  float x[swarm_size * dim];
+  pso_rand_init(x, swarm_size * dim, min, max);
   float vel[swarm_size*dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
-  for (size_t s=0;s<swarm_size;s++){
-    for (size_t d = 0; d < dim; d++){
-      size_t idx = s*dim + d;
-      cr_expect_leq(vel[idx], (max_vel[d] - x[idx])*0.5,
-                    "%ld dimension should be bound above",d);
-      cr_expect_geq(vel[idx], (min_vel[d] - x[idx])*0.5,
-                    "%ld dimension should be bound below",d);
+  for(size_t s = 0; s < swarm_size; s++) {
+    for(size_t d = 0; d < dim; d++) {
+      size_t idx = s * dim + d;
+      cr_expect_leq(vel[idx], (max_vel[d] - x[idx]) * 0.5,
+                    "%ld dimension should be bound above", d);
+      cr_expect_geq(vel[idx], (min_vel[d] - x[idx]) * 0.5,
+                    "%ld dimension should be bound below", d);
     }
   }
 }
 
-Test(pso_unit,pso_best_fitness){
+Test(pso_unit, pso_best_fitness) {
   size_t swarm_size,dim;
   swarm_size = 4;
   dim = 2;
   float local_best_position[] = {
-    100.0,  0.0,
-      2.5,  4.0,
-     10.0,  3.0,
-    -10.0, -3.0
+     100.0, 0.0,
+     2.5, 4.0,
+     10.0, 3.0,
+      -10.0, -3.0
   };
 
   float fitness[swarm_size];
@@ -88,7 +88,7 @@ Test(pso_unit,pso_best_fitness){
 
   float* global_best_position;
   size_t best_index;
-  best_index = pso_best_fitness(fitness, dim, swarm_size);
+  best_index = pso_best_fitness(fitness, swarm_size);
   cr_expect_eq(best_index, 1, "the optima is at local_best_position[1]");
 
   global_best_position = local_best_position+(dim*best_index);
@@ -98,7 +98,7 @@ Test(pso_unit,pso_best_fitness){
                      "second dim of global best is 4.0");
 }
 
-Test(pso_unit,pso_update_velocity){
+Test(pso_unit, pso_update_velocity) {
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -107,28 +107,28 @@ Test(pso_unit,pso_update_velocity){
   float min = 0.0;
   float max = 1.0;
 
-  float x[swarm_size*dim];
-  pso_rand_init(x, swarm_size, dim, min, max);
-  float y[swarm_size*dim];
-  pso_rand_init(y, swarm_size, dim, min, max);
-  float best[swarm_size*dim];
-  pso_rand_init(best, 1, dim, min, max);
+  float x[swarm_size * dim];
+  pso_rand_init(x, swarm_size * dim, min, max);
+  float y[swarm_size * dim];
+  pso_rand_init(y, swarm_size * dim, min, max);
+  float best[dim];
+  pso_rand_init(best, dim, min, max);
 
-  float vel[swarm_size*dim];
+  float vel[swarm_size * dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
-  for (size_t s=0;s<swarm_size;s++){
-    for (size_t d = 0; d < dim; d++) {
-      size_t idx = s*dim + d;
-        cr_expect_leq(vel[idx], max_vel,
-                      "%ld dimension'd velocity should be bound above",d);
-        cr_expect_geq(vel[idx], min_vel,
-                      "%ld dimension'd velocity should be bound below",d);
+  for(size_t s = 0; s < swarm_size; s++) {
+    for(size_t d = 0; d < dim; d++) {
+      size_t idx = s * dim + d;
+      cr_expect_leq(vel[idx], max_vel,
+                    "%ld dimension'd velocity should be bound above", d);
+      cr_expect_geq(vel[idx], min_vel,
+                    "%ld dimension'd velocity should be bound below", d);
     }
   }
 }
 
-Test(pso_unit,pso_update_position){
+Test(pso_unit, pso_update_position) {
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -137,24 +137,24 @@ Test(pso_unit,pso_update_position){
   float min_vel = -1.;
   float max_vel =  1.;
 
-  float x[swarm_size*dim];
-  pso_rand_init(x, swarm_size, dim, min, max);
-  float y[swarm_size*dim];
-  pso_rand_init(y, swarm_size, dim, min, max);
-  float best[swarm_size*dim];
-  pso_rand_init(best, 1, dim, min, max);
+  float x[swarm_size * dim];
+  pso_rand_init(x, swarm_size * dim, min, max);
+  float y[swarm_size * dim];
+  pso_rand_init(y, swarm_size * dim, min, max);
+  float best[dim];
+  pso_rand_init(best, dim, min, max);
 
-  float vel[swarm_size*dim];
+  float vel[swarm_size * dim];
   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max);
   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel);
   pso_update_position( x, vel, swarm_size, dim, min, max);
-  for (size_t s=0;s<swarm_size;s++){
-    for (size_t d = 0; d < dim; d++) {
-      size_t idx = s*dim + d;
+  for(size_t s = 0; s < swarm_size; s++) {
+    for(size_t d = 0; d < dim; d++) {
+      size_t idx = s * dim + d;
       cr_expect_leq(x[idx], max,
-                    "%ld dimension'd position should be bound above",d);
+                    "%ld dimension'd position should be bound above", d);
       cr_expect_geq(x[idx], min,
-                    "%ld dimension'd position should be bound below",d);
+                    "%ld dimension'd position should be bound below", d);
     }
   }
 }
