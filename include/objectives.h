@@ -14,8 +14,7 @@ float sum_of_squares (const float * args, size_t dim);
 
 float sum            (const float * args, size_t dim);
 
-float sum_negative   (const float * args, size_t dim);
-
+us
 float rastigrin      (const float * args, size_t dim);
 
 float rosenbrock     (const float * args, size_t dim);
@@ -29,6 +28,14 @@ float egghol2d       (const float * args, size_t dim);
 float schaf2d        (const float * args, size_t dim);
 
 float griewank       (const float * args, size_t dim);
+
+float schwefel01     (const float *const args, size_t dim);
+
+float powel          (const float *const args, size_t dim);
+
+float freundsteinroth(const float *const args, size_t dim);
+
+float beale          (const float *const args, size_t dim);
 
 
 /*******************************************************************************
