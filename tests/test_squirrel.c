@@ -110,7 +110,7 @@ Test(squirrel_unit,eval_smin){
 
   cr_expect_float_eq(val0, 1e-6, FLT_EPSILON,
                      "highest possible value at the start of the process");
-  cr_expect_float_eq(val1, 2.739726027397260273972602739726e-9, FLT_EPSILON,
+  cr_expect_float_eq(val1, 2.739726027397260273972602739726e-9, 1e-6,
                      "for iter = 8, the exponents cancel out");
 }
 
