@@ -76,7 +76,7 @@ Test(obj_unit, schwefel01) {
  *Testing powel
  */
 Test(obj_unit, powel) {
-  float args[] = {3, -1, 0, 1};
+  float args[] = {0, 0, 0, 0};
   cr_expect_float_eq(powel(args, 4), 0.0, FLT_EPSILON, "powel function works as expected.");
 }
 

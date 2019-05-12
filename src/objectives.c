@@ -129,7 +129,7 @@ float schwefel01(const float *const args, size_t dim){
    This is a multimodal minimization problem defined as follows */
 
 float powel(const float *const args, size_t dim){
-  float powel = pow((args[2] + 10.0 * args[0]), 2) + 5.0 * pow((args[1] - args[3]), 2) + pow((args[0] - 2 * args[1]), 4) + 10.0 * pow((args[2] - args[3]), 4);
+  float powel = pow((args[0] + 10.0 * args[1]), 2) + 5.0 * pow((args[2] - args[3]), 2) + pow((args[1] - 2 * args[2]), 4) + 10.0 * pow((args[0] - args[3]), 4);
   return powel;
 }
 
