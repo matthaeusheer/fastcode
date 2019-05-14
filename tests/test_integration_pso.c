@@ -5,8 +5,7 @@
 #include "pso.h"
 
 #define SWARM_SIZE 1000
-#define DIM 2
-
+#define DIM 10
 
 Test(pso_integration, sum_of_squares) {
   test_algo(sum_of_squares, SWARM_SIZE, DIM, -10, 10, 1000, pso_basic, 0, 0.1,
