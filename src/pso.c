@@ -74,7 +74,7 @@ void pso_rand_init(float *const array, size_t length,
   size_t idx = 0;
   if(length > 7) {
     for(; idx < length - 8; idx += 8) {
-      _mm256_store_ps(&array[idx], simd_rand_min_max(min, max));
+      _mm256_storeu_ps(&array[idx], simd_rand_min_max(min, max));
     }
   }
   for(; idx < length; idx++) {
@@ -117,6 +117,7 @@ void pso_gen_init_velocity(float *const velocity, const float *const positions,
                             const float min_position,
                             const float max_position) {
   float* u = (float*)malloc(swarm_size * dim * sizeof(float));
+  if (!u) { perror("malloc arr"); exit(EXIT_FAILURE); };
   pso_rand_init(u, swarm_size * dim, min_position, max_position);
   for(size_t idx = 0; idx < swarm_size * dim; idx++) {
     velocity[idx] = 0.25 * (u[idx] - positions[idx]);
@@ -240,14 +241,19 @@ float *pso_basic(obj_func_t obj_func,
 
   size_t sizeof_position = dim * swarm_size * sizeof(float);
   float *current_positions = (float*)malloc(sizeof_position);
+  if (!current_positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
   pso_rand_init(current_positions, swarm_size * dim, min_position, max_position);
   float *local_best_positions = (float*)malloc(sizeof_position);
+  if (!local_best_positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
   memcpy(local_best_positions, current_positions, sizeof_position);
 
   size_t sizeof_fitness = swarm_size * sizeof(float);
   float *current_fitness = (float*)malloc(sizeof_fitness);
+  if (!current_fitness) { perror("malloc arr"); exit(EXIT_FAILURE); };
   pso_eval_fitness(obj_func, swarm_size, dim, current_positions, current_fitness);
+
   float *local_best_fitness = (float*)malloc(sizeof_fitness);
+  if (!local_best_fitness) { perror("malloc arr"); exit(EXIT_FAILURE); };
   memcpy(local_best_fitness, current_fitness, sizeof_fitness);
 
   #ifdef DEBUG
@@ -257,6 +263,8 @@ float *pso_basic(obj_func_t obj_func,
   #endif
 
   float *p_velocity = (float*)malloc(sizeof_position);
+  if (!p_velocity) { perror("malloc arr"); exit(EXIT_FAILURE); };
+
   pso_gen_init_velocity(p_velocity, current_positions, swarm_size, dim,
                         min_position, max_position);
 
@@ -289,7 +297,9 @@ float *pso_basic(obj_func_t obj_func,
 
   }
 
-  float *const best_solution = (float *const)malloc(dim*sizeof(float));
+  float *const best_solution = (float *const)malloc(dim * sizeof(float));
+  if (!best_solution) { perror("malloc arr"); exit(EXIT_FAILURE); };
+
   memcpy(best_solution, global_best_position , dim * sizeof(float));
 
   free(current_positions);
