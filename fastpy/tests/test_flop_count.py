@@ -1,6 +1,6 @@
 import unittest
 
-from fastpy.evaluation.flop_count import FlopCounter
+from fastpy.evaluation.performance_calculations import FlopCounter
 
 
 class TestFlopCount(unittest.TestCase):

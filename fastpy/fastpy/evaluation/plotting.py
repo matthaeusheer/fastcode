@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from fastpy.utils import sort_two_lists_based_on_first
 from fastpy.visualization import viz_utils
 from fastpy.io.output_loader import OutputParser
-from fastpy.evaluation.flop_count import FlopCounter
+from fastpy.evaluation.performance_calculations import FlopCounter
 
 
 PLOT_TYPES = ['performance', 'runtime']
