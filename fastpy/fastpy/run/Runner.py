@@ -30,7 +30,7 @@ SUB_DIR_PATTERN = 'run_{run_idx}'
 
 class BenchmarkRunner:
 
-    def __init__(self, config_path, data_dir=DATA_DIR_PATH, bin_dir='build'):
+    def __init__(self, config_path, data_dir=DATA_DIR_PATH, bin_dir=None):
         self.config = load_json_config(config_path)
         self.data_dir = data_dir
         self.timestamp = get_date_time_tag()
