@@ -19,7 +19,8 @@ def parse_args():
 
 def main(args):
 
-    assert os.path.exists(args.config), f'Config file {args.config} does not exist. Abort. See README.md.'
+    assert os.path.exists(args.config), 'Config file {} does not exist. ' \
+                                        'Abort. See README.md.'.format(args.config)
     runner = BenchmarkRunner(args.config, bin_dir=args.bin_dir)
     runner.run_benchmarks()
 
