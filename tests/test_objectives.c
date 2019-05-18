@@ -5,8 +5,11 @@
 
 #include "objectives.h"
 #include "utils.h"
+#include "pso.h"
 
 #include <criterion/criterion.h>
+
+
 
 /*
   Testing the sum of squares
@@ -42,8 +45,18 @@ Test(obj_unit, rastigrin) {
   Testing Multidimensional Rosenbrock Function
 */
 Test(obj_unit, rosenbrock) {
-  float args[] = {1, 1, 1};
-  cr_expect_float_eq(rosenbrock(args,3), 0.0, FLT_EPSILON, "rosenbrock function works as expected.");
+  float args[] = {1, 2, 3};
+  cr_expect_float_eq(rosenbrock(args,3), 201.0, FLT_EPSILON, "rosenbrock function works as expected.");
+  // printf("%f\n", rosenbrock(args,3) );
+}
+
+/*
+  Testing Multidimensional Rosenbrock Function
+*/
+Test(obj_unit, simd_rosenbrock) {
+  float args[] = {2, 1, 1, 1000000, 1 , 5, 2, 1, 1, 1 , 2 , 12 , 13321 , 546 , 446 , 656, 64  , 654 , 654};
+
+  cr_expect_float_eq(simd_rosenbrock(args,18), rosenbrock(args,18), FLT_EPSILON, "simd_rosenbrock function works as expected.");
 }
 
 /*

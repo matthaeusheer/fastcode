@@ -20,6 +20,8 @@ float rastigrin      (const float * args, size_t dim);
 
 float rosenbrock     (const float * args, size_t dim);
 
+float simd_rosenbrock(const float *const args, size_t dim);
+
 float sphere         (const float * args, size_t dim);
 
 float egghol2d       (const float * args, size_t dim);
