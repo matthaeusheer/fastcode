@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.9.2)
 project(fastcode)
 
 ##### Setting up the CXX flags #####
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT} -std=c++11 -Wall -Wextra -O3 -fno-tree-vectorize -mavx2 -mfma")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_DEFAULT} -std=c11 -Wall -Wextra -O3 -fno-tree-vectorize -mavx2 -mfma")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT} -std=c++11 -O3 -Wall -Wextra -fno-tree-vectorize -mavx2 -mfma")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_DEFAULT} -std=c11 -O3 -Wall -Wextra -fno-tree-vectorize -mavx2 -mfma")
 
 ##### DEBUG #####
 OPTION(DEBUG "DEBUG flag" OFF)
