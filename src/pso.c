@@ -27,6 +27,13 @@ __m256i seed_a;
 __m256i seed_b;
 __m256 max_rng;
 
+__m256 factor_0_to_1;
+__m256 middle_0_to_1;
+
+__m256 inertia;
+__m256 cog;
+__m256 social;
+
 /**
    Seed a parallel floating point RNG.
  */
@@ -37,6 +44,13 @@ void seed_simd_rng(size_t seed) {
   seed_b = _mm256_set_epi32(rand(), rand(), rand(), rand(),
                             rand(), rand(), rand(), rand());
   max_rng = _mm256_cvtepi32_ps(_mm256_set1_epi32(INT_MIN));
+
+  inertia = _mm256_set1_ps(INERTIA);
+  cog = _mm256_set1_ps(COG);
+  social = _mm256_set1_ps(SOCIAL);
+
+  factor_0_to_1 = _mm256_set1_ps(0.5);
+  middle_0_to_1 = _mm256_set1_ps(0.5);
 }
 
 /**
@@ -58,6 +72,22 @@ inline __m256 simd_rand_min_max(float min, float max) {
   __m256 factors = _mm256_set1_ps(factor);
   __m256 middles = _mm256_set1_ps(middle);
   return _mm256_fmadd_ps(factors, frands, middles);
+}
+
+/**
+   Generate a vector of random floats between 0 and 1.
+*/
+inline __m256 simd_rand_0_to_1() {
+  __m256i s1 = seed_a;
+	const __m256i s0 = seed_b;
+	seed_a = seed_b;
+	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
+	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
+                                             _mm256_srli_epi64(s1, 18)),
+                            _mm256_srli_epi64(s0, 5));
+  __m256i rands = _mm256_add_epi64(seed_b, s0);
+  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
+  return _mm256_fmadd_ps(factor_0_to_1, frands, middle_0_to_1);
 }
 
 /**
@@ -165,8 +195,34 @@ void pso_update_velocity(float *velocity, float *positions,
                          float *best, size_t swarm_size, size_t dim,
                          const float min_vel,
                          const float max_vel) {
+  __m256 v_max_vel = _mm256_set1_ps(max_vel);
+  __m256 v_min_vel = _mm256_set1_ps(min_vel);
+
   for(size_t particle = 0; particle < swarm_size; particle++) {
-    for(size_t dimension = 0; dimension < dim; dimension++) {
+    size_t dimension = 0;
+    if(dim > 7) {
+      for(; dimension < dim - 8; dimension += 8) {
+        size_t idx = (particle * dim) + dimension;
+        __m256 vel = _mm256_loadu_ps(&velocity[idx]);
+        __m256 rand1 = simd_rand_0_to_1();
+        __m256 rand2 = simd_rand_0_to_1();
+        __m256 local_best_pos = _mm256_loadu_ps(&local_best_positions[idx]);
+        __m256 pos = _mm256_loadu_ps(&positions[idx]);
+        __m256 best_pos = _mm256_loadu_ps(&best[dimension]);
+
+        __m256 term1 = _mm256_mul_ps(rand1, _mm256_sub_ps(local_best_pos, pos));
+        __m256 term2 = _mm256_mul_ps(rand2, _mm256_sub_ps(best_pos, pos));
+        __m256 res = _mm256_mul_ps(inertia, vel);
+        res = _mm256_fmadd_ps(cog, term1, res);
+        res = _mm256_fmadd_ps(social, term2, res);
+
+        res = _mm256_min_ps(_mm256_max_ps(v_min_vel, res), v_max_vel);
+
+        _mm256_storeu_ps(&velocity[idx], res);
+      }
+    }
+
+    for(; dimension < dim; dimension++) {
       size_t idx = (particle * dim) + dimension;
       velocity[idx] = INERTIA * velocity[idx] +\
           COG * random_0_to_1() * (local_best_positions[idx] - positions[idx]) +\
