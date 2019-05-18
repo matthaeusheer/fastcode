@@ -68,3 +68,47 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
     plt.show()
 
     return algo_quantity_vs_size
+
+
+def plot_perf_metric_vs_config_val(perf_metrics, x_val, y_val, ax=None, label=None):
+    """Given a dict of performanc_metric dicts over runs, one dict looks like so
+    {'config': {'algorithm': 'pso',
+                'obj_func': 'rosenbrock',
+                'dimension': 64,
+                'n_rep': 1,
+                'n_iter': 1832,
+                'population': 512,
+                'min_val': -100,
+                'max_val': 100},
+     'op_intensity': 2947.808607796262,
+     'flop_count': 1193603079,
+     'mem_move_bytes': 404912,
+     'mem_move_floats': 101228,
+     'performance': 0.3243619732473652},
+     plot values from the config, e.g. n_iter, over runs vs calculated performance metrics, e.g. performance.
+     """
+    assert x_val in list(perf_metrics.values())[0]['config'], 'x axis values should be keys in run config.'
+    assert y_val in [item for item in list(perf_metrics.values())[0].keys() if item != 'config'], \
+        'y axis values should be calculated performance quantities.'
+
+    if ax is None:
+        fig, ax = viz_utils.setup_figure_1ax(x_label=x_val, y_label=y_val)
+
+    x_val_list = []
+    y_val_list = []
+
+    for metrics in perf_metrics.values():
+        x_val_list.append(metrics['config'][x_val])
+        y_val_list.append(metrics[y_val])
+
+    ax.plot(x_val_list, y_val_list, '.', label=label)
+    return ax
+
+
+def plot_multiple_perf_metric_vs_config_val(perf_metrics, x_val, y_vals, ax=None):
+    """Same as plot_perf_metric_vs_config_val but for multiple y values."""
+    if ax is None:
+        fig, ax = viz_utils.setup_figure_1ax(x_label=x_val, y_label='')
+    for y_val in y_vals:
+        plot_perf_metric_vs_config_val(perf_metrics, x_val, y_val, ax=ax, label=y_val)
+    ax.legend()
