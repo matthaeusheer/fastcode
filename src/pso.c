@@ -279,11 +279,20 @@ void pso_update_position(float *positions, float *velocity,
                          size_t swarm_size, size_t dim,
                          const float min_position,
                          const float max_position) {
-  for(size_t idx = 0; idx < swarm_size * dim; idx++) {
+  __m256 v_min = _mm256_set1_ps(min_position);
+  __m256 v_max = _mm256_set1_ps(max_position);
+
+  size_t idx = 0;
+  for(; idx < swarm_size * dim - 8; idx += 8) {
+    __m256 pos = _mm256_loadu_ps(&positions[idx]);
+    __m256 vel = _mm256_loadu_ps(&velocity[idx]);
+    pos = _mm256_add_ps(pos, vel);
+    pos = _mm256_min_ps(_mm256_max_ps(v_min, pos), v_max);
+    _mm256_storeu_ps(&positions[idx], pos);
+  }
+
+  for(; idx < swarm_size * dim; idx++) {
     positions[idx] += velocity[idx];
-    if(positions[idx] >= max_position || positions[idx] <= min_position) {
-      velocity[idx] = -velocity[idx];
-    }
     positions[idx] = min(max(min_position, positions[idx]), max_position);
   }
 }
