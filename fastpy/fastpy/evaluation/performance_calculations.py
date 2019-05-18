@@ -1,9 +1,13 @@
+import numpy as np
+
+from fastpy.io.output_loader import OutputParser
+
 from typing import Dict
 
 
 class PerfCounter:
     def __init__(self, run_config: Dict) -> None:
-        """Base class for FlopCounter and MemmoryMoveCounter.
+        """Base class for FlopCounter and MemoryMoveCounter.
 
         Arguments
         ---------
@@ -30,14 +34,6 @@ class PerfCounter:
     @property
     def algorithm(self):
         return self.config['algorithm']
-
-
-def calc_op_intensity(run_config: Dict) -> float:
-    """Given a run configuration, what is the operational intensity (FLOPS / BYTES)."""
-    mem_move_bytes = MemoryMoveCounter(run_config).mem_movement_bytes()
-    total_flop_cont = FlopCounter(run_config).flop_count()
-
-    return total_flop_cont / mem_move_bytes
 
 
 class MemoryMoveCounter(PerfCounter):
@@ -84,6 +80,7 @@ class FlopCounter(PerfCounter):
         super().__init__(run_config)
 
     def obj_func_flops(self) -> int:
+        """Returns the flop count for the particular objective function specified in the run config."""
         if self.obj_func == 'sum_of_squares':
             return self.dimension * 2
 
@@ -133,6 +130,39 @@ class FlopCounter(PerfCounter):
             return flop_count
 
         elif self.algorithm == 'pso':
-            pass
+            flop_count = sum([7 + 7 * pop_size * dimension,
+                              pop_size * obj_func_flops,
+                              n_iter * (12 * pop_size * dimension + pop_size * obj_func_flops)])
+            return flop_count
         else:
             raise NotImplementedError(f'Algorithm {self.algorithm} not implemented yet for performance plot.')
+
+
+def calc_op_intensity(run_config: Dict) -> float:
+    """Given a run configuration, what is the operational intensity [FLOPS / BYTES]."""
+    mem_move_bytes = MemoryMoveCounter(run_config).mem_movement_bytes()
+    total_flop_cont = FlopCounter(run_config).flop_count()
+    return total_flop_cont / mem_move_bytes
+
+
+def performance_metrics(output_parser: OutputParser) -> Dict:
+    """For all sub runs loaded by an OutputParser, calculate the
+    operational intensity, flop counts and memory movement.
+
+    Returns
+    -------
+        results: a dict with run_name keys and dict value which holds the config and performance metrics fields
+    """
+    timings = output_parser.parse_timings(return_lists=True)
+    results = {}
+    for run_name, sub_config in output_parser.sub_configs.items():
+
+        flop_count = FlopCounter(sub_config).flop_count()
+        results[run_name] = {'config': sub_config,
+                             'op_intensity': calc_op_intensity(sub_config),
+                             'flop_count': flop_count,
+                             'mem_move_bytes': MemoryMoveCounter(sub_config).mem_movement_bytes(),
+                             'mem_move_floats': MemoryMoveCounter(sub_config).mem_movement_floats(),
+                             'performance': flop_count / np.mean(timings[run_name])}
+    print(f'Calculated performance metrics for {len(output_parser.sub_configs)} run(s).')
+    return results
