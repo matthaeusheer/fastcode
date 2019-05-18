@@ -149,7 +149,17 @@ void pso_gen_init_velocity(float *const velocity, const float *const positions,
   float* u = (float*)malloc(swarm_size * dim * sizeof(float));
   if (!u) { perror("malloc arr"); exit(EXIT_FAILURE); };
   pso_rand_init(u, swarm_size * dim, min_position, max_position);
-  for(size_t idx = 0; idx < swarm_size * dim; idx++) {
+  __m256 quarter = _mm256_set1_ps(0.25);
+
+  size_t idx = 0;
+  for(; idx < swarm_size * dim - 8; idx += 8) {
+    __m256 pos = _mm256_loadu_ps(&positions[idx]);
+    __m256 v_u = _mm256_loadu_ps(&u[idx]);
+    __m256 diff = _mm256_sub_ps(v_u, pos);
+    _mm256_storeu_ps(&velocity[idx], _mm256_mul_ps(quarter, diff));
+  }
+
+  for(; idx < swarm_size * dim; idx++) {
     velocity[idx] = 0.25 * (u[idx] - positions[idx]);
   }
   free(u);
