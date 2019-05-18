@@ -20,9 +20,11 @@
      debug:     whether to print additional debug information
                 this includes the best solution and the objective function
                 value at that best solution
+     suite:     name of the testing suite this test is contained in
+     test:      name of this test
  */
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
                float min_bound, float max_bound,
                size_t max_iter, algo_func_t algo,
                float target, float tolerance,
-               bool debug);
+               bool debug, char* suite, char* test);

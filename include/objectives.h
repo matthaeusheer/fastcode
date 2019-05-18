@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "stddef.h"
+#include <stdlib.h>
 
 /*******************************************************************************
   OBJECTIVE FUNCTIONS PROTOTYPES
@@ -20,8 +20,6 @@ float rastigrin      (const float * args, size_t dim);
 
 float rosenbrock     (const float * args, size_t dim);
 
-float rosenbrock_neg (const float * args, size_t dim);
-
 float sphere         (const float * args, size_t dim);
 
 float egghol2d       (const float * args, size_t dim);
@@ -30,6 +28,13 @@ float schaf2d        (const float * args, size_t dim);
 
 float griewank       (const float * args, size_t dim);
 
+float schwefel01     (const float * args, size_t dim);
+
+float powel          (const float * args, size_t dim);
+
+float freundsteinroth(const float * args, size_t dim);
+
+float beale          (const float * args, size_t dim);
 
 /*******************************************************************************
   UTILITIES

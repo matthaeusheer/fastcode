@@ -70,10 +70,8 @@ obj_map_t create_obj_map() {
   // Register more objective functions here as they get implemented.
   obj_map_t obj_map = {{"sum_of_squares", &sum_of_squares},
                        {"sum",            &sum},
-                       {"sum_negative",   &sum_negative},
                        {"rastigrin",      &rastigrin},
                        {"rosenbrock",     &rosenbrock},
-                       {"rosenbrock_neg", &rosenbrock_neg},
                        {"sphere",         &sphere},
                        {"egghol2d",       &egghol2d},
                        {"schaf2d",        &schaf2d},
