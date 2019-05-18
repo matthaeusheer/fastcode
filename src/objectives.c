@@ -74,7 +74,37 @@ float rastigrin(const float *const args, size_t dim) {
 float rosenbrock(const float *const args, size_t dim) {
   float rNd = 0.0;
   for (size_t idx = 0; idx < dim - 1; idx++)
-    rNd += (100.0 * (pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
+  rNd += (100.0 * (+pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
+  return rNd;
+}
+
+/**
+ * Multidimensional Rosenbrock Function
+ * global minima f(x1,.....,xN) = 0 at (x1,.....,xN) = (1,.....,1)
+ */
+float simd_rosenbrock(const float *const args, size_t dim) {
+  float rNd = 0.0;
+  __m256 ones = _mm256_set1_ps(1.0);
+  __m256 cent = _mm256_set1_ps(100.0);
+  __m256 res = _mm256_setzero_ps();
+
+  int idx = 0;
+  if (dim > 8) {
+    for (idx; idx < dim - 9; idx+=8){
+      // printf("this is inside the loop\n" );
+      __m256 pos = _mm256_loadu_ps(&args[idx]);
+      __m256 pos_p1 = _mm256_loadu_ps(&args[idx+1]);
+      __m256 r1 = _mm256_fmsub_ps(pos,pos,pos_p1);
+      r1 = _mm256_mul_ps(r1,r1);
+      r1 = _mm256_mul_ps(cent,r1);
+      __m256 temp = _mm256_sub_ps(ones,pos);
+      res = _mm256_add_ps(res, _mm256_fmadd_ps(temp,temp,r1));
+    }
+    rNd = horizontal_add(res);
+  }
+  for (; idx < dim - 1; idx++){
+    rNd += (100.0 * (+pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
+  }
   return rNd;
 }
 

@@ -13,17 +13,18 @@ float horizontal_add(__m256 a) {
 }
 
 
+
 // Possibly more efficient solution than above
-/* float horizontal_add(__m256 x) { */
-/*   __m128 hi = _mm256_extractf128_ps(x, 1); */
-/*   __m128 lo = _mm256_extractf128_ps(x, 0); */
-/*   lo = _mm_add_ps(hi, lo); */
-/*   hi = _mm_movehl_ps(hi, lo); */
-/*   lo = _mm_add_ps(hi, lo); */
-/*   hi = _mm_shuffle_ps(lo, lo, 1); */
-/*   lo = _mm_add_ss(hi, lo); */
-/*   return _mm_cvtss_f32(lo); */
-/* } */
+ float fast_horizontal_add(__m256 x) {
+   __m128 hi = _mm256_extractf128_ps(x, 1);
+   __m128 lo = _mm256_extractf128_ps(x, 0);
+   lo = _mm_add_ps(hi, lo);
+   hi = _mm_movehl_ps(hi, lo);
+   lo = _mm_add_ps(hi, lo);
+   hi = _mm_shuffle_ps(lo, lo, 1);
+   lo = _mm_add_ss(hi, lo);
+   return _mm_cvtss_f32(lo);
+ }
 
 float *filled_float_array(size_t length, float val) {
   float *res = (float *) malloc(length * sizeof(float));
