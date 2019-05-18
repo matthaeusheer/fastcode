@@ -68,7 +68,8 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
 obj_map_t create_obj_map() {
 
   // Register more objective functions here as they get implemented.
-  obj_map_t obj_map = {{"sum_of_squares", &sum_of_squares},
+  obj_map_t obj_map = {{"simd_sum_of_squares", &(simd_sum_of_squares)},
+                       {"sum_of_squares", &sum_of_squares},
                        {"sum",            &sum},
                        {"rastigrin",      &rastigrin},
                        {"rosenbrock",     &rosenbrock},

@@ -16,7 +16,7 @@
 ******************************************************************************/
 
 /**
- * Sum of squares function
+ * Sum of squares SIMD function
  * optimal solution is 0s everywhere
  */
 float simd_sum_of_squares(const float *const args, size_t dim) {
@@ -49,7 +49,6 @@ float sum_of_squares(const float *const args, size_t dim) {
   for(; idx < dim; idx++) {
     sum += args[idx] * args[idx];
   }
-
   return sum;
 }
 
