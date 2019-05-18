@@ -66,3 +66,6 @@ cmake-build-release/
 /fastpy/config.json
 /fastpy/data/*
 !fastpy/data/data_readme.txt
+
+MYENV
+*.pyc
