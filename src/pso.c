@@ -249,7 +249,14 @@ void pso_update_bests(float *local_best_fitness, float *current_fitness,
   for(size_t particle = 0; particle < swarm_size; particle++) {
     if(current_fitness[particle] < local_best_fitness[particle]) {
       local_best_fitness[particle] = current_fitness[particle];
-      for(size_t dimension = 0; dimension < dim; dimension++) {
+      size_t dimension = 0;
+      if(dim > 7) {
+        for(; dimension < dim - 8; dimension += 8) {
+          size_t idx = (particle * dim) + dimension;
+          _mm256_storeu_ps(&local_best_positions[idx], _mm256_loadu_ps(&current_positions[idx]));
+        }
+      }
+      for(; dimension < dim; dimension++) {
         size_t idx = (particle * dim) + dimension;
         local_best_positions[idx] = current_positions[idx];
       }
