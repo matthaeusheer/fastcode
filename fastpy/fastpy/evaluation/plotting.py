@@ -8,7 +8,27 @@ from fastpy.io.output_loader import OutputParser
 from fastpy.evaluation.performance_calculations import FlopCounter
 
 
-PLOT_TYPES = ['performance', 'runtime']
+# For display in plots.
+UNITS_MAP = {'op_intensity': '[Flops/Bytes]',
+             'flop_count': '',
+             'mem_move_bytes': '[Bytes]',
+             'mem_move_floats': '[# Floats]',
+             'performance': '[Flops/Cycle]',
+             'mean_runtime': '[Cycles]'}
+
+# For nicer formatting in plots.
+LABEL_MAP = {'op_intensity': 'Operational Intensity',
+             'flop_count': 'Flop Count',
+             'mem_move_bytes': 'Memory Movement',
+             'mem_move_floats': 'Memory Movement',
+             'performance': 'Performance',
+             'n_iter': 'Number of Iterations',
+             'population': 'Population Size',
+             'n_rep': 'N Repetitions',
+             'dimension': 'Search Space Dimension',
+             'algorithm': 'Algorithm',
+             'obj_func': 'Objective Function',
+             'mean_runtime': 'Runtime'}
 
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance'):
@@ -16,6 +36,7 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
 
     NOTE: We fix the dimension to be equal for all runs. Only works if only one dimension specified in config.
     """
+    plot_types = ['performance', 'runtime']
 
     config = out_parser.config
     sub_configs = out_parser.sub_configs
@@ -24,7 +45,7 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
         raise ValueError(f'We fix the dimension and vary population size. Only one dimension allowed. '
                          f'Given: {config["dimension"]}')
 
-    assert plot_type in PLOT_TYPES, f'Plot type argument needs to be one of {PLOT_TYPES}.'
+    assert plot_type in plot_types, f'Plot type argument needs to be one of {plot_types}.'
 
     algos = config['algorithm']
     obj_funcs = config['obj_func']
@@ -44,14 +65,13 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
 
                 if sub_config['algorithm'] == algo and sub_config['obj_func'] == obj_func:
 
+                    y_label = ' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]])
                     if plot_type == 'performance':
                         flop_counter = FlopCounter(sub_config)
                         flops = flop_counter.flop_count()
                         algo_quantity_vs_size[algo][obj_func][plot_type].append(flops/mean_timings[run])
-                        y_label = 'Performance [flops/cycle]'
                     elif plot_type == 'runtime':
                         algo_quantity_vs_size[algo][obj_func][plot_type].append(mean_timings[run])
-                        y_label = 'Runtime [cycles]'
 
                     algo_quantity_vs_size[algo][obj_func]['sizes'].append(sub_config['population'])
 
@@ -70,45 +90,48 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
     return algo_quantity_vs_size
 
 
-def plot_perf_metric_vs_config_val(perf_metrics, x_val, y_val, ax=None, label=None):
+def plot_perf_metric_vs_config_val(perf_metrics, x_key, y_key, ax=None, label=None):
     """Given a dict of performanc_metric dicts over runs, one dict looks like so
-    {'config': {'algorithm': 'pso',
-                'obj_func': 'rosenbrock',
-                'dimension': 64,
-                'n_rep': 1,
-                'n_iter': 1832,
-                'population': 512,
-                'min_val': -100,
-                'max_val': 100},
-     'op_intensity': 2947.808607796262,
-     'flop_count': 1193603079,
-     'mem_move_bytes': 404912,
-     'mem_move_floats': 101228,
-     'performance': 0.3243619732473652},
+        {'config': {'algorithm': 'pso',
+                    'obj_func': 'rosenbrock',
+                    'dimension': 64,
+                    'n_rep': 1,
+                    'n_iter': 1832,
+                    'population': 512,
+                    'min_val': -100,
+                    'max_val': 100},
+         'op_intensity': 2947.808607796262,
+         'flop_count': 1193603079,
+         'mem_move_bytes': 404912,
+         'mem_move_floats': 101228,
+         'performance': 0.3243619732473652},
      plot values from the config, e.g. n_iter, over runs vs calculated performance metrics, e.g. performance.
      """
-    assert x_val in list(perf_metrics.values())[0]['config'], 'x axis values should be keys in run config.'
-    assert y_val in [item for item in list(perf_metrics.values())[0].keys() if item != 'config'], \
+    assert x_key in list(perf_metrics.values())[0]['config'], 'x axis values should be keys in run config.'
+    assert y_key in [item for item in list(perf_metrics.values())[0].keys() if item != 'config'], \
         'y axis values should be calculated performance quantities.'
 
+    if label is None:
+        label = ' '.join([LABEL_MAP[y_key], UNITS_MAP[y_key]])
+
     if ax is None:
-        fig, ax = viz_utils.setup_figure_1ax(x_label=x_val, y_label=y_val)
+        fig, ax = viz_utils.setup_figure_1ax(x_label=LABEL_MAP[x_key], y_label=label)
 
     x_val_list = []
     y_val_list = []
 
     for metrics in perf_metrics.values():
-        x_val_list.append(metrics['config'][x_val])
-        y_val_list.append(metrics[y_val])
+        x_val_list.append(metrics['config'][x_key])
+        y_val_list.append(metrics[y_key])
 
-    ax.plot(x_val_list, y_val_list, '.', label=label)
+    ax.plot(x_val_list, y_val_list, 'o', label=label)
     return ax
 
 
-def plot_multiple_perf_metric_vs_config_val(perf_metrics, x_val, y_vals, ax=None):
+def plot_multiple_perf_metric_vs_config_val(perf_metrics, x_key, y_keys, ax=None):
     """Same as plot_perf_metric_vs_config_val but for multiple y values."""
     if ax is None:
-        fig, ax = viz_utils.setup_figure_1ax(x_label=x_val, y_label='')
-    for y_val in y_vals:
-        plot_perf_metric_vs_config_val(perf_metrics, x_val, y_val, ax=ax, label=y_val)
+        fig, ax = viz_utils.setup_figure_1ax(x_label=x_key, y_label='')
+    for y_val in y_keys:
+        plot_perf_metric_vs_config_val(perf_metrics, x_key, y_val, ax=ax)
     ax.legend()

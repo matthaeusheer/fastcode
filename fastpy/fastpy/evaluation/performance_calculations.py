@@ -84,6 +84,9 @@ class FlopCounter(PerfCounter):
         if self.obj_func == 'sum_of_squares':
             return self.dimension * 2
 
+        elif self.obj_func == 'simd_sum_of_squares':
+            return self.dimension * 2
+
         elif self.obj_func == 'sum':
             return self.dimension * 1
 
@@ -163,6 +166,8 @@ def performance_metrics(output_parser: OutputParser) -> Dict:
                              'flop_count': flop_count,
                              'mem_move_bytes': MemoryMoveCounter(sub_config).mem_movement_bytes(),
                              'mem_move_floats': MemoryMoveCounter(sub_config).mem_movement_floats(),
-                             'performance': flop_count / np.mean(timings[run_name])}
+                             'performance': flop_count / np.mean(timings[run_name]),
+                             'mean_runtime': np.mean(timings[run_name]),
+                             'std_runtime': np.std(timings[run_name])}
     print(f'Calculated performance metrics for {len(output_parser.sub_configs)} run(s).')
     return results
