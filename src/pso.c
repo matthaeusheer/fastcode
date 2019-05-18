@@ -72,11 +72,12 @@ void pso_gen_init_velocity(float *const velocity, const float *const positions,
                             size_t swarm_size, size_t dim,
                             const float min_position,
                             const float max_position) {
-  float u[swarm_size * dim];
+  float* u = (float*)malloc(swarm_size * dim * sizeof(float));
   pso_rand_init(u, swarm_size * dim, min_position, max_position);
   for(size_t idx = 0; idx < swarm_size * dim; idx++) {
     velocity[idx] = 0.25 * (u[idx] - positions[idx]);
   }
+  free(u);
 }
 
 /**
@@ -244,7 +245,7 @@ float *pso_basic(obj_func_t obj_func,
 
   }
 
-  float *const best_solution = (float *const)malloc(dim);
+  float *const best_solution = (float *const)malloc(dim*sizeof(float));
   memcpy(best_solution, global_best_position , dim * sizeof(float));
 
   free(current_positions);

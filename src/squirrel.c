@@ -263,10 +263,10 @@ float* squirrel (obj_func_t obj_func,
     #endif
   }
 
-  float* const best_solution = (float *const) malloc(dim);
+  float* const best_solution = (float *const) malloc(dim*sizeof(float));
   memcpy(best_solution, positions , dim*sizeof(float));
 
-  // free(fitness);
+  free(fitness);
   free(positions);
 
   return best_solution;
