@@ -37,6 +37,14 @@ __m256 social;
 
 __m256 quarter;
 
+__m256 v_min_vel;
+__m256 v_max_vel;
+
+__m256 v_min_pos;
+__m256 v_max_pos;
+__m256 v_factor_pos;
+__m256 v_middle_pos;
+
 /**
    Seed a parallel floating point RNG.
  */
@@ -58,13 +66,24 @@ void seed_simd_rng(size_t seed) {
   quarter = _mm256_set1_ps(0.25);
 }
 
+void initialise_velocity_bounds(float min_vel, float max_vel) {
+  v_min_vel = _mm256_set1_ps(min_vel);
+  v_max_vel = _mm256_set1_ps(max_vel);
+}
+
+void initialise_position_bounds(float min_position, float max_position) {
+  v_min_pos = _mm256_set1_ps(min_position);
+  v_max_pos = _mm256_set1_ps(max_position);
+  float factor = (max_position - min_position) / 2;
+  v_factor_pos = _mm256_set1_ps(factor);
+  v_middle_pos = _mm256_set1_ps(min_position + factor);
+}
+
+
 /**
    Generate a vector of random floats between `min` and `max`.
  */
-inline __m256 simd_rand_min_max(float min, float max) {
-  float factor = (max - min) / 2;
-  float middle = min + factor;
-
+inline __m256 simd_rand_min_max() {
   __m256i s1 = seed_a;
 	const __m256i s0 = seed_b;
 	seed_a = seed_b;
@@ -74,9 +93,7 @@ inline __m256 simd_rand_min_max(float min, float max) {
                             _mm256_srli_epi64(s0, 5));
   __m256i rands = _mm256_add_epi64(seed_b, s0);
   __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
-  __m256 factors = _mm256_set1_ps(factor);
-  __m256 middles = _mm256_set1_ps(middle);
-  return _mm256_fmadd_ps(factors, frands, middles);
+  return _mm256_fmadd_ps(v_factor_pos, frands, v_middle_pos);
 }
 
 /**
@@ -101,13 +118,10 @@ inline __m256 simd_rand_0_to_1() {
    Arguments:
      array   the array to randomly initialise
      length  the length of the array to initialise in terms of __m256
-     min     minimum allowed value of each entry
-     max     maximum allowed value of each entry
  */
-void pso_rand_init(__m256 *const array, size_t length,
-                   const float min, const float max) {
+void pso_rand_init(__m256 *const array, size_t length) {
   for(size_t idx = 0; idx < length; idx++) {
-    array[idx] = simd_rand_min_max(min, max);
+    array[idx] = simd_rand_min_max();
   }
 }
 
@@ -126,7 +140,6 @@ void pso_eval_fitness(obj_func_t obj_func,
                       size_t swarm_size, size_t simd_dim,
                       const __m256 *const positions, float *fitness) {
   for(size_t particle = 0; particle < swarm_size; particle++) {
-    // TODO fix this to reduce division in index.
     float tmp[simd_dim * 8];
     for(size_t idx = 0; idx < simd_dim; idx++) {
       _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
@@ -143,17 +156,12 @@ void pso_eval_fitness(obj_func_t obj_func,
      positions     position array of the particles
      swarm_size    number of particles for which to compute the initial velocity
      simd_dim      dimension of the position of each particle in terms of __m256
-     min_position  lower bound on each entry of the position for a particle
-     max_position  upper bound on each entry of the position for a particle
  */
 void pso_gen_init_velocity(__m256 *const velocity, const __m256 *const positions,
-                           size_t swarm_size, size_t simd_dim,
-                           const float min_position,
-                           const float max_position) {
-  // TODO check if malloc necessary here
+                           size_t swarm_size, size_t simd_dim) {
   __m256* u = (__m256*)malloc(swarm_size * simd_dim * sizeof(__m256));
   if (!u) { perror("malloc arr"); exit(EXIT_FAILURE); };
-  pso_rand_init(u, swarm_size * simd_dim, min_position, max_position);
+  pso_rand_init(u, swarm_size * simd_dim);
 
   for(size_t idx = 0; idx < swarm_size * simd_dim; idx++) {
     __m256 diff = _mm256_sub_ps(u[idx], positions[idx]);
@@ -195,18 +203,10 @@ size_t pso_best_fitness(float *fitness, size_t swarm_size) {
      best                  best solution so far
      swarm_size            number of particles in the swarm
      simd_dim              dimension of a single particle in terms of __m256
-     min_vel               minimum allowed value for each velocity entry
-     max_vel               maximum allowed value for each velocity entry
  */
 void pso_update_velocity(__m256 *velocity, __m256 *positions,
                          __m256 *local_best_positions,
-                         __m256 *best, size_t swarm_size, size_t simd_dim,
-                         const float min_vel,
-                         const float max_vel) {
-  // TODO turn this into globals
-  __m256 v_max_vel = _mm256_set1_ps(max_vel);
-  __m256 v_min_vel = _mm256_set1_ps(min_vel);
-
+                         __m256 *best, size_t swarm_size, size_t simd_dim) {
   for(size_t particle = 0; particle < swarm_size; particle++) {
     for(size_t dimension = 0; dimension < simd_dim; dimension++) {
       // TODO check correctness
@@ -258,20 +258,12 @@ void pso_update_bests(float *local_best_fitness, float *current_fitness,
      positions     positions of the particles in the swarm
      velocity      velocity of the particles in the swarm
      length        length in __m256 of positions and velocity vectors
-     min_position  lower bound on each entry of the position for a particle
-     max_position  upper bound on each entry of the position for a particle
  */
 void pso_update_position(__m256 *positions, __m256 *velocity,
-                         size_t length,
-                         const float min_position,
-                         const float max_position) {
-  // TODO turn into globals
-  __m256 v_min = _mm256_set1_ps(min_position);
-  __m256 v_max = _mm256_set1_ps(max_position);
-
+                         size_t length) {
   for(size_t idx = 0; idx < length; idx++) {
     positions[idx] = _mm256_add_ps(positions[idx], velocity[idx]);
-    positions[idx] = _mm256_min_ps(_mm256_max_ps(v_min, positions[idx]), v_max);
+    positions[idx] = _mm256_min_ps(_mm256_max_ps(v_min_pos, positions[idx]), v_max_pos);
   }
 }
 
@@ -294,10 +286,13 @@ float *pso_basic(obj_func_t obj_func,
   float min_vel = min_position/VEL_LIMIT_SCALE;
   float max_vel = max_position/VEL_LIMIT_SCALE;
 
+  initialise_velocity_bounds(min_vel, max_vel);
+  initialise_position_bounds(min_position, max_position);
+
   size_t sizeof_position = swarm_size * simd_dim * sizeof(__m256);
   __m256 *current_positions = (__m256*)malloc(sizeof_position);
   if (!current_positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
-  pso_rand_init(current_positions, swarm_size * simd_dim, min_position, max_position);
+  pso_rand_init(current_positions, swarm_size * simd_dim);
   __m256 *local_best_positions = (__m256*)malloc(sizeof_position);
   if (!local_best_positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
   memcpy(local_best_positions, current_positions, sizeof_position);
@@ -320,8 +315,7 @@ float *pso_basic(obj_func_t obj_func,
   __m256 *p_velocity = (__m256*)malloc(sizeof_position);
   if (!p_velocity) { perror("malloc arr"); exit(EXIT_FAILURE); };
 
-  pso_gen_init_velocity(p_velocity, current_positions, swarm_size, simd_dim,
-                        min_position, max_position);
+  pso_gen_init_velocity(p_velocity, current_positions, swarm_size, simd_dim);
 
   size_t global_best_idx = pso_best_fitness(local_best_fitness, swarm_size);
   __m256 *global_best_position = &local_best_positions[simd_dim * global_best_idx];
@@ -330,10 +324,9 @@ float *pso_basic(obj_func_t obj_func,
 
   for(size_t iter = 0; iter < max_iter; iter++) {
     pso_update_velocity(p_velocity, current_positions, local_best_positions,
-                        global_best_position, swarm_size, simd_dim, min_vel, max_vel);
+                        global_best_position, swarm_size, simd_dim);
 
-    pso_update_position(current_positions, p_velocity, swarm_size * simd_dim,
-                        min_position, max_position);
+    pso_update_position(current_positions, p_velocity, swarm_size * simd_dim);
 
     pso_eval_fitness(obj_func, swarm_size, simd_dim, current_positions,
                      current_fitness);
@@ -344,7 +337,6 @@ float *pso_basic(obj_func_t obj_func,
     global_best_idx = pso_best_fitness(local_best_fitness, swarm_size);
     global_best_position = local_best_positions + (simd_dim * global_best_idx);
 
-    // TODO fix this to be better
     global_best_fitness = local_best_fitness[global_best_idx];
 
   #ifdef DEBUG

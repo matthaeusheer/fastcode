@@ -15,8 +15,19 @@ void seed_simd_rng();
 /**
    Generate a vector of random floats between `min` and `max`.
  */
-inline __m256 simd_rand_min_max(float min, float max);
+inline __m256 simd_rand_min_max();
 
+
+/**
+   Initialise velocity bounds for later use.
+ */
+void initialise_velocity_bounds(float min_vel, float max_vel);
+
+
+/**
+    Initialise position bounds for later use.
+ */
+void initialise_position_bounds(float min_position, float max_position);
 
 /**
     Generate a vector of random floats between 0 and 1.
@@ -29,11 +40,8 @@ inline __m256 simd_rand_0_to_1();
     Arguments:
       array   the array to randomly initialise
       length  the length of the array to initialise
-      min     minimum allowed value of each entry
-      max     maximum allowed value of each entry
 */
-void pso_rand_init(__m256 *const array, size_t length,
-                   const float min, const float max);
+void pso_rand_init(__m256 *const array, size_t length);
 
 /**
    Evaluate fitness of `positions` according to `obj_func` and store the result
@@ -58,13 +66,9 @@ void pso_eval_fitness(obj_func_t obj_func,
      positions     position array of the particles
      swarm_size    number of particles for which to compute the initial velocity
      dim           dimension of the position of each particle
-     max_position  upper bound on each entry of the position for a particle
-     min_position  lower bound on each entry of the position for a particle
  */
 void pso_gen_init_velocity(__m256 *const velocity, const __m256 *positions,
-                           size_t swarm_size, size_t dim,
-                           const float min_position,
-                           const float max_position);
+                           size_t swarm_size, size_t dim);
 
 /**
    Returns the index of the particle with lowest fitness.
@@ -89,14 +93,10 @@ size_t pso_best_fitness(float *fitness, size_t swarm_size);
      best                  best solution so far
      swarm_size            number of particles in the swarm
      dim                   dimension of a single particle
-     min_vel               minimum allowed value for each velocity entry
-     max_vel               maximum allowed value for each velocity entry
  */
 void pso_update_velocity(__m256 *velocity, __m256 *positions,
                          __m256 *local_best_position,
-                         __m256 *best, size_t swarm_size, size_t dim,
-                         const float min_vel,
-                         const float max_vel);
+                         __m256 *best, size_t swarm_size, size_t dim);
 
 /**
    Update the local best fitness and position for all particles.
@@ -120,13 +120,9 @@ void pso_update_bests(float *local_best_fitness, float *current_fitness,
      positions     positions of the particles in the swarm
      velocity      velocity of the particles in the swarm
      length        length in __m256 of positions and velocity vectors
-     min_position  lower bound on each entry of the position for a particle
-     max_position  upper bound on each entry of the position for a particle
  */
 void pso_update_position(__m256 *positions, __m256 *velocity,
-                         size_t length,
-                         const float min_position,
-                         const float max_position);
+                         size_t length);
 
 /**
    PSO algorithm.
