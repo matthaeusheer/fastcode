@@ -36,6 +36,16 @@ void print_solution(size_t dim, const float * solution);
 void print_population(size_t colony_size, size_t dim, const float *population);
 
 /**
+  *  Prints the solution array of one algorithm output to console.
+  */
+void simd_print_solution(size_t dim, const __m256 *solution);
+
+/**
+    Prints the population to standard output.
+ */
+void simd_print_population(size_t colony_size, size_t dim, const __m256 *population);
+
+/**
  * Fills an float array with a given length and unique value for all entries.
  */
 float *filled_float_array(size_t length, float val);
