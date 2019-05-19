@@ -12,19 +12,17 @@ float horizontal_add(__m256 a) {
   return _mm_cvtss_f32(t4);
 }
 
-
-
 // Possibly more efficient solution than above
- float fast_horizontal_add(__m256 x) {
-   __m128 hi = _mm256_extractf128_ps(x, 1);
-   __m128 lo = _mm256_extractf128_ps(x, 0);
-   lo = _mm_add_ps(hi, lo);
-   hi = _mm_movehl_ps(hi, lo);
-   lo = _mm_add_ps(hi, lo);
-   hi = _mm_shuffle_ps(lo, lo, 1);
-   lo = _mm_add_ss(hi, lo);
-   return _mm_cvtss_f32(lo);
- }
+/* float horizontal_add(__m256 x) { */
+/*   __m128 hi = _mm256_extractf128_ps(x, 1); */
+/*   __m128 lo = _mm256_extractf128_ps(x, 0); */
+/*   lo = _mm_add_ps(hi, lo); */
+/*   hi = _mm_movehl_ps(hi, lo); */
+/*   lo = _mm_add_ps(hi, lo); */
+/*   hi = _mm_shuffle_ps(lo, lo, 1); */
+/*   lo = _mm_add_ss(hi, lo); */
+/*   return _mm_cvtss_f32(lo); */
+/* } */
 
 float *filled_float_array(size_t length, float val) {
   float *res = (float *) malloc(length * sizeof(float));
@@ -197,4 +195,22 @@ void print_float_array(size_t length, const float * arr) {
     printf("\t# %f \n", arr[idx]);
   }
   printf("#-----\n");
+}
+
+void simd_print_solution(size_t dim, const __m256 *const solution) {
+  float tmp[8];
+  for (size_t idx = 0; idx < dim / 8; idx++) {
+    _mm256_storeu_ps(tmp, solution[idx]);
+    for (size_t j = 0; j < 8; j++) {
+      printf("%.4f, ", tmp[j]);
+    }
+  }
+  printf("\n");
+}
+
+void simd_print_population(size_t colony_size, size_t dim, const __m256 *population) {
+  for (size_t idx = 0; idx < colony_size; idx++) {
+    printf("member%03ld, ", idx);
+    print_solution(dim, &population[idx * dim / 8]);
+  }
 }

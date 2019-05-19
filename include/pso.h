@@ -32,8 +32,8 @@ inline __m256 simd_rand_0_to_1();
       min     minimum allowed value of each entry
       max     maximum allowed value of each entry
 */
-void pso_rand_init(float *const array, size_t length,
-                    const float min, const float max);
+void pso_rand_init(__m256 *const array, size_t length,
+                   const float min, const float max);
 
 /**
    Evaluate fitness of `positions` according to `obj_func` and store the result
@@ -48,7 +48,7 @@ void pso_rand_init(float *const array, size_t length,
  */
 void pso_eval_fitness(obj_func_t obj_func,
                       size_t swarm_size, size_t dim,
-                      const float *positions, float *fitness);
+                      const __m256 *positions, float *fitness);
 
 /**
    Randomly generate initial velocity for all particles.
@@ -61,10 +61,10 @@ void pso_eval_fitness(obj_func_t obj_func,
      max_position  upper bound on each entry of the position for a particle
      min_position  lower bound on each entry of the position for a particle
  */
-void pso_gen_init_velocity(float *const velocity, const float *positions,
-                          size_t swarm_size, size_t dim,
-                          const float min_position,
-                          const float max_position);
+void pso_gen_init_velocity(__m256 *const velocity, const __m256 *positions,
+                           size_t swarm_size, size_t dim,
+                           const float min_position,
+                           const float max_position);
 
 /**
    Returns the index of the particle with lowest fitness.
@@ -92,9 +92,9 @@ size_t pso_best_fitness(float *fitness, size_t swarm_size);
      min_vel               minimum allowed value for each velocity entry
      max_vel               maximum allowed value for each velocity entry
  */
-void pso_update_velocity(float *velocity, float *positions,
-                         float *local_best_position,
-                         float *best, size_t swarm_size, size_t dim,
+void pso_update_velocity(__m256 *velocity, __m256 *positions,
+                         __m256 *local_best_position,
+                         __m256 *best, size_t swarm_size, size_t dim,
                          const float min_vel,
                          const float max_vel);
 
@@ -110,7 +110,7 @@ void pso_update_velocity(float *velocity, float *positions,
      dim                   dimension of a single particle
  */
 void pso_update_bests(float *local_best_fitness, float *current_fitness,
-                      float *local_best_positions, float *current_positions,
+                      __m256 *local_best_positions, __m256 *current_positions,
                       size_t swarm_size, size_t dim);
 
 /**
@@ -119,13 +119,12 @@ void pso_update_bests(float *local_best_fitness, float *current_fitness,
    Arguments:
      positions     positions of the particles in the swarm
      velocity      velocity of the particles in the swarm
-     swarm_size    number of particles in the swarm
-     dim           dimension of a single particle
+     length        length in __m256 of positions and velocity vectors
      min_position  lower bound on each entry of the position for a particle
      max_position  upper bound on each entry of the position for a particle
  */
-void pso_update_position(float *positions, float *velocity,
-                         size_t swarm_size, size_t dim,
+void pso_update_position(__m256 *positions, __m256 *velocity,
+                         size_t length,
                          const float min_position,
                          const float max_position);
 
@@ -133,10 +132,10 @@ void pso_update_position(float *positions, float *velocity,
    PSO algorithm.
  */
 float *pso_basic(obj_func_t obj_func,
-                  size_t swarm_size,
-                  size_t dim, size_t max_iter,
-                  const float min_position,
-                  const float max_position);
+                 size_t swarm_size,
+                 size_t dim, size_t max_iter,
+                 const float min_position,
+                 const float max_position);
 
 #ifdef __cplusplus
 }
