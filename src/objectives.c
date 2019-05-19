@@ -19,7 +19,7 @@
  * Sum of squares function
  * optimal solution is 0s everywhere
  */
-float sum_of_squares(const float *const args, size_t dim) {
+float simd_sum_of_squares(const float *const args, size_t dim) {
   __m256 v_sum = _mm256_setzero_ps();
   size_t idx = 0;
 
@@ -32,6 +32,20 @@ float sum_of_squares(const float *const args, size_t dim) {
   }
 
   float sum = horizontal_add(v_sum);
+  for(; idx < dim; idx++) {
+    sum += args[idx] * args[idx];
+  }
+
+  return sum;
+}
+
+/**
+ * Sum of squares function
+ * optimal solution is 0s everywhere
+ */
+float sum_of_squares(const float *const args, size_t dim) {
+  float sum = 0;
+  size_t idx = 0;
   for(; idx < dim; idx++) {
     sum += args[idx] * args[idx];
   }
