@@ -14,12 +14,14 @@ BASIC PSO UNIT TESTS
 
 Test(pso_unit, pso_rand_init) {
   seed_simd_rng(100);
-  size_t swarm_size = 16;
-  size_t dim = 8;
   float min = 0.0;
   float max = 1.0;
+  initialise_velocity_bounds(min, max);
+  initialise_position_bounds(min, max);
+  size_t swarm_size = 16;
+  size_t dim = 8;
   __m256 pos[swarm_size * dim / 8];
-  pso_rand_init(pos, swarm_size * dim / 8, min, max);
+  pso_rand_init(pos, swarm_size * dim / 8);
   for(size_t s = 0; s < swarm_size * dim / 8; s++) {
     float tmp[8];
     _mm256_storeu_ps(tmp, pos[s]);
@@ -66,18 +68,21 @@ Test(pso_unit, pso_eval_fitness) {
 
 Test(pso_unit, pso_gen_init_velocity) {
   seed_simd_rng(100);
+  float min = 0.0;
+  float max = 1.0;
+  initialise_velocity_bounds(min, max);
+  initialise_position_bounds(min, max);
+
   size_t swarm_size = 8;
   size_t dim = 8;
   size_t simd_dim = dim / 8;
   float min_vel[] = {0.0, -1.0 , 1.0, -10.0, -10.0, -10.0, -10.0, -10.0};
   float max_vel[] = {1.0, 1.0, 3.0, 25.0, 10.0, 10.0, 10.0, 10.0};
-  float min = 0.0;
-  float max = 1.0;
 
   __m256 x[swarm_size * simd_dim];
-  pso_rand_init(x, swarm_size * simd_dim, min, max);
+  pso_rand_init(x, swarm_size * simd_dim);
   __m256 vel[swarm_size * simd_dim];
-  pso_gen_init_velocity(vel, x, swarm_size, simd_dim, min, max);
+  pso_gen_init_velocity(vel, x, swarm_size, simd_dim);
   for(size_t s = 0; s < swarm_size; s++) {
     for(size_t d = 0; d < simd_dim; d++) {
       size_t idx = s * simd_dim + d;
