@@ -25,6 +25,21 @@ Test(obj_unit, sum_of_squares) {
 }
 
 /*
+  Testing the sum of squares
+*/
+Test(obj_unit, simd_sum_of_squares) {
+  float args[] = {0, 1, 2, 3, 4, 5};
+  cr_expect_float_eq(simd_sum_of_squares(args, 6), 55.0, FLT_EPSILON,
+                     "sum_of_squares should work on small dimensions");
+
+  float *args_2 = filled_float_array(100, 2.0);
+  cr_expect_float_eq(simd_sum_of_squares(args_2, 100), 400.0, FLT_EPSILON,
+                     "sum_of_squares should work on larger dimensions");
+}
+
+
+
+/*
   Testing the sum
 */
 Test(obj_unit, sum) {

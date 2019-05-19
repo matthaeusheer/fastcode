@@ -12,6 +12,8 @@ extern "C" {
 
 float sum_of_squares (const float * args, size_t dim);
 
+float simd_sum_of_squares (const float * args, size_t dim);
+
 float sum            (const float * args, size_t dim);
 
 float sum_negative   (const float * args, size_t dim);
