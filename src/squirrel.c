@@ -5,11 +5,12 @@
 
 #include <time.h>
 #include <float.h>
+#include <limits.h>
 
 #include "squirrel.h"
 #include "utils.h"
 
-#define NUM_JUMP_HICK 0.2
+#define NUM_JUMP_HICK 0.125
 #define T_MAX 100
 #define PREDATOR_PROB 0.1
 #define BETA 1.5
@@ -32,16 +33,92 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
 
+__m256i seed_a;
+__m256i seed_b;
+__m256 max_rng;
+
+__m256 factor_0_to_1;
+__m256 middle_0_to_1;
+
+__m256 drop_invSFdrag;
+__m256 gliding_const;
+
+float basic_drop_invSFdrag;
+/**
+   Seed a parallel floating point RNG.
+ */
+void sqr_seed_simd_rng(size_t seed) {
+  srand(seed);
+  seed_a = _mm256_set_epi32(rand(), rand(), rand(), rand(),
+                            rand(), rand(), rand(), rand());
+  seed_b = _mm256_set_epi32(rand(), rand(), rand(), rand(),
+                            rand(), rand(), rand(), rand());
+  max_rng = _mm256_cvtepi32_ps(_mm256_set1_epi32(INT_MIN));
+
+  factor_0_to_1 = _mm256_set1_ps(0.5);
+  middle_0_to_1 = _mm256_set1_ps(0.5);
+
+  __m256 drag = _mm256_set1_ps(CD);
+  __m256 drop = _mm256_set1_ps(DROP);
+  __m256 sf   = _mm256_set1_ps(SF);
+
+  __m256 invSFdrag = _mm256_mul_ps(sf,drag);
+  drop_invSFdrag = _mm256_div_ps(drop,invSFdrag);
+  basic_drop_invSFdrag = DROP/(SF*CD);
+  gliding_const = _mm256_set1_ps(GLIDING_CONST);
+}
+
+/**
+   Generate a vector of random floats between `min` and `max`.
+ */
+__m256 simd_rand_min_max(float min, float max) {
+  float factor = (max - min) / 2;
+  float middle = min + factor;
+
+  __m256i s1 = seed_a;
+	const __m256i s0 = seed_b;
+	seed_a = seed_b;
+	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
+	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
+                                             _mm256_srli_epi64(s1, 18)),
+                            _mm256_srli_epi64(s0, 5));
+  __m256i rands = _mm256_add_epi64(seed_b, s0);
+  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
+  __m256 factors = _mm256_set1_ps(factor);
+  __m256 middles = _mm256_set1_ps(middle);
+  return _mm256_fmadd_ps(factors, frands, middles);
+}
+
+/**
+   Generate a vector of random floats between 0 and 1.
+*/
+__m256 simd_rand_0_to_1() {
+  __m256i s1 = seed_a;
+	const __m256i s0 = seed_b;
+	seed_a = seed_b;
+	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
+	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
+                                             _mm256_srli_epi64(s1, 18)),
+                            _mm256_srli_epi64(s0, 5));
+  __m256i rands = _mm256_add_epi64(seed_b, s0);
+  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
+  return _mm256_fmadd_ps(factor_0_to_1, frands, middle_0_to_1);
+}
+/**
+    generate length size array of random numbers in range (min,max)
+*/
 void sqr_rand_init(float* const positions,
-                      size_t pop_size,
-                      size_t dim,
-                      const float min_position,
-                      const float max_position) {
-  for (size_t particle=0; particle < pop_size; particle++){
-    for (size_t d=0; d<dim; d++){
-      size_t idx = (particle*dim) + d;
-      positions[idx] = random_min_max(min_position,max_position);
+                      size_t length,
+                      const float min,
+                      const float max) {
+  size_t idx = 0;
+  if (length > 7) {
+    for ( ; idx < length - 8; idx+=8){
+      _mm256_storeu_ps(&positions[idx], simd_rand_min_max(min, max));
     }
+  }
+  for(; idx < length; idx++) {
+    positions[idx] = random_min_max(min, max);
   }
 }
 
@@ -101,10 +178,14 @@ void sqr_lowest4_vals_to_front(float* fitness,float* positions, size_t pop_size,
   }
 }
 
+__m256 sqr_simd_gliding_dist(){
+  __m256 lift = simd_rand_min_max(CL_MIN, CL_MAX);
+  return _mm256_mul_ps(drop_invSFdrag,lift);
+}
+
 float sqr_gliding_dist(){
   float lift = random_min_max(CL_MIN,CL_MAX);
-  float drag = CD;
-  return DROP/(SF*drag/lift);
+  return basic_drop_invSFdrag*lift;
 }
 
 void sqr_move_to_hickory(float* positions,
@@ -112,20 +193,45 @@ void sqr_move_to_hickory(float* positions,
                     size_t dim,
                     const float min_position,
                     const float max_position){
-  float p = PREDATOR_PROB;
-  if (!sqr_bernoulli_distribution(p)){
+
+  if (!sqr_bernoulli_distribution(PREDATOR_PROB)){
     for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
-      for (size_t d = 0; d < dim; d++){
-        size_t idx = pop_idx*dim + d;
-        positions[idx] = positions[idx] +
-                        sqr_gliding_dist()*GLIDING_CONST*(positions[d]-positions[idx]);
+      size_t d = 0;
+      if (dim > 7 ){
+        for ( ; d < dim - 8; d+=8){
+          size_t idx = pop_idx*dim + d;
+
+          __m256 gl_dist = sqr_simd_gliding_dist();
+          __m256 simd_pos = _mm256_loadu_ps( &positions[idx]);
+          __m256 simd_best_pos = _mm256_loadu_ps(&positions[dim]);
+
+          __m256 glide = _mm256_mul_ps(gliding_const,gl_dist);
+          __m256 diff = _mm256_sub_ps(simd_best_pos,simd_pos);
+          __m256 new_pos = _mm256_fmadd_ps(glide,diff,simd_pos);
+
+          _mm256_storeu_ps(&positions[idx],new_pos);
+        }
+      } else {
+          for (size_t d = 0; d < dim; d++){
+            size_t idx = pop_idx*dim + d;
+            positions[idx] = positions[idx] +
+            sqr_gliding_dist()*GLIDING_CONST*(positions[d]-positions[idx]);
+          }
+        }
       }
-    }
   } else {
     for (size_t pop_idx = 1; pop_idx < 4+NUM_JUMP_HICK*pop_size ; pop_idx ++){
-      for (size_t d = 0; d < dim; d++){
-        size_t idx = pop_idx*dim + d;
-        positions[idx] = random_min_max(min_position,max_position);
+      size_t d = 0;
+      if (dim > 7) {
+        for ( ; d < dim - 8; d+=8){
+          size_t idx = pop_idx*dim + d;
+          _mm256_storeu_ps(&positions[idx],simd_rand_min_max(min_position,max_position));
+        }
+      } else {
+        for (size_t d = 0; d < dim; d++){
+          size_t idx = pop_idx*dim + d;
+          positions[idx] = random_min_max(min_position,max_position);
+        }
       }
     }
   }
@@ -214,7 +320,7 @@ float* squirrel (obj_func_t obj_func,
                   size_t max_iter,
                   const float min_position,
                   const float max_position) {
-  srand(100);
+  sqr_seed_simd_rng(100);
 
   // float p_dp = PREDATOR_PROB;
   // size_t num_jump_hick = ceil(NUM_JUMP_HICK*pop_size);
@@ -222,7 +328,7 @@ float* squirrel (obj_func_t obj_func,
   size_t sizeof_position = pop_size*dim*sizeof(float);
   float* positions = (float*)malloc(sizeof_position);
   if (!positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
-  sqr_rand_init(positions,pop_size,dim,min_position,max_position);
+  sqr_rand_init(positions,pop_size*dim,min_position,max_position);
 
   size_t sizeof_fitness = pop_size*sizeof(float);
   float* fitness = (float*)malloc(sizeof_fitness);

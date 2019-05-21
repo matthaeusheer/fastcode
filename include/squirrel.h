@@ -7,6 +7,23 @@ extern "C" {
 #include "stddef.h"
 #include "utils.h"
 
+
+
+/**
+   Seed a parallel floating point RNG.
+ */
+void sqr_seed_simd_rng();
+/**
+   Generate a vector of random floats between `min` and `max`.
+ */
+// inline __m256 simd_rand_min_max(float min, float max);
+/**
+    Generate a vector of random floats between 0 and 1.
+ */
+// inline __m256 simd_rand_0_to_1();
+/**
+    Optimise for given objective function using squirrel algorithm
+*/
 float* squirrel (obj_func_t obj_func,
                   size_t population,
                   size_t dim,
@@ -17,8 +34,7 @@ float* squirrel (obj_func_t obj_func,
 * Randomly initialize squirrel population
 **/
 void sqr_rand_init(float* const positions,
-                  size_t population,
-                  size_t dim,
+                  size_t length,
                   const float min_position,
                   const float max_position);
 
@@ -56,6 +72,7 @@ void sqr_lowest4_vals_to_front(float* fitness,
 /**
 * Calculate gliding distance
 **/
+__m256 sqr_simd_gliding_dist();
 float sqr_gliding_dist();
 /**
 *   move squirrels from acorn and

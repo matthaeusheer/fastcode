@@ -37,7 +37,7 @@ __m256 social;
 /**
    Seed a parallel floating point RNG.
  */
-void seed_simd_rng(size_t seed) {
+void pso_seed_simd_rng(size_t seed) {
   srand(seed);
   seed_a = _mm256_set_epi32(rand(), rand(), rand(), rand(),
                             rand(), rand(), rand(), rand());
@@ -56,7 +56,7 @@ void seed_simd_rng(size_t seed) {
 /**
    Generate a vector of random floats between `min` and `max`.
  */
-inline __m256 simd_rand_min_max(float min, float max) {
+inline __m256 pso_simd_rand_min_max(float min, float max) {
   float factor = (max - min) / 2;
   float middle = min + factor;
 
@@ -77,7 +77,7 @@ inline __m256 simd_rand_min_max(float min, float max) {
 /**
    Generate a vector of random floats between 0 and 1.
 */
-inline __m256 simd_rand_0_to_1() {
+inline __m256 pso_simd_rand_0_to_1() {
   __m256i s1 = seed_a;
 	const __m256i s0 = seed_b;
 	seed_a = seed_b;
@@ -104,7 +104,7 @@ void pso_rand_init(float *const array, size_t length,
   size_t idx = 0;
   if(length > 7) {
     for(; idx < length - 8; idx += 8) {
-      _mm256_storeu_ps(&array[idx], simd_rand_min_max(min, max));
+      _mm256_storeu_ps(&array[idx], pso_simd_rand_min_max(min, max));
     }
   }
   for(; idx < length; idx++) {
@@ -214,8 +214,8 @@ void pso_update_velocity(float *velocity, float *positions,
       for(; dimension < dim - 8; dimension += 8) {
         size_t idx = (particle * dim) + dimension;
         __m256 vel = _mm256_loadu_ps(&velocity[idx]);
-        __m256 rand1 = simd_rand_0_to_1();
-        __m256 rand2 = simd_rand_0_to_1();
+        __m256 rand1 = pso_simd_rand_0_to_1();
+        __m256 rand2 = pso_simd_rand_0_to_1();
         __m256 local_best_pos = _mm256_loadu_ps(&local_best_positions[idx]);
         __m256 pos = _mm256_loadu_ps(&positions[idx]);
         __m256 best_pos = _mm256_loadu_ps(&best[dimension]);
@@ -316,7 +316,7 @@ float *pso_basic(obj_func_t obj_func,
                  size_t max_iter,
                  const float min_position,
                  const float max_position) {
-  seed_simd_rng(100);
+  pso_seed_simd_rng(100);
 
   float min_vel = min_position/VEL_LIMIT_SCALE;
   float max_vel = max_position/VEL_LIMIT_SCALE;

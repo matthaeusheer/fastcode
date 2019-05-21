@@ -10,18 +10,18 @@ extern "C" {
 /**
    Seed a parallel floating point RNG.
  */
-void seed_simd_rng();
+void pso_seed_simd_rng();
 
 /**
    Generate a vector of random floats between `min` and `max`.
  */
-inline __m256 simd_rand_min_max(float min, float max);
+__m256 simd_rand_min_max(float min, float max);
 
 
 /**
     Generate a vector of random floats between 0 and 1.
  */
-inline __m256 simd_rand_0_to_1();
+__m256 simd_rand_0_to_1();
 
 /**
     Initialise an array to random numbers between `min` and `max`.

@@ -13,7 +13,7 @@ BASIC PSO UNIT TESTS
 
 
 Test(pso_unit, pso_rand_init) {
-  seed_simd_rng(100);
+  pso_seed_simd_rng(100);
   size_t swarm_size = 10;
   size_t dim = 4;
   float min = 0.0;
@@ -49,7 +49,7 @@ Test(pso_unit, pso_eval_fitness) {
 }
 
 Test(pso_unit, pso_gen_init_velocity) {
-  seed_simd_rng(100);
+  pso_seed_simd_rng(100);
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -100,7 +100,7 @@ Test(pso_unit, pso_best_fitness) {
 }
 
 Test(pso_unit, pso_update_velocity) {
-  seed_simd_rng(100);
+  pso_seed_simd_rng(100);
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
@@ -131,7 +131,7 @@ Test(pso_unit, pso_update_velocity) {
 }
 
 Test(pso_unit, pso_update_position) {
-  seed_simd_rng(100);
+  pso_seed_simd_rng(100);
   size_t swarm_size, dim;
   swarm_size = 4;
   dim = 2;
