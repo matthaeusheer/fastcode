@@ -3,7 +3,7 @@
 # This is a shell script to create executables for different releases in a folder called build-releases.
 # The executables will be named benchmark_<version-tag>
 
-declare -a  tags=("v0.0.1" "v0.0.2" "v0.0.3" "v0.0.4" "v0.0.5" "v0.0.6")
+declare -a  tags=("v0.0.1" "v0.0.2" "v0.0.3" "v0.0.4" "v0.0.5" "v0.0.6" "v0.0.7")
 
 original_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
