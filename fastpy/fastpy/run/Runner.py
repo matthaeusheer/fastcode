@@ -136,7 +136,11 @@ class MultiBenchmarkRunner:
             tag_out_dict: a dictionary mapping tags to output dir names of the respective runs
         """
         if force_compile:
-            self._compile_executables()
+            # TODO: Fix force_compile with git releases. Currently the checkout is prevented when having
+            # non commit changes which happens when stuff is called in a jupyter notebook for example.
+            raise NotImplementedError('force_compile=True is broken. Please run the build-releases.sh shell '
+                                      'script manually.')
+            # self._compile_executables()
         tag_out_dir_dict = {}
         for tag in sorted(self._parse_tags()):
             print(f'Running benchmarks for tag {tag}...')
