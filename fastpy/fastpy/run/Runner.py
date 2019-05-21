@@ -27,19 +27,23 @@ CONFIG_FILE_NAME = 'config.json'
 RUN_CONFIG_FILE_NAME = 'run_config.json'
 SUB_DIR_PATTERN = 'run_{run_idx}'
 
+RELEASE_BUILD_SCRIPT = 'build-releases.sh'
+RELEASES_BUILD_DIR = 'build-releases'
+
 
 class BenchmarkRunner:
 
-    def __init__(self, config_path, data_dir=DATA_DIR_PATH, bin_dir=None):
+    def __init__(self, config_path, data_dir=DATA_DIR_PATH, bin_dir=None, bin_name=None):
         self.config = load_json_config(config_path)
         self.data_dir = data_dir
         self.timestamp = get_date_time_tag()
         self.bin_dir = bin_dir
+        self.bin_name = bin_name if bin_name else BENCHMARK_BIN
 
     def run_benchmarks(self):
-        """Main wrapper function to loop over all possible parameter combinations."""
+        """Main wrapper function to loop over all possible parameter combinations. Returns output dir name."""
         os.mkdir(self._output_dir)  # main output dir for this whole run
-        shutil.copy(os.path.join(self._bin_dir_path, BENCHMARK_BIN), self._output_dir)
+        shutil.copy(os.path.join(self._bin_dir_path, self.bin_name), self._output_dir)
         store_json_config(self.config, self._output_dir, CONFIG_FILE_NAME)
 
         for run_idx, run_config in enumerate(self._build_param_sets()):
@@ -50,6 +54,7 @@ class BenchmarkRunner:
             store_json_config(run_config, sub_dir, RUN_CONFIG_FILE_NAME)
 
             self._run_algorithm(run_config, sub_dir)
+        return self._output_dir
 
     def _run_algorithm(self, run_config, sub_dir):
         """Subprocess call to run a single algorithm."""
@@ -99,7 +104,7 @@ class BenchmarkRunner:
 
     @property
     def _benchmark_bin(self):
-        return os.path.join(self.bin_dir, BENCHMARK_BIN)
+        return os.path.join(self.bin_dir, self.bin_name)
 
     @property
     def _output_dir(self):
@@ -114,3 +119,51 @@ class BenchmarkRunner:
                 'Config: ' + str(self.config) + '\n' + \
                 'Output dir: ' + DATA_DIR_PATH + '\n' + \
                 'Benchmark binary: ' + self._benchmark_bin
+
+
+class MultiBenchmarkRunner:
+    """Lets us perform runs for a config over several releases. The releases are compiled using the build-releases.sh
+    shell script in the fastcode project root folder. Specify the release tags in this file."""
+
+    def __init__(self, config_path, data_dir=DATA_DIR_PATH):
+        self.config_path = config_path
+        self.data_dir = data_dir
+
+    def perform_runs(self, force_compile=False):
+        """Performs a benchmark run for every tagged executable in the RELEASES_BUILD_DIR.
+        Returns
+        -------
+            tag_out_dict: a dictionary mapping tags to output dir names of the respective runs
+        """
+        if force_compile:
+            self._compile_executables()
+        tag_out_dir_dict = {}
+        for tag in sorted(self._parse_tags()):
+            print(f'Running benchmarks for tag {tag}...')
+            bin_dir = os.path.join(self.fastcode_root_path, RELEASES_BUILD_DIR)
+            bin_name = f'benchmark_{tag}'
+
+            benchmark_runner = BenchmarkRunner(config_path=self.config_path, data_dir=self.data_dir,
+                                               bin_dir=bin_dir, bin_name=bin_name)
+
+            run_dir_path = benchmark_runner.run_benchmarks()
+            tag_out_dir_dict[tag] = os.path.split(run_dir_path)[1]
+        return tag_out_dir_dict
+
+    def _compile_executables(self):
+        subprocess.call(['sh', os.path.join(self.fastcode_root_path, RELEASE_BUILD_SCRIPT)],
+                        cwd=self.fastcode_root_path)
+
+    def _parse_tags(self):
+        if not os.path.exists(os.path.join(self.fastcode_root_path, RELEASES_BUILD_DIR)):
+            raise FileNotFoundError('Executable dir not found. '
+                                    'You might want to run the build-releases.sh shell script or run the'
+                                    'function perform_runs with force_compile=True.')
+        files = os.listdir(os.path.join(self.fastcode_root_path, RELEASES_BUILD_DIR))
+        executables = [file for file in files if 'benchmark_' in file]
+        tags = [name.split('_')[1] for name in executables]
+        return tags
+
+    @property
+    def fastcode_root_path(self):
+        return os.path.dirname(PROJECT_ROOT_PATH)
