@@ -9,7 +9,8 @@ def setup_figure_1ax(x_label='', y_label='', title='', size=(13, 9), shrink_ax=T
     fig, ax = plt.subplots()
     fig.set_size_inches(size)
     ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
+    ax.set_ylabel(y_label, rotation='horizontal')
+    ax.yaxis.set_label_coords(0.16 , 1.05)
     ax.set_title(title)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -19,7 +20,7 @@ def setup_figure_1ax(x_label='', y_label='', title='', size=(13, 9), shrink_ax=T
     if shrink_ax:
         box = ax.get_position()
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    ax.grid()
+    ax.grid(alpha=0.3)
     return fig, ax
 
 
