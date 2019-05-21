@@ -10,9 +10,7 @@ def load_json_config(config_path, is_sub_config=False):
                 if isinstance(item, list):
                     pass
                 elif isinstance(item, str) and item not in []:
-                    print('str:', item)
                     if item.startswith('range'):
-                        print(key)
                         start, stop, step = [int(val) for val in item[item.find("(") + 1:item.find(")")].split(',')]
                         conf[key] = list(range(start, stop, step))
                     else:
