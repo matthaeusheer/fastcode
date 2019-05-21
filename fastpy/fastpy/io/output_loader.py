@@ -52,7 +52,8 @@ class OutputParser:
         """Dictionary with sub_run_name keys (e.g. run_1) and run_config values (dict)."""
         sub_configs = {}
         for sub_dir_name in self._get_sub_folders_list():
-            sub_configs[sub_dir_name] = load_json_config(os.path.join(self.out_dir, sub_dir_name, RUN_CONFIG_FILE_NAME))
+            sub_configs[sub_dir_name] = load_json_config(os.path.join(self.out_dir, sub_dir_name, RUN_CONFIG_FILE_NAME),
+                                                         is_sub_config=True)
 
         return sub_configs
 
