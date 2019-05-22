@@ -159,8 +159,10 @@ void store_timings(const std::vector<unsigned long long> &cycles_vec, std::strin
     outfile.open(file_path);
 
     outfile << "iteration,cycles" << std::endl;
-    for (int idx = 0; idx < cycles_vec.size(); ++idx) {
-      outfile << idx << ", " << cycles_vec[idx] << std::endl;
+    int idx = 0;
+    for (unsigned long long time : cycles_vec) {
+      outfile << idx << ", " << time << std::endl;
+      idx ++;
     }
 
     outfile.close();
