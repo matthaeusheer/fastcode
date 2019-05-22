@@ -63,15 +63,8 @@ class BenchmarkRunner:
         call_str += ' -f ' + os.path.join(sub_dir, TIMING_OUT_FILE)
         call_str += ' -s ' + os.path.join(sub_dir, SOLUTION_OUT_FILE)
 
-        try:
-            subprocess.check_output(call_str, shell=True)
-        except subprocess.CalledProcessError as exception:
-            # TODO: This is a first step, better would be using a proper logging system.
-            print(exception)
-            print(f'\nThe call to the binary executable failed. Tried parameters: \n')
-            pprint(run_config)
-            print('\nAbort.')
-            sys.exit()
+        # TODO: Investigate in exception handling, check_call raises an exception although call works fine
+        subprocess.call(call_str, shell=True)
 
     def _build_param_sets(self):
         """Returns a list of dictionaries, where the dictionaries are a set of parameters for a single run."""
