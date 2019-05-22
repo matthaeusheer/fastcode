@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import itertools
 import subprocess
@@ -63,14 +64,14 @@ class BenchmarkRunner:
         call_str += ' -s ' + os.path.join(sub_dir, SOLUTION_OUT_FILE)
 
         try:
-            subprocess.check_call(call_str, shell=True)
+            subprocess.check_output(call_str, shell=True)
         except subprocess.CalledProcessError as exception:
             # TODO: This is a first step, better would be using a proper logging system.
             print(exception)
             print(f'\nThe call to the binary executable failed. Tried parameters: \n')
             pprint(run_config)
             print('\nAbort.')
-            exit(1)
+            sys.exit()
 
     def _build_param_sets(self):
         """Returns a list of dictionaries, where the dictionaries are a set of parameters for a single run."""
