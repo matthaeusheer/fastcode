@@ -234,9 +234,9 @@ double* squirrel (obj_func_t obj_func,
   sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
   #ifdef DEBUG
-    print_population(population, dim, positions); // printing the initial status of the population
-    printf("# AVG FITNESS: %f\n", average_value(population, fitness));
-    printf("# BEST FITNESS: %f\n", lowest_value(population, fitness));
+    print_population(pop_size, dim, positions); // printing the initial status of the population
+    printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
+    printf("# BEST FITNESS: %f\n", lowest_value(pop_size, fitness));
   #endif
 
   double s_c = 0;
@@ -258,9 +258,9 @@ double* squirrel (obj_func_t obj_func,
     sqr_lowest4_vals_to_front(fitness,positions,pop_size,dim);
 
     #ifdef DEBUG
-      print_population(population, dim, positions); // printing the initial status of the population
-      printf("# AVG FITNESS: %f\n", average_value(population, fitness));
-      printf("# BEST FITNESS: %f\n", lowest_value(population, fitness));
+      print_population(pop_size, dim, positions); // printing the initial status of the population
+      printf("# AVG FITNESS: %f\n", average_value(pop_size, fitness));
+      printf("# BEST FITNESS: %f\n", lowest_value(pop_size, fitness));
     #endif
   }
 
