@@ -37,7 +37,7 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
                              cfg.max_position);
 
   std::vector<timeInt64> cycles_vec;
-  double *solution;
+  auto solution = (double* const) malloc(cfg.dimension * cfg.population * sizeof(double));
 
   // Run the actual algorithm and time it for n_iterations
   for (int rep = 0; rep < cfg.n_repetitions; ++rep) {
@@ -47,7 +47,9 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
 
     timeInt64 cycles = stop_tsc(start_time);
 
+    printf("Emplacing now...\n");
     cycles_vec.emplace_back(cycles);
+    printf("Done Emplacing.\n");
 
     #ifdef DEBUG
         // Store final solution values per repetition
@@ -58,7 +60,6 @@ std::vector<timeInt64> time_algorithm(Config cfg) {
         // So far no possibility to get the objective value here...
     #endif
   }
-
   free(solution);
 
   return cycles_vec;
