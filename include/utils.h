@@ -10,6 +10,8 @@ extern "C" {
 // Objective function type
 typedef float (*obj_func_t)(const float *, size_t);
 
+typedef float (*simd_obj_func_t)(const __m256*, size_t);
+
 // Algorithm function type
 typedef float * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const float, const float);
 

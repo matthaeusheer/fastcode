@@ -11,6 +11,10 @@
 #define M_PI (3.14159265358979323846)
 #endif
 
+__m256 ones = _mm256_set1_ps(1.0);
+__m256 cent = _mm256_set1_ps(100.0);
+__m256 res = _mm256_setzero_ps();
+
 /*******************************************************************************
   IMPLEMENTATIONS OF OBJECTIVE FUNCTIONS TO TEST ALGORITHMS
 ******************************************************************************/
@@ -19,6 +23,19 @@
  * Sum of squares SIMD function
  * optimal solution is 0s everywhere
  */
+ float opt_simd_sum_of_squares(const __m256* args, size_t simd_dim) {
+  __m256 v_sum = _mm256_setzero_ps();
+  size_t idx = 0;
+  for(; idx < simd_dim; idx++){
+    v_sum = _mm256_fmadd_ps(v_args, v_args, v_sum);
+  }
+  float sum = horizontal_add(v_sum);
+  // for(; idx < dim; idx++) {
+  //  sum += args[idx] * args[idx];
+  // }
+  return sum;
+ }
+
 float simd_sum_of_squares(const float *const args, size_t dim) {
   __m256 v_sum = _mm256_setzero_ps();
   size_t idx = 0;
@@ -39,10 +56,6 @@ float simd_sum_of_squares(const float *const args, size_t dim) {
   return sum;
 }
 
-/**
- * Sum of squares function
- * optimal solution is 0s everywhere
- */
 float sum_of_squares(const float *const args, size_t dim) {
   float sum = 0;
   size_t idx = 0;
@@ -91,15 +104,11 @@ float rosenbrock(const float *const args, size_t dim) {
   return rNd;
 }
 
-/**
- * Multidimensional Rosenbrock Function
- * global minima f(x1,.....,xN) = 0 at (x1,.....,xN) = (1,.....,1)
- */
 float simd_rosenbrock(const float *const args, size_t dim) {
   float rNd = 0.0;
-  __m256 ones = _mm256_set1_ps(1.0);
-  __m256 cent = _mm256_set1_ps(100.0);
-  __m256 res = _mm256_setzero_ps();
+  // __m256 ones = _mm256_set1_ps(1.0);
+  // __m256 cent = _mm256_set1_ps(100.0);
+  // __m256 res = _mm256_setzero_ps();
 
   int idx = 0;
   if (dim > 8) {
@@ -120,6 +129,50 @@ float simd_rosenbrock(const float *const args, size_t dim) {
   }
   return rNd;
 }
+
+
+float opt_simd_rosenbrock(const __m256* args, size_t simd_dim) {
+  float rNd = 0.0;
+  __m256i t1,t2,t3;
+  __m256 shift1, shift2;
+  if (simd_dim > 1) {
+    for (size_t idx = 0; idx < simd_dim - 1; idx++) {
+      t1 = _mm256_castps_si256(args[idx]);
+      t2 = _mm256_castps_si256(args[idx+1]);
+      shift1 = _mm256_castsi256_ps(_mm256_alignr_epi8(t1,t2,4))
+      // shift2 = _mm256_castsi256_ps(_mm256_alignr_epi8(t2,t1,4))
+      __m256 r1 = _mm256_fmsub_ps(args[idx],args[idx],shift1);
+      r1 = _mm256_mul_ps(r1,r1);
+      r1 = _mm256_mul_ps(cent,r1);
+      __m256 temp = _mm256_sub_ps(ones,args[idx]);
+      if (idx == simd_dim - 1 ) {
+        temp[simd_dim-1] = 0;
+        r1[simd_dim-1] = 0;
+      }
+      res = _mm256_add_ps(res, _mm256_fmadd_ps(temp,temp,r1));
+    }
+  } else {
+
+      DEAL WITH THIS 
+  }
+  rNd = horizontal_add(res);
+
+  // for (idx; idx < simd_dim ; idx++){
+  //   __m256 pos = _mm256_loadu_ps(&args[idx]);
+  //   __m256 pos_p1 = _mm256_loadu_ps(&args[idx+1]);
+  //   __m256 r1 = _mm256_fmsub_ps(pos,pos,pos_p1);
+  //   r1 = _mm256_mul_ps(r1,r1);
+  //   r1 = _mm256_mul_ps(cent,r1);
+  //   __m256 temp = _mm256_sub_ps(ones,pos);
+  //   res = _mm256_add_ps(res, _mm256_fmadd_ps(temp,temp,r1));
+  // }
+  // for (; idx < dim - 1; idx++){
+  //   rNd += (100.0 * (+pow(args[idx + 1] - pow(args[idx], 2), 2)) + pow(1 - args[idx], 2));
+  // }
+  return rNd;
+}
+
+
 
 
 /**

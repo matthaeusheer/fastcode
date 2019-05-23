@@ -14,6 +14,8 @@ float sum_of_squares (const float * args, size_t dim);
 
 float simd_sum_of_squares (const float * args, size_t dim);
 
+float opt_simd_sum_of_squares(const __m256* args, size_t dim);
+
 float sum            (const float * args, size_t dim);
 
 float sum_negative   (const float * args, size_t dim);
@@ -23,6 +25,8 @@ float rastigrin      (const float * args, size_t dim);
 float rosenbrock     (const float * args, size_t dim);
 
 float simd_rosenbrock(const float *const args, size_t dim);
+
+float opt_simd_rosenbrock(const __m256* args, size_t dim);
 
 float sphere         (const float * args, size_t dim);
 
