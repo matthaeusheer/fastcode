@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 3.5.2)
 
-set(CMAKE_C_COMPILER "icc")
-set(CMAKE_CXX_COMPILER "icpc")
+OPTION(DEBUG "DEBUG flag" OFF)
+IF(DEBUG)
+    ADD_DEFINITIONS(-DDEBUG)
+ENDIF(DEBUG)
+
+##### INTEL #####
+OPTION(INTEL "INTEL flag" OFF)
+IF(INTEL)
+    set(CMAKE_C_COMPILER "icc")
+    set(CMAKE_CXX_COMPILER "icpc")
+ENDIF(INTEL)
 
 project(fastcode)
 
@@ -10,10 +19,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT} -std=c++11 -Wall -Wextra -O3 -fn
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_DEFAULT} -std=c11 -Wall -Wextra -O3 -fno-tree-vectorize -mavx2 -mfma")
 
 ##### DEBUG #####
-OPTION(DEBUG "DEBUG flag" OFF)
-IF(DEBUG)
-    ADD_DEFINITIONS(-DDEBUG)
-ENDIF(DEBUG)
+
+
 
 ##### Using FindCriterion.cmake we find the package ######
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules/")

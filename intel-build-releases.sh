@@ -22,7 +22,7 @@ for tag in "${tags[@]}"
 do
    echo "$tag"
    git checkout $tag
-   cmake ..; make benchmark
+   cmake -DINTEL=ON ..; make benchmark  # sorry I am too bad in bash scripting to introduce an if statement haha
    mv benchmark benchmark_$tag
 done
 

@@ -24,6 +24,16 @@ cmake -DDEBUG=ON ..
 in the above example. (or, well, use an IDE which has Debug and Release modes, ha!)
 
 ---
+---
+**Note: INTEL COMPILER mode**
+
+
+If you have icc / icpc installed and want to use those run cmake using
+```
+cmake -DINTEL=ON ..
+```
+
+---
 
 
 This will compile all sources and link the targets for (currently, might get updated)
