@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.5.2)
 
-project(fastcode)
-
 set(CMAKE_C_COMPILER "icc")
 set(CMAKE_CXX_COMPILER "icpc")
 
+project(fastcode)
 
 ##### Setting up the CXX flags #####
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEFAULT} -std=c++11 -Wall -Wextra -O3 -fno-tree-vectorize -mavx2 -mfma")
