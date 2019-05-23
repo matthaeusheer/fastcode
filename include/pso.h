@@ -44,10 +44,10 @@ inline __m256 simd_rand_0_to_1();
 void pso_rand_init(__m256 *const array, size_t length);
 
 void update_everything(__m256 *velocity, __m256 *positions,
-                        __m256 *local_best_positions,
-                        __m256 *global_best_position,
-                        float *current_fitness, float* local_best_fitness,
-                       obj_func_t obj_func, size_t swarm_size, size_t simd_dim);
+                       __m256 *local_best_positions,
+                       __m256 *global_best_position,
+                       float *current_fitness, float* local_best_fitness,
+                       simd_obj_func_t obj_func, size_t swarm_size, size_t simd_dim);
 
 /**
    Evaluate fitness of `positions` according to `obj_func` and store the result
@@ -60,7 +60,7 @@ void update_everything(__m256 *velocity, __m256 *positions,
      positions  position array of the particles
      fitness    array where to store the result
  */
-void pso_eval_fitness(obj_func_t obj_func,
+void pso_eval_fitness(simd_obj_func_t obj_func,
                       size_t swarm_size, size_t dim,
                       const __m256 *positions, float *fitness);
 
@@ -91,7 +91,7 @@ size_t pso_best_fitness(float *fitness, size_t swarm_size);
 /**
    PSO algorithm.
  */
-float *pso_basic(obj_func_t obj_func,
+float *pso_basic(simd_obj_func_t obj_func,
                  size_t swarm_size,
                  size_t dim, size_t max_iter,
                  const float min_position,

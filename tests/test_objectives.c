@@ -75,6 +75,16 @@ Test(obj_unit, simd_rosenbrock) {
 }
 
 /*
+  Testing Multidimensional Rosenbrock Function
+*/
+Test(obj_unit, opt_simd_rosenbrock) {
+  cr_skip_test();
+  float args[] = {2, 1, 1, 1000000, 1 , 5, 2, 1, 1, 1 , 2 , 12 , 13321 , 546 , 446 , 656, 64};
+  __m256 simd_args[] = {_mm256_loadu_ps(args), _mm256_loadu_ps(&args[8])};
+  cr_expect_float_eq(opt_simd_rosenbrock(simd_args,2), rosenbrock(args,16), FLT_EPSILON, "simd_rosenbrock function works as expected.");
+}
+
+/*
   Testing multidimensional sphere
 */
 Test(obj_unit, sphere) {

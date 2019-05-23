@@ -15,6 +15,8 @@ typedef float (*simd_obj_func_t)(const __m256*, size_t);
 // Algorithm function type
 typedef float * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const float, const float);
 
+typedef float * (*simd_algo_func_t)(simd_obj_func_t, size_t, size_t, size_t, const float, const float);
+
 /**
    Perform a horizontal addition of a AVX register containing 8 floats.
 

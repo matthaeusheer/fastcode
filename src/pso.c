@@ -136,19 +136,11 @@ void pso_rand_init(__m256 *const array, size_t length) {
      positions   position array of the particles
      fitness     array where to store the result
  */
-void pso_eval_fitness(obj_func_t obj_func,
+void pso_eval_fitness(simd_obj_func_t obj_func,
                       size_t swarm_size, size_t simd_dim,
                       const __m256 *const positions, float *fitness) {
-  // for(size_t particle = 0; particle < swarm_size; particle++) {
-  //   float tmp[simd_dim * 8];
-  //   for(size_t idx = 0; idx < simd_dim; idx++) {
-  //     _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
-  //   }
-  //   fitness[particle] = obj_func(tmp, simd_dim * 8);
-  // }
   for(size_t particle = 0; particle < swarm_size; particle++) {
-    for(size_t idx = 0; idx < simd_dim; idx++)
-      fitness[particle] = obj_func(&positions[particle*simd_dim + idx], simd_dim);
+    fitness[particle] = obj_func(&positions[particle], simd_dim);
   }
 }
 
@@ -217,7 +209,7 @@ void update_everything(__m256 *velocity, __m256 *positions,
                        __m256 *local_best_positions,
                        __m256 *global_best_position,
                        float *current_fitness, float* local_best_fitness,
-                       obj_func_t obj_func,
+                       simd_obj_func_t obj_func,
                        size_t swarm_size, size_t simd_dim) {
   for(size_t particle = 0; particle < swarm_size; particle++) {
     // update velocity for particle
@@ -244,11 +236,7 @@ void update_everything(__m256 *velocity, __m256 *positions,
     }
 
     // update fitness for particle
-    float tmp[simd_dim * 8];
-    for(size_t idx = 0; idx < simd_dim; idx++) {
-      _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
-    }
-    current_fitness[particle] = obj_func(tmp, simd_dim * 8);
+    current_fitness[particle] = obj_func(&positions[particle], simd_dim);
 
     // update local best fitness and position for particle
     if(current_fitness[particle] < local_best_fitness[particle]) {
@@ -265,7 +253,7 @@ void update_everything(__m256 *velocity, __m256 *positions,
 /**
    PSO algorithm.
  */
-float *pso_basic(obj_func_t obj_func,
+float *pso_basic(simd_obj_func_t obj_func,
                  size_t swarm_size,
                  size_t dim,
                  size_t max_iter,
