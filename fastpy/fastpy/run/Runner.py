@@ -65,9 +65,8 @@ class BenchmarkRunner:
         call_str += ' -s ' + os.path.join(sub_dir, SOLUTION_OUT_FILE)
 
         try:
-            result = subprocess.run(call_str, shell=True, check=True)
+            subprocess.run(call_str, shell=True, check=True)
         except subprocess.CalledProcessError as exception:
-            print(result.returncode, result.stdout, result.stderr)
             print(exception)
             print(f'\nThe call to the binary executable failed. Tried parameters: \n')
             pprint(run_config)

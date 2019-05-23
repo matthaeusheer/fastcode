@@ -1,4 +1,3 @@
-import functools
 import numpy as np
 
 import matplotlib
@@ -76,6 +75,7 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
                                         reverse_legend=reverse_legend)
         idx += 1
     ax.set_ylim(bottom=0.0)
+
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
                                     reverse_legend=False):
