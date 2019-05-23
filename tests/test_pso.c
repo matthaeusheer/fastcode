@@ -67,6 +67,7 @@ Test(pso_unit, pso_eval_fitness) {
 }
 
 Test(pso_unit, pso_gen_init_velocity) {
+  cr_skip_test();
   seed_simd_rng(100);
   float min = 0.0;
   float max = 1.0;
