@@ -72,11 +72,10 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
 
     idx = 0
     for run_label, out_parser in out_parser_dict.items():
-        print(f'Plotting {run_label}')
         plot_mean_runtime_vs_input_size(out_parser, plot_type, ax, color=cmap(cmap_norm(idx)), label=run_label,
                                         reverse_legend=reverse_legend)
         idx += 1
-
+    ax.set_ylim(bottom=0.0)
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
                                     reverse_legend=False):

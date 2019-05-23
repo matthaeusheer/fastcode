@@ -47,8 +47,9 @@ class BenchmarkRunner:
         shutil.copy(os.path.join(self._bin_dir_path, self.bin_name), self._output_dir)
         store_json_config(self.config, self._output_dir, CONFIG_FILE_NAME)
 
+        total_runs = len(self._build_param_sets())
         for run_idx, run_config in enumerate(self._build_param_sets()):
-
+            print(f'\tRun {run_idx + 1} / {total_runs}')
             sub_dir = os.path.join(self._output_dir, SUB_DIR_PATTERN.format(run_idx=run_idx))  # sub output dir one param combo
             os.mkdir(sub_dir)
 
@@ -65,8 +66,8 @@ class BenchmarkRunner:
 
         try:
             result = subprocess.run(call_str, shell=True, check=True)
-            print(result.returncode, result.stdout, result.stderr)
         except subprocess.CalledProcessError as exception:
+            print(result.returncode, result.stdout, result.stderr)
             print(exception)
             print(f'\nThe call to the binary executable failed. Tried parameters: \n')
             pprint(run_config)
