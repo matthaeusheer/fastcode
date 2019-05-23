@@ -139,12 +139,16 @@ void pso_rand_init(__m256 *const array, size_t length) {
 void pso_eval_fitness(obj_func_t obj_func,
                       size_t swarm_size, size_t simd_dim,
                       const __m256 *const positions, float *fitness) {
+  // for(size_t particle = 0; particle < swarm_size; particle++) {
+  //   float tmp[simd_dim * 8];
+  //   for(size_t idx = 0; idx < simd_dim; idx++) {
+  //     _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
+  //   }
+  //   fitness[particle] = obj_func(tmp, simd_dim * 8);
+  // }
   for(size_t particle = 0; particle < swarm_size; particle++) {
-    float tmp[simd_dim * 8];
-    for(size_t idx = 0; idx < simd_dim; idx++) {
-      _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
-    }
-    fitness[particle] = obj_func(tmp, simd_dim * 8);
+    for(size_t idx = 0; idx < simd_dim; idx++)
+      fitness[particle] = obj_func(&positions[particle*simd_dim + idx], simd_dim);
   }
 }
 

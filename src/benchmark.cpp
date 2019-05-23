@@ -84,9 +84,11 @@ obj_map_t create_obj_map() {
 algo_map_t create_algo_map() {
 
   // Register more algorithms here as they get implemented.
-  algo_map_t algo_map = {{"hgwosca",  &gwo_hgwosca},
-                         {"penguin",  &pen_emperor_penguin},
+  algo_map_t algo_map = {
+                         // {"hgwosca",  &gwo_hgwosca},
+                         // {"penguin",  &pen_emperor_penguin},
                          {"pso",      &pso_basic},
-                         {"squirrel", &squirrel}};
+                         // {"squirrel", &squirrel}
+                         };
   return algo_map;
 }
