@@ -5,6 +5,8 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <immintrin.h>
+
 
 /*******************************************************************************
   OBJECTIVE FUNCTIONS PROTOTYPES

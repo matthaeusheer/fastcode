@@ -28,3 +28,9 @@ void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
                size_t max_iter, algo_func_t algo,
                float target, float tolerance,
                bool debug, char* suite, char* test);
+
+void test_simd_algo(simd_obj_func_t obj_func, size_t pop_size, size_t dim,
+                    float min_bound, float max_bound,
+                    size_t max_iter, simd_algo_func_t algo,
+                    float target, float tolerance,
+                    bool debug, char* suite, char* test);
