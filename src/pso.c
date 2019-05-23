@@ -26,10 +26,9 @@
 
 __m256i seed_a;
 __m256i seed_b;
-__m256 max_rng;
+__m256 mul_factor;
 
-__m256 factor_0_to_1;
-__m256 middle_0_to_1;
+__m256 factor_min_to_max;
 
 __m256 inertia;
 __m256 cog;
@@ -42,8 +41,6 @@ __m256 v_max_vel;
 
 __m256 v_min_pos;
 __m256 v_max_pos;
-__m256 v_factor_pos;
-__m256 v_middle_pos;
 
 /**
    Seed a parallel floating point RNG.
@@ -54,14 +51,12 @@ void seed_simd_rng(size_t seed) {
                             rand(), rand(), rand(), rand());
   seed_b = _mm256_set_epi32(rand(), rand(), rand(), rand(),
                             rand(), rand(), rand(), rand());
-  max_rng = _mm256_cvtepi32_ps(_mm256_set1_epi32(INT_MIN));
+
+  mul_factor = _mm256_set1_ps(1.0f / 2147483648.0f);
 
   inertia = _mm256_set1_ps(INERTIA);
   cog = _mm256_set1_ps(COG);
   social = _mm256_set1_ps(SOCIAL);
-
-  factor_0_to_1 = _mm256_set1_ps(0.5);
-  middle_0_to_1 = _mm256_set1_ps(0.5);
 
   quarter = _mm256_set1_ps(0.25);
 }
@@ -74,9 +69,7 @@ void initialise_velocity_bounds(float min_vel, float max_vel) {
 void initialise_position_bounds(float min_position, float max_position) {
   v_min_pos = _mm256_set1_ps(min_position);
   v_max_pos = _mm256_set1_ps(max_position);
-  float factor = (max_position - min_position) / 2;
-  v_factor_pos = _mm256_set1_ps(factor);
-  v_middle_pos = _mm256_set1_ps(min_position + factor);
+  factor_min_to_max = _mm256_sub_ps(v_max_pos, v_min_pos);
 }
 
 
@@ -84,32 +77,25 @@ void initialise_position_bounds(float min_position, float max_position) {
    Generate a vector of random floats between `min` and `max`.
  */
 inline __m256 simd_rand_min_max() {
-  __m256i s1 = seed_a;
-	const __m256i s0 = seed_b;
-	seed_a = seed_b;
-	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
-	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
-                                             _mm256_srli_epi64(s1, 18)),
-                            _mm256_srli_epi64(s0, 5));
-  __m256i rands = _mm256_add_epi64(seed_b, s0);
-  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
-  return _mm256_fmadd_ps(v_factor_pos, frands, v_middle_pos);
+  const __m256 rands = simd_rand_0_to_1();
+  return _mm256_fmadd_ps(rands, factor_min_to_max, v_min_pos);
 }
 
 /**
    Generate a vector of random floats between 0 and 1.
 */
 inline __m256 simd_rand_0_to_1() {
-  __m256i s1 = seed_a;
-	const __m256i s0 = seed_b;
-	seed_a = seed_b;
-	s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
-	seed_b = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(s1, s0),
-                                             _mm256_srli_epi64(s1, 18)),
-                            _mm256_srli_epi64(s0, 5));
-  __m256i rands = _mm256_add_epi64(seed_b, s0);
-  __m256 frands = _mm256_div_ps(_mm256_cvtepi32_ps(rands), max_rng);
-  return _mm256_fmadd_ps(factor_0_to_1, frands, middle_0_to_1);
+  seed_a = seed_b;
+
+  const __m256i s0 = seed_b;
+  const __m256i s1 = _mm256_xor_si256(seed_b, _mm256_slli_epi64(seed_b, 23));
+
+  const __m256i lhs = _mm256_xor_si256(_mm256_xor_si256(s1, s0), _mm256_srli_epi64(s1, 18));
+  const __m256i rhs = _mm256_srli_epi64(s0, 5);
+
+  seed_b = _mm256_xor_si256(lhs, rhs);
+  const __m256 rands = _mm256_cvtepi32_ps(_mm256_abs_epi32(_mm256_add_epi64(seed_b, s0)));
+  return _mm256_mul_ps(rands, mul_factor);
 }
 
 /**

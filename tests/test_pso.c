@@ -26,8 +26,8 @@ Test(pso_unit, pso_rand_init) {
     float tmp[8];
     _mm256_storeu_ps(tmp, pos[s]);
     for(size_t idx = 0; idx < 8; idx++) {
-      cr_expect_leq(tmp[idx], max, "dimension should be bound above");
-      cr_expect_geq(tmp[idx], min, "dimension should be bound below");
+      cr_expect_leq(tmp[idx], max, "dimension should be bound above %f", tmp[idx]);
+      cr_expect_geq(tmp[idx], min, "dimension should be bound below %f", tmp[idx]);
     }
   }
 }
