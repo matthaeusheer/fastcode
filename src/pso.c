@@ -193,28 +193,36 @@ size_t pso_best_fitness(float *fitness, size_t swarm_size) {
   return min_idx;
 }
 
+
 /**
-   Update the velocity of each particle in the swarm.
+   Update the velocity, positions, local best positions, global best positions,
+   fitness, and local best fitness of each particle in the swarm.
 
    Arguments:
-     velocity              the array to update
-     positions             positions of the particles in the swarm
-     local_best_positions  previous best positions of each particle
-     best                  best solution so far
-     swarm_size            number of particles in the swarm
-     simd_dim              dimension of a single particle in terms of __m256
+   velocity              the array to update
+   positions             positions of the particles in the swarm
+   local_best_positions  previous best positions of each particle
+   globa_best_position   best solution so far
+   current_fitness       fitness of particles
+   local_best_fitess     local best fitness of each particle
+   obj_func              objective function used to compute fitnesss
+   swarm_size            number of particles in the swarm
+   simd_dim              dimension of a single particle in terms of __m256
  */
-void pso_update_velocity(__m256 *velocity, __m256 *positions,
-                         __m256 *local_best_positions,
-                         __m256 *best, size_t swarm_size, size_t simd_dim) {
+void update_everything(__m256 *velocity, __m256 *positions,
+                       __m256 *local_best_positions,
+                       __m256 *global_best_position,
+                       float *current_fitness, float* local_best_fitness,
+                       obj_func_t obj_func,
+                       size_t swarm_size, size_t simd_dim) {
   for(size_t particle = 0; particle < swarm_size; particle++) {
+    // update velocity for particle
     for(size_t dimension = 0; dimension < simd_dim; dimension++) {
-      // TODO check correctness
       size_t idx = (particle * simd_dim) + dimension;
       __m256 rand1 = simd_rand_0_to_1();
       __m256 rand2 = simd_rand_0_to_1();
       __m256 term1 = _mm256_mul_ps(rand1, _mm256_sub_ps(local_best_positions[idx], positions[idx]));
-      __m256 term2 = _mm256_mul_ps(rand2, _mm256_sub_ps(best[dimension], positions[idx]));
+      __m256 term2 = _mm256_mul_ps(rand2, _mm256_sub_ps(global_best_position[dimension], positions[idx]));
       __m256 res = _mm256_mul_ps(inertia, velocity[idx]);
       res = _mm256_fmadd_ps(cog, term1, res);
       res = _mm256_fmadd_ps(social, term2, res);
@@ -223,49 +231,32 @@ void pso_update_velocity(__m256 *velocity, __m256 *positions,
 
       velocity[idx] = res;
     }
-  }
-}
 
-/**
-   Update the local best fitness and position for all particles.
+    // update position for particle
+    for(size_t dimension = 0; dimension < simd_dim; dimension++) {
+      size_t idx = (particle * simd_dim) + dimension;
+      positions[idx] = _mm256_add_ps(positions[idx], velocity[idx]);
+      positions[idx] = _mm256_min_ps(_mm256_max_ps(v_min_pos, positions[idx]), v_max_pos);
+    }
 
-   Arguments:
-     local_best_fitness    local best fitness of the particles
-     current_fitness       current fitness of the particles
-     local_best_positions  local best positions of the particles
-     current_positions     current positions of the particles
-     swarm_size            number of particles in the swarm]
-     simd_dim              dimension of a single particle in terms of __256
- */
-void pso_update_bests(float *local_best_fitness, float *current_fitness,
-                      __m256 *local_best_positions, __m256 *current_positions,
-                      size_t swarm_size, size_t simd_dim) {
-  for(size_t particle = 0; particle < swarm_size; particle++) {
+    // update fitness for particle
+    float tmp[simd_dim * 8];
+    for(size_t idx = 0; idx < simd_dim; idx++) {
+      _mm256_storeu_ps(&tmp[idx * 8], positions[particle * simd_dim + idx]);
+    }
+    current_fitness[particle] = obj_func(tmp, simd_dim * 8);
+
+    // update local best fitness and position for particle
     if(current_fitness[particle] < local_best_fitness[particle]) {
       local_best_fitness[particle] = current_fitness[particle];
       for(size_t dimension = 0; dimension < simd_dim; dimension++) {
         size_t j = (particle * simd_dim) + dimension;
-        local_best_positions[j] = current_positions[j];
+        local_best_positions[j] = positions[j];
       }
     }
   }
 }
 
-/**
-   Update the position for all particles in the swarm.
-
-   Arguments:
-     positions     positions of the particles in the swarm
-     velocity      velocity of the particles in the swarm
-     length        length in __m256 of positions and velocity vectors
- */
-void pso_update_position(__m256 *positions, __m256 *velocity,
-                         size_t length) {
-  for(size_t idx = 0; idx < length; idx++) {
-    positions[idx] = _mm256_add_ps(positions[idx], velocity[idx]);
-    positions[idx] = _mm256_min_ps(_mm256_max_ps(v_min_pos, positions[idx]), v_max_pos);
-  }
-}
 
 /**
    PSO algorithm.
@@ -296,6 +287,7 @@ float *pso_basic(obj_func_t obj_func,
   __m256 *local_best_positions = (__m256*)malloc(sizeof_position);
   if (!local_best_positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
   memcpy(local_best_positions, current_positions, sizeof_position);
+  __m256 *global_best_position = (__m256*)malloc(simd_dim * sizeof(__m256));
 
   size_t sizeof_fitness = swarm_size * sizeof(float);
   float *current_fitness = (float*)malloc(sizeof_fitness);
@@ -318,24 +310,17 @@ float *pso_basic(obj_func_t obj_func,
   pso_gen_init_velocity(p_velocity, current_positions, swarm_size, simd_dim);
 
   size_t global_best_idx = pso_best_fitness(local_best_fitness, swarm_size);
-  __m256 *global_best_position = &local_best_positions[simd_dim * global_best_idx];
+  memcpy(global_best_position, &local_best_positions[simd_dim * global_best_idx], simd_dim * sizeof(__m256));
 
   float global_best_fitness = local_best_fitness[global_best_idx];
 
   for(size_t iter = 0; iter < max_iter; iter++) {
-    pso_update_velocity(p_velocity, current_positions, local_best_positions,
-                        global_best_position, swarm_size, simd_dim);
-
-    pso_update_position(current_positions, p_velocity, swarm_size * simd_dim);
-
-    pso_eval_fitness(obj_func, swarm_size, simd_dim, current_positions,
-                     current_fitness);
-
-    pso_update_bests(local_best_fitness, current_fitness, local_best_positions,
-                     current_positions, swarm_size, simd_dim);
+    update_everything(p_velocity, current_positions, local_best_positions,
+                      global_best_position, current_fitness, local_best_fitness,
+                      obj_func, swarm_size, simd_dim);
 
     global_best_idx = pso_best_fitness(local_best_fitness, swarm_size);
-    global_best_position = local_best_positions + (simd_dim * global_best_idx);
+    memcpy(global_best_position, &local_best_positions[simd_dim * global_best_idx], simd_dim * sizeof(__m256));
 
     global_best_fitness = local_best_fitness[global_best_idx];
 
@@ -361,6 +346,7 @@ float *pso_basic(obj_func_t obj_func,
   free(current_fitness);
   free(local_best_fitness);
   free(p_velocity);
+  free(global_best_position);
 
   return best_solution;
 }
