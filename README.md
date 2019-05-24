@@ -1,8 +1,26 @@
 # fastcode  [![Build Status](https://travis-ci.com/matthaeusheer/fastcode.svg?branch=master)](https://travis-ci.com/matthaeusheer/fastcode)
 
-Group project for ETH course "How to Write Fast Numerical Code".
+Group project for ETH course "How to Write Fast Numerical Code". The goal of this project was to implement 
+nature inspired metaheuristic optimization algorithms with subsequent optimization of the performance.
 
-## How to Build
+Right now, 4 metaheuristic algorithms are implemented, namely  
+- Grey Wolf Optimizer
+- Particle Swarm Optimization
+- Emperor Penguin Colony / Spiral Optimization fusion
+- Squirrel Optimization
+
+We focused on optimizing Particle Swarm Optimization mainly using SIMD vector instructions.
+
+The **fastcode** repository contains two main components. The first one being the implementation of the algorithms 
+in C and the timing infrastructure around them in C++. This code gets compiled into the *benchmark* executable which is 
+responsible to run an algorithm with a specified user input for the parameters.  
+Check out the different releases to obtain code for different steps along the code optimization process.
+ 
+The second being the **fastpy** python package in the fastpy subfolder of fastcode. This code holds a wrapper around 
+the C++ benchmarking code to conveniently run and benchmark large amounts of algorithm execution on any input and 
+the subsequent output analysis / visualization and data management.
+
+## Build instructions
 We use ```cmake``` as our build tool. Make sure it is installed.
 
 From within the project root do
@@ -30,19 +48,20 @@ Before invoking cmake, set the CC and CXX environment variables, i.e.
 ```
 export CC=icc
 export CXX=icpc
+
+mkdir build
+cd build
+cmake ..
+make
 ```
-to use intel compilers.
+to use intel compilers as an example.
 
 ---
 
 
 This will compile all sources and link the targets for (currently, might get updated)
-- benchmark (main executable to run the algorithms on some input and time them)
-- test_units (collection of all unit tests)
-- test_integration (integration tests)
-- test_<unit_test_name> (single unit tests)
-
-You can later on build individual targets by make <target_name>. Check CMakeLists for available targets.
+- benchmark (the main executable to run any algorithm on some user input and time this)
+- executables for unit and integration tests
 
 Hint: If you use an IDE such as CLion all of this will be handled automatically and you can bild individual
 targets and run tests directly.
@@ -69,6 +88,10 @@ To plot the 2D evolution of particles for an algorithm over time,
 check out the plot_optimization_evolution notebook. Data formats are described there. 
 You basically need to use print_population in every iteration. Make sure not to 
 plot a shitton of other stuff since then the parsing might fail. Lines starting with # will be handled, other stuff might break it.
+
+### Other visualizations
+There are lots of viualizations like roofline plots or performance metrics visualizations in the notebooks of the
+fastpy package.
 
 ## Testing
 
@@ -146,3 +169,47 @@ dimension, value
 1, 98
 ... until (d - 1)  
 ```
+
+### Evolution visualization and animation
+His only works for 2D (d=2). Compile in debug mode (-DDEBUG=ON) and pipe the output 
+of the benchmark executable to a file, e.g. parsed_output.txt.
+Use the jupyter notebook of the fastpy package to read the piped output and 
+produce the plot.
+
+# fastPy
+## Installation
+1. Install the dependencies using pipenv
+    ```
+    cd fastpy
+    pipenv install
+    pipenv shell
+    ```
+2. Install the ipykernel for the pipenv virtual environment for jupyter
+    ```
+    python -m ipykernel install --user --name fastpy --display-name "fastpy"
+    ```
+    You can then chose this kernel in the jupyter notebook.
+
+## Usage for benchmarking
+1. Get the run config ready
+    - In the fastpy folder there is a config_template.json file. Copy it and name the new 
+    file config.json
+    - All fields are lists and whatever values you put in the list, all possible 
+    combinations of values will be performed
+    - Every combination will be written out to a single output folder in the *data* folder.
+    
+2. Run ```python run_benchmark.py```.  
+    This will perform benchmark runs as described above.
+    Note: Run ```python run_benchmark.py --help``` to see cmd arguments.  
+    --bin-dir has to match the directory inside the fastcode folder holding the benchmark 
+    binary (defaults to "build")
+
+    
+## Analysis
+Check out the various jupyter notebooks in the notebooks folder for 
+- runtime plots
+- performance plots
+- roofline plots
+- performance metrics plots
+- algorithm visualization / animation
+...
