@@ -51,7 +51,8 @@ def prepare_multiple_out_parsers(run_dict):
     return output_parser_dict
 
 
-def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False):
+def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False,
+                                  **kwargs):
     """Plot multiple runs (e.g. over different releases) with same configurations in one performance plot."""
     fig, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]',
                                          y_label=' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]]))
@@ -67,18 +68,30 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
         assert len(parser.config['algorithm']) == 1, 'Only one algorithm over different runs per plot.'
         assert len(parser.config['obj_func']) == 1, 'Only one objective func over different runs per plot.'
 
-    cmap_norm, cmap = norm_cmap(colormap, vmin=0, vmax=len(out_parser_dict))
+    if 'vmax' in kwargs:
+        vmax = kwargs['vmax']
+    else:
+        vmax = len(out_parser_dict)
+    cmap_norm, cmap = norm_cmap(colormap, vmin=0, vmax=vmax)
 
     idx = 0
     for run_label, out_parser in out_parser_dict.items():
         plot_mean_runtime_vs_input_size(out_parser, plot_type, ax, color=cmap(cmap_norm(idx)), label=run_label,
-                                        reverse_legend=reverse_legend)
+                                        reverse_legend=reverse_legend, **kwargs)
         idx += 1
     ax.set_ylim(bottom=0.0)
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
+    if reverse_legend:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(reversed(handles), reversed(labels), frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
+    else:
+        ax.legend(frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
-                                    reverse_legend=False):
+                                    reverse_legend=False, **kwargs):
     """For all algorithms present in the out_parser data, plot mean runtime vs input size.
 
     NOTE: We fix the dimension to be equal for all runs. Only works if only one dimension specified in config.
@@ -124,8 +137,12 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
         _, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]', y_label=y_label,
                                            title=f'Search space dimension: {config["dimension"][0]}')
 
+    if 'vmax' in kwargs:
+        vmax = kwargs['vmax']
+    else:
+        vmax = len(sub_configs)
     if color is None:
-        cmap_norm, cmap = norm_cmap('jet', vmin=0, vmax=len(sub_configs))
+        cmap_norm, cmap = norm_cmap('jet', vmin=0, vmax=vmax)
         print('No colormap provided, using jet as default.')
     idx = 1
     for algo, obj_func_dict in algo_quantity_vs_size.items():
@@ -139,11 +156,8 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
             ax.plot(sizes, times, label=label, color=color, linewidth=1.8)
             idx += 1
 
-    if reverse_legend:
-        handles, labels = ax.get_legend_handles_labels()
-        ax.legend(reversed(handles), reversed(labels), frameon=False)
-    else:
-        ax.legend(frameon=False)
+    if 'y_upper_lim' in kwargs:
+        ax.set_ylim(top=kwargs['y_upper_lim'])
 
     return algo_quantity_vs_size
 
