@@ -38,7 +38,7 @@ void store_timings(const std::vector<unsigned long long> &cycles_vec, std::strin
 /**
  *  Writes the solution array of one algorithm output to a specified file.
  */
-void store_solutions(float *solution, int dimension, std::string file_path);
+void store_solutions(double *solution, int dimension, std::string file_path);
 
 /**
  * Splits an input string (e.g. output_file.txt) to a vector of {output_file, txt) in case of character '.'

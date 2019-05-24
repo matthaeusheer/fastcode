@@ -10,39 +10,39 @@ extern "C" {
   OBJECTIVE FUNCTIONS PROTOTYPES
 ******************************************************************************/
 
-float sum_of_squares (const float * args, size_t dim);
+double sum_of_squares (const double * args, size_t dim);
 
-float sum            (const float * args, size_t dim);
+double sum            (const double * args, size_t dim);
 
-float sum_negative   (const float * args, size_t dim);
+double sum_negative   (const double * args, size_t dim);
 
-float rastigrin      (const float * args, size_t dim);
+double rastigrin      (const double * args, size_t dim);
 
-float rosenbrock     (const float * args, size_t dim);
+double rosenbrock     (const double * args, size_t dim);
 
-float sphere         (const float * args, size_t dim);
+double sphere         (const double * args, size_t dim);
 
-float egghol2d       (const float * args, size_t dim);
+double egghol2d       (const double * args, size_t dim);
 
-float schaf2d        (const float * args, size_t dim);
+double schaf2d        (const double * args, size_t dim);
 
-float griewank       (const float * args, size_t dim);
+double griewank       (const double * args, size_t dim);
 
-float schwefel01     (const float * args, size_t dim);
+double schwefel01     (const double * args, size_t dim);
 
-float powel          (const float * args, size_t dim);
+double powel          (const double * args, size_t dim);
 
-float freundsteinroth(const float * args, size_t dim);
+double freundsteinroth(const double * args, size_t dim);
 
-float beale          (const float * args, size_t dim);
+double beale          (const double * args, size_t dim);
 
 /*******************************************************************************
   UTILITIES
 ******************************************************************************/
 
-void print_solution(size_t dim, const float * solution);
+void print_solution(size_t dim, const double * solution);
 
-float *filled_float_array(size_t length, float val);
+double *filled_double_array(size_t length, double val);
 
 #ifdef __cplusplus
 }

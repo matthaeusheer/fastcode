@@ -24,7 +24,7 @@
      test:      name of this test
  */
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
-               float min_bound, float max_bound,
+               double min_bound, double max_bound,
                size_t max_iter, algo_func_t algo,
-               float target, float tolerance,
+               double target, double tolerance,
                bool debug, char* suite, char* test);

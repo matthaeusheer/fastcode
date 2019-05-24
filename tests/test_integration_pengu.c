@@ -6,17 +6,17 @@
 
 
 Test(pengu_integration, sum) {
-  test_algo(sum, 50, 2, -5, 5, 100, pen_emperor_penguin, -10, 0.1,
+  test_algo(sum, 50, 2, -5, 5, 50, pen_emperor_penguin, -10, 0.1,
             true, "EPC", "sum");
 }
 
 Test(pengu_integration, sum_of_squares) {
-  test_algo(sum_of_squares, 50, 2, -5, 5, 100, pen_emperor_penguin, 0, 0.1,
+  test_algo(sum_of_squares, 50, 2, -5, 5, 50, pen_emperor_penguin, 0, 0.1,
             true, "EPC", "sum_of_squares");
 }
 
 Test(pengu_integration, rosenbrock) {
-  test_algo(rosenbrock, 100, 2, -5, 5, 300, pen_emperor_penguin, 0, 0.3,
+  test_algo(rosenbrock, 500, 2, -5, 5, 2000, pen_emperor_penguin, 0, 0.3,
             true, "EPC", "rosenbrock");
 }
 

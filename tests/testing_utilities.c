@@ -8,11 +8,11 @@
 #include "testing_utilities.h"
 
 void test_algo(obj_func_t obj_func, size_t pop_size, size_t dim,
-               float min_bound, float max_bound,
+               double min_bound, double max_bound,
                size_t max_iter, algo_func_t algo,
-               float target, float tolerance,
+               double target, double tolerance,
                bool debug, char* suite, char* test) {
-  float* solution = (*algo)(obj_func, pop_size, dim, max_iter, min_bound, max_bound);
+  double* solution = (*algo)(obj_func, pop_size, dim, max_iter, min_bound, max_bound);
   if(debug) {
     printf("%s -- %s\n  Best solution: ", suite, test);
     print_solution(dim, solution);
