@@ -10,7 +10,7 @@
 ##################################################################################################
 
 build_releases_dir="build-releases"
-declare -a  tags=("base" "pso0.0.1" "pso0.0.2" "pso0.0.3" "pso0.0.4" "pso0.0.5" "pso0.0.6" "pso0.0.7")
+declare -a  tags=("doubles" "base" "pso0.0.1" "pso0.0.2" "pso0.0.3" "pso0.0.4" "pso0.0.5" "pso0.0.6" "pso0.0.7" "pso0.0.8")
 
 original_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
