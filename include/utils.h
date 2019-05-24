@@ -7,14 +7,27 @@ extern "C" {
 #include <stddef.h>
 #include <immintrin.h>
 
-
 // Objective function type
 typedef float (*obj_func_t)(const float *, size_t);
+
+typedef float (*simd_obj_func_t)(const __m256*, size_t);
 
 // Algorithm function type
 typedef float * (*algo_func_t)(obj_func_t, size_t, size_t, size_t, const float, const float);
 
+typedef float * (*simd_algo_func_t)(simd_obj_func_t, size_t, size_t, size_t, const float, const float);
+
+/**
+   Perform a horizontal addition of a AVX register containing 8 floats.
+
+   Arguments:
+     a   the AVX register
+
+   Returns:
+     A single float representing the sum of all floats in the register.
+ */
 float horizontal_add(__m256 a);
+
 
 /**
  *  Prints the solution array of one algorithm output to console.
@@ -25,6 +38,16 @@ void print_solution(size_t dim, const float * solution);
    Prints the population to standard output.
  */
 void print_population(size_t colony_size, size_t dim, const float *population);
+
+/**
+  *  Prints the solution array of one algorithm output to console.
+  */
+void simd_print_solution(size_t dim, const __m256 *solution);
+
+/**
+    Prints the population to standard output.
+ */
+void simd_print_population(size_t colony_size, size_t dim, const __m256 *population);
 
 /**
  * Fills an float array with a given length and unique value for all entries.

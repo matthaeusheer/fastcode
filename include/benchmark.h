@@ -9,10 +9,10 @@
 
 
 // String to objective function pointer type
-typedef std::map<std::string, obj_func_t> obj_map_t;
+typedef std::map<std::string, simd_obj_func_t> obj_map_t;
 
 // String to algorithm function pointer type
-typedef std::map<std::string, algo_func_t> algo_map_t;
+typedef std::map<std::string, simd_algo_func_t> algo_map_t;
 
 /**
  * Main function to run an algorithm on a function and time it.

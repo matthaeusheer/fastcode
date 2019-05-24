@@ -13,6 +13,5 @@ script:
   - make
   - ./test_units --tap -S
   - ./test_integration_pengu --tap -S
-  - ./test_integration_pso --tap -S
   - ./test_integration_squirrel --tap -S
   - ./test_integration_hgwosca --tap -S

@@ -81,8 +81,6 @@ void sqr_lowest_val_to_front(float* fitness,float* positions, size_t pop_size, s
   fitness[best_idx] = temp;
 
   // careful
-  // float temp_pos[dim];
-  // float* temp_pos = (float*)malloc(dim*sizeof(float));
   float temp_pos[dim];
 
   memcpy(temp_pos, positions, dim*sizeof(float));
@@ -223,10 +221,12 @@ float* squirrel (obj_func_t obj_func,
 
   size_t sizeof_position = pop_size*dim*sizeof(float);
   float* positions = (float*)malloc(sizeof_position);
+  if (!positions) { perror("malloc arr"); exit(EXIT_FAILURE); };
   sqr_rand_init(positions,pop_size,dim,min_position,max_position);
 
   size_t sizeof_fitness = pop_size*sizeof(float);
   float* fitness = (float*)malloc(sizeof_fitness);
+  if (!fitness) { perror("malloc arr"); exit(EXIT_FAILURE); };
   sqr_eval_fitness(obj_func,pop_size,dim,positions,fitness);
 
   // positions[0] is hickory, positions[1:3] are acorn, rest are normal.
@@ -264,6 +264,7 @@ float* squirrel (obj_func_t obj_func,
   }
 
   float* const best_solution = (float *const) malloc(dim*sizeof(float));
+  if (!best_solution) { perror("malloc arr"); exit(EXIT_FAILURE); };
   memcpy(best_solution, positions , dim*sizeof(float));
 
   free(fitness);

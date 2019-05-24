@@ -196,3 +196,21 @@ void print_float_array(size_t length, const float * arr) {
   }
   printf("#-----\n");
 }
+
+void simd_print_solution(size_t dim, const __m256 *const solution) {
+  float tmp[8];
+  for (size_t idx = 0; idx < dim / 8; idx++) {
+    _mm256_storeu_ps(tmp, solution[idx]);
+    for (size_t j = 0; j < 8; j++) {
+      printf("%.4f, ", tmp[j]);
+    }
+  }
+  printf("\n");
+}
+
+void simd_print_population(size_t colony_size, size_t dim, const __m256 *population) {
+  for (size_t idx = 0; idx < colony_size; idx++) {
+    printf("member%03ld, ", idx);
+    print_solution(dim, &population[idx * dim / 8]);
+  }
+}

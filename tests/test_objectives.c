@@ -5,8 +5,11 @@
 
 #include "objectives.h"
 #include "utils.h"
+#include "pso.h"
 
 #include <criterion/criterion.h>
+
+
 
 /*
   Testing the sum of squares
@@ -20,6 +23,21 @@ Test(obj_unit, sum_of_squares) {
   cr_expect_float_eq(sum_of_squares(args_2, 100), 400.0, FLT_EPSILON,
                      "sum_of_squares should work on larger dimensions");
 }
+
+/*
+  Testing the sum of squares
+*/
+Test(obj_unit, simd_sum_of_squares) {
+  float args[] = {0, 1, 2, 3, 4, 5};
+  cr_expect_float_eq(simd_sum_of_squares(args, 6), 55.0, FLT_EPSILON,
+                     "sum_of_squares should work on small dimensions");
+
+  float *args_2 = filled_float_array(100, 2.0);
+  cr_expect_float_eq(simd_sum_of_squares(args_2, 100), 400.0, FLT_EPSILON,
+                     "sum_of_squares should work on larger dimensions");
+}
+
+
 
 /*
   Testing the sum
@@ -42,8 +60,28 @@ Test(obj_unit, rastigrin) {
   Testing Multidimensional Rosenbrock Function
 */
 Test(obj_unit, rosenbrock) {
-  float args[] = {1, 1, 1};
-  cr_expect_float_eq(rosenbrock(args,3), 0.0, FLT_EPSILON, "rosenbrock function works as expected.");
+  float args[] = {1, 2, 3};
+  cr_expect_float_eq(rosenbrock(args,3), 201.0, FLT_EPSILON, "rosenbrock function works as expected.");
+  // printf("%f\n", rosenbrock(args,3) );
+}
+
+/*
+  Testing Multidimensional Rosenbrock Function
+*/
+Test(obj_unit, simd_rosenbrock) {
+  float args[] = {2, 1, 1, 1000000, 1 , 5, 2, 1, 1, 1 , 2 , 12 , 13321 , 546 , 446 , 656, 64  , 654 , 654};
+
+  cr_expect_float_eq(simd_rosenbrock(args,18), rosenbrock(args,18), FLT_EPSILON, "simd_rosenbrock function works as expected.");
+}
+
+/*
+  Testing Multidimensional Rosenbrock Function
+*/
+Test(obj_unit, opt_simd_rosenbrock) {
+  cr_skip_test();
+  float args[] = {2, 1, 1, 1000000, 1 , 5, 2, 1, 1, 1 , 2 , 12 , 13321 , 546 , 446 , 656, 64};
+  __m256 simd_args[] = {_mm256_loadu_ps(args), _mm256_loadu_ps(&args[8])};
+  cr_expect_float_eq(opt_simd_rosenbrock(simd_args,2), rosenbrock(args,16), FLT_EPSILON, "simd_rosenbrock function works as expected.");
 }
 
 /*
