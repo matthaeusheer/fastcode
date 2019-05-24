@@ -25,13 +25,13 @@ in the above example. (or, well, use an IDE which has Debug and Release modes, h
 
 ---
 ---
-**Note: INTEL COMPILER mode**
-
-
-If you have icc / icpc installed and want to use those run cmake using
+**Note: Using different compilers**
+Before invoking cmake, set the CC and CXX environment variables, i.e.  
 ```
-cmake -DINTEL=ON ..
+export CC=icc
+export CXX=icpc
 ```
+to use intel compilers.
 
 ---
 
