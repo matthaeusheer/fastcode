@@ -5,13 +5,6 @@ IF(DEBUG)
     ADD_DEFINITIONS(-DDEBUG)
 ENDIF(DEBUG)
 
-##### INTEL #####
-OPTION(INTEL "INTEL flag" OFF)
-IF(INTEL)
-    set(CMAKE_C_COMPILER "icc")
-    set(CMAKE_CXX_COMPILER "icpc")
-ENDIF(INTEL)
-
 project(fastcode)
 
 ##### Setting up the CXX flags #####
