@@ -152,7 +152,6 @@ add_executable(test_units
         tests/test_hgwosca.c
         tests/test_penguin.c
         tests/test_squirrel.c
-        tests/test_pso.c
         tests/test_cpp_utils.cpp
         tests/test_utils.c
         src/cpp_utils.cpp
@@ -173,7 +172,5 @@ add_test(integration_hgwosca
   test_integration_hgwosca -q)
 add_test(integration_pengu
   test_integration_pengu -q)
-add_test(integration_pso
-  test_integration_pso -q)
 add_test(integration_squirrel
   test_integration_squirrel -q)

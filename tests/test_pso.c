@@ -13,6 +13,7 @@ BASIC PSO UNIT TESTS
 
 
 Test(pso_unit, pso_rand_init) {
+  cr_skip_test();
   seed_simd_rng(100);
   float min = 0.0;
   float max = 1.0;
@@ -101,92 +102,3 @@ Test(pso_unit, pso_gen_init_velocity) {
     }
   }
 }
-
-/* Test(pso_unit, pso_best_fitness) { */
-/*   size_t swarm_size,dim; */
-/*   swarm_size = 4; */
-/*   dim = 2; */
-/*   float local_best_position[] = { */
-/*      100.0, 0.0, */
-/*      2.5, 4.0, */
-/*      10.0, 3.0, */
-/*       -10.0, -3.0 */
-/*   }; */
-
-/*   float fitness[swarm_size]; */
-/*   pso_eval_fitness(sum_of_squares, swarm_size, dim, local_best_position, fitness); */
-
-/*   float* global_best_position; */
-/*   size_t best_index; */
-/*   best_index = pso_best_fitness(fitness, swarm_size); */
-/*   cr_expect_eq(best_index, 1, "the optima is at local_best_position[1]"); */
-
-/*   global_best_position = local_best_position+(dim*best_index); */
-/*   cr_expect_float_eq(global_best_position[0], 2.5, FLT_EPSILON, */
-/*                      "first dim of global best is 2.5"); */
-/*   cr_expect_float_eq(global_best_position[1], 4.0, FLT_EPSILON, */
-/*                      "second dim of global best is 4.0"); */
-/* } */
-
-/* Test(pso_unit, pso_update_velocity) { */
-/*   seed_simd_rng(100); */
-/*   size_t swarm_size, dim; */
-/*   swarm_size = 4; */
-/*   dim = 2; */
-/*   float min_vel = -1.; */
-/*   float max_vel =  1.; */
-/*   float min = 0.0; */
-/*   float max = 1.0; */
-
-/*   float x[swarm_size * dim]; */
-/*   pso_rand_init(x, swarm_size * dim, min, max); */
-/*   float y[swarm_size * dim]; */
-/*   pso_rand_init(y, swarm_size * dim, min, max); */
-/*   float best[dim]; */
-/*   pso_rand_init(best, dim, min, max); */
-
-/*   float vel[swarm_size * dim]; */
-/*   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max); */
-/*   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel); */
-/*   for(size_t s = 0; s < swarm_size; s++) { */
-/*     for(size_t d = 0; d < dim; d++) { */
-/*       size_t idx = s * dim + d; */
-/*       cr_expect_leq(vel[idx], max_vel, */
-/*                     "%ld dimension'd velocity should be bound above", d); */
-/*       cr_expect_geq(vel[idx], min_vel, */
-/*                     "%ld dimension'd velocity should be bound below", d); */
-/*     } */
-/*   } */
-/* } */
-
-/* Test(pso_unit, pso_update_position) { */
-/*   seed_simd_rng(100); */
-/*   size_t swarm_size, dim; */
-/*   swarm_size = 4; */
-/*   dim = 2; */
-/*   float min = 0.0; */
-/*   float max = 1.0; */
-/*   float min_vel = -1.; */
-/*   float max_vel =  1.; */
-
-/*   float x[swarm_size * dim]; */
-/*   pso_rand_init(x, swarm_size * dim, min, max); */
-/*   float y[swarm_size * dim]; */
-/*   pso_rand_init(y, swarm_size * dim, min, max); */
-/*   float best[dim]; */
-/*   pso_rand_init(best, dim, min, max); */
-
-/*   float vel[swarm_size * dim]; */
-/*   pso_gen_init_velocity(vel, x, swarm_size, dim, min, max); */
-/*   pso_update_velocity(vel, x, y, best, swarm_size, dim, min_vel, max_vel); */
-/*   pso_update_position( x, vel, swarm_size, dim, min, max); */
-/*   for(size_t s = 0; s < swarm_size; s++) { */
-/*     for(size_t d = 0; d < dim; d++) { */
-/*       size_t idx = s * dim + d; */
-/*       cr_expect_leq(x[idx], max, */
-/*                     "%ld dimension'd position should be bound above", d); */
-/*       cr_expect_geq(x[idx], min, */
-/*                     "%ld dimension'd position should be bound below", d); */
-/*     } */
-/*   } */
-/* } */
