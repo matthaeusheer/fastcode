@@ -107,11 +107,12 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
     config = out_parser.config
     sub_configs = out_parser.sub_configs
 
-    if plot_over == 'population':
-        if len(config['dimension']) != 1:
-            raise ValueError(f'When plotting over population, fix dimension and vary population size. '
-                             f'Only one dimension allowed. '
-                             f'Given dimensions: {config["dimension"]}')
+    #
+    # if len(config['dimension']) != 1:
+    #     raise ValueError(f'We fix the dimension and vary population size. Only one dimension allowed. '
+    #                      f'Given: {config["dimension"]}')
+
+    assert plot_type in plot_types, f'Plot type argument needs to be one of {plot_types}.'
 
     algos = config['algorithm']
     obj_funcs = config['obj_func']
