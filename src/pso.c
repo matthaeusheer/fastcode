@@ -10,6 +10,7 @@
 
 #include "pso.h"
 #include "utils.h"
+#include "objectives.h"
 
 
 #define EPS 0.001
@@ -247,6 +248,8 @@ float *pso_basic(simd_obj_func_t obj_func,
                  const float max_position) {
   assert(dim % 8 == 0);
   assert(swarm_size % 8 == 0);
+
+  init_obj_globals();
 
   size_t simd_dim = dim / 8;
 

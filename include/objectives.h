@@ -12,6 +12,8 @@ extern "C" {
   OBJECTIVE FUNCTIONS PROTOTYPES
 ******************************************************************************/
 
+void init_obj_globals();
+
 float sum_of_squares (const float * args, size_t dim);
 
 float simd_sum_of_squares (const float * args, size_t dim);

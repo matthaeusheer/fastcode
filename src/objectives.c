@@ -11,10 +11,22 @@
 #define M_PI (3.14159265358979323846)
 #endif
 
+__m256 ones;
+__m256 cent;
+
 
 /*******************************************************************************
   IMPLEMENTATIONS OF OBJECTIVE FUNCTIONS TO TEST ALGORITHMS
 ******************************************************************************/
+
+/**
+   Initialise globals for objective functions. Must be called before the first
+   call to an objective function.
+ */
+void init_obj_globals() {
+  ones = _mm256_set1_ps(1.0);
+  cent = _mm256_set1_ps(100.0);
+}
 
 /**
  * Sum of squares SIMD function
@@ -99,8 +111,6 @@ float rosenbrock(const float *const args, size_t dim) {
 
 float simd_rosenbrock(const float *const args, size_t dim) {
   float rNd = 0.0;
-  __m256 ones = _mm256_set1_ps(1.0);
-  __m256 cent = _mm256_set1_ps(100.0);
   __m256 res = _mm256_setzero_ps();
 
   size_t idx = 0;
@@ -125,8 +135,6 @@ float simd_rosenbrock(const float *const args, size_t dim) {
 
 
 float opt_simd_rosenbrock(const __m256* args, size_t simd_dim) {
-  __m256 ones = _mm256_set1_ps(1.0);
-  __m256 cent = _mm256_set1_ps(100.0);
   __m256 res = _mm256_setzero_ps();
   float rNd = 0.0;
   float tmp[0];
