@@ -78,25 +78,21 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
 
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
-                                    reverse_legend=False, plot_over='population', **kwargs):
+                                    reverse_legend=False):
     """For all algorithms present in the out_parser data, plot mean runtime vs input size.
 
     NOTE: We fix the dimension to be equal for all runs. Only works if only one dimension specified in config.
     """
     plot_types = ['performance', 'mean_runtime']
-    plot_over_choices = ['population', 'dimension']
-
-    assert plot_type in plot_types, f'plot_type argument needs to be one of {plot_types}.'
-    assert plot_over in plot_over_choices, f'plot_over argument needs to be one of {plot_over_choices}.'
 
     config = out_parser.config
     sub_configs = out_parser.sub_configs
 
-    if plot_over == 'population':
-        if len(config['dimension']) != 1:
-            raise ValueError(f'When plotting over population, fix dimension and vary population size. '
-                             f'Only one dimension allowed. '
-                             f'Given dimensions: {config["dimension"]}')
+    if len(config['dimension']) != 1:
+        raise ValueError(f'We fix the dimension and vary population size. Only one dimension allowed. '
+                         f'Given: {config["dimension"]}')
+
+    assert plot_type in plot_types, f'Plot type argument needs to be one of {plot_types}.'
 
     algos = config['algorithm']
     obj_funcs = config['obj_func']
@@ -122,15 +118,11 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
                     elif plot_type == 'mean_runtime':
                         algo_quantity_vs_size[algo][obj_func][plot_type].append(mean_timings[run])
 
-                    algo_quantity_vs_size[algo][obj_func]['sizes'].append(sub_config[plot_over])
+                    algo_quantity_vs_size[algo][obj_func]['sizes'].append(sub_config['population'])
 
     if ax is None:
-        if plot_over == 'dimension':
-            title = f'Population size: {config["population"][0]}'
-        if plot_over == 'population':
-            title = f'Search space dimension: {config["dimension"][0]}'
-        _, ax = viz_utils.setup_figure_1ax(x_label=f'Input size [{plot_over}]', y_label=y_label,
-                                           title=title)
+        _, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]', y_label=y_label,
+                                           title=f'Search space dimension: {config["dimension"][0]}')
 
     if color is None:
         cmap_norm, cmap = norm_cmap('jet', vmin=0, vmax=len(sub_configs))
@@ -145,7 +137,6 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
             if not label:
                 label = '_'.join([algo, obj_func])
             ax.plot(sizes, times, label=label, color=color, linewidth=1.8)
-            ax.plot(sizes, times, 'o', label='', color=color)
             idx += 1
 
     if reverse_legend:
@@ -153,10 +144,6 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
         ax.legend(reversed(handles), reversed(labels), frameon=False)
     else:
         ax.legend(frameon=False)
-    if 'log_xaxis' in kwargs:
-        ax.set_xscale("log", nonposx='clip')
-    if 'log_yaxis' in kwargs:
-        ax.set_yscale("log")
 
     return algo_quantity_vs_size
 
