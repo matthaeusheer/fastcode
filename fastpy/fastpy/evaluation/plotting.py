@@ -51,8 +51,7 @@ def prepare_multiple_out_parsers(run_dict):
     return output_parser_dict
 
 
-def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False,
-                                  plot_over='population', **kwargs):
+def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False):
     """Plot multiple runs (e.g. over different releases) with same configurations in one performance plot."""
     fig, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]',
                                          y_label=' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]]))
@@ -72,9 +71,8 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
 
     idx = 0
     for run_label, out_parser in out_parser_dict.items():
-        plot_mean_runtime_vs_input_size(out_parser, plot_type, plot_over=plot_over, ax=ax,
-                                        color=cmap(cmap_norm(idx)), label=run_label,
-                                        reverse_legend=reverse_legend, **kwargs)
+        plot_mean_runtime_vs_input_size(out_parser, plot_type, ax, color=cmap(cmap_norm(idx)), label=run_label,
+                                        reverse_legend=reverse_legend)
         idx += 1
     ax.set_ylim(bottom=0.0)
 
