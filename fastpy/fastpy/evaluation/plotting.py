@@ -54,7 +54,7 @@ def prepare_multiple_out_parsers(run_dict):
 def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False,
                                   plot_over='population', **kwargs):
     """Plot multiple runs (e.g. over different releases) with same configurations in one performance plot."""
-    fig, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]',
+    fig, ax = viz_utils.setup_figure_1ax(x_label=f'Input size [{plot_over}]',
                                          y_label=' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]]))
 
     # Check that all runs have same configuration and only one algo / obj func
@@ -157,7 +157,7 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
     else:
         ax.legend(frameon=False)
     if 'log_xaxis' in kwargs:
-        ax.set_xscale("log", nonposx='clip')
+        ax.set_xscale("log", basex=2,nonposx='clip')
     if 'log_yaxis' in kwargs:
         ax.set_yscale("log")
 
