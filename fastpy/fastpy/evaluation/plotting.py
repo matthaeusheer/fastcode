@@ -53,6 +53,7 @@ def prepare_multiple_out_parsers(run_dict):
 
 def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False,
                                   plot_over='population', **kwargs):
+
     """Plot multiple runs (e.g. over different releases) with same configurations in one performance plot."""
     fig, ax = viz_utils.setup_figure_1ax(x_label=f'Input size [{plot_over}]',
                                          y_label=' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]]))
@@ -68,7 +69,11 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
         assert len(parser.config['algorithm']) == 1, 'Only one algorithm over different runs per plot.'
         assert len(parser.config['obj_func']) == 1, 'Only one objective func over different runs per plot.'
 
-    cmap_norm, cmap = norm_cmap(colormap, vmin=0, vmax=len(out_parser_dict))
+    if 'vmax' in kwargs:
+        vmax = kwargs['vmax']
+    else:
+        vmax = len(out_parser_dict)
+    cmap_norm, cmap = norm_cmap(colormap, vmin=0, vmax=vmax)
 
     idx = 0
     for run_label, out_parser in out_parser_dict.items():
@@ -77,7 +82,15 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
                                         reverse_legend=reverse_legend, **kwargs)
         idx += 1
     ax.set_ylim(bottom=0.0)
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
+    if reverse_legend:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(reversed(handles), reversed(labels), frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
+    else:
+        ax.legend(frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
                                     reverse_legend=False, plot_over='population', **kwargs):
@@ -135,8 +148,12 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
         _, ax = viz_utils.setup_figure_1ax(x_label=f'Input size [{plot_over}]', y_label=y_label,
                                            title=title)
 
+    if 'vmax' in kwargs:
+        vmax = kwargs['vmax']
+    else:
+        vmax = len(sub_configs)
     if color is None:
-        cmap_norm, cmap = norm_cmap('jet', vmin=0, vmax=len(sub_configs))
+        cmap_norm, cmap = norm_cmap('jet', vmin=0, vmax=vmax)
         print('No colormap provided, using jet as default.')
     idx = 1
     for algo, obj_func_dict in algo_quantity_vs_size.items():
@@ -217,7 +234,7 @@ def roofline_plot():
     def attainable_performance(operational_intensity):
         return min(PEAK_PERFORMANCE, MEMORY_BANDWIDTH * operational_intensity)
 
-    oi_values = np.logspace(-4, 7, 1000, base=2)
+    oi_values = np.logspace(-4, 12, 1000, base=2)
     perf_values = [attainable_performance(oi) for oi in oi_values]
     fig, ax = viz_utils.setup_figure_1ax(x_label='Operational Intensity [Flops/Bytes]',
                                          y_label='Performance [Flops/Cycle]')
@@ -245,8 +262,8 @@ def perf_in_roofline_plot(perf_metrics, label, color, fig=None, ax=None):
 
     if not fig and not ax:
         fig, ax = roofline_plot()
-    ax.plot(op_intensity_values, perf_values, color=color, markersize=8, marker='o', label=label)
-    ax.plot(op_intensity_values, perf_values, color=color, linewidth=1.5, alpha=0.8)
+    ax.plot(op_intensity_values, perf_values, color=color, markersize=8, marker='o')
+    ax.plot(op_intensity_values, perf_values, color=color, linewidth=1.5, alpha=0.8, label=label)
 
 
 def prepare_multiple_perf_metrics(run_dict):
@@ -259,7 +276,7 @@ def prepare_multiple_perf_metrics(run_dict):
     return multiple_perf_metrics
 
 
-def multiple_perf_in_roofline_plot(multiple_perf_metrics, colormap):
+def multiple_perf_in_roofline_plot(multiple_perf_metrics, colormap, reverse_legend=False):
     """Plot multiple runs (e.g. for same configuration set but different releases) in one roofline plot."""
     fig, ax = roofline_plot()
 
@@ -271,7 +288,16 @@ def multiple_perf_in_roofline_plot(multiple_perf_metrics, colormap):
         print(f'Plotting roofline for {run_label}')
         perf_in_roofline_plot(perf_metrics, run_label, cmap(norm(idx)), fig, ax)
         idx += 1
-    ax.legend()
+
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    if reverse_legend:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(reversed(handles), reversed(labels), frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
+    else:
+        ax.legend(frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
 
 
 def norm_cmap(cmap_name, vmin, vmax):
