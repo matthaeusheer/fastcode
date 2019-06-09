@@ -1,9 +1,10 @@
 {
-  "algorithm":  ["hgwosca"],
-  "obj_func":   ["sum_of_squares", "sum"],
-  "dimension":  [100],
-  "n_iter":     [10],
-  "population": [20],
+  "algorithm":  ["hgwosca", "penguin", "pso", "squirrel"],
+  "obj_func":   ["sphere", "sum", "rosenbrock", "rastigrin"],
+  "dimension":  [10, 100, 1000],
+  "n_rep":      [10],
+  "n_iter":     [100],
+  "population": [50],
   "min_val":    [-100],
   "max_val":    [100]
 }
