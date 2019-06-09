@@ -52,7 +52,8 @@ def prepare_multiple_out_parsers(run_dict):
 
 
 def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colormap='jet', reverse_legend=False,
-                                  **kwargs):
+                                  plot_over='population', **kwargs):
+
     """Plot multiple runs (e.g. over different releases) with same configurations in one performance plot."""
     fig, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]',
                                          y_label=' '.join([LABEL_MAP[plot_type], UNITS_MAP[plot_type]]))
@@ -76,7 +77,8 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
 
     idx = 0
     for run_label, out_parser in out_parser_dict.items():
-        plot_mean_runtime_vs_input_size(out_parser, plot_type, ax, color=cmap(cmap_norm(idx)), label=run_label,
+        plot_mean_runtime_vs_input_size(out_parser, plot_type, plot_over=plot_over, ax=ax,
+                                        color=cmap(cmap_norm(idx)), label=run_label,
                                         reverse_legend=reverse_legend, **kwargs)
         idx += 1
     ax.set_ylim(bottom=0.0)
@@ -91,21 +93,25 @@ def mult_plot_runtime_performance(out_parser_dict, plot_type='performance', colo
         ax.legend(frameon=False, loc='center left', bbox_to_anchor=(1, 0.5))
 
 def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='performance', ax=None, color=None, label=None,
-                                    reverse_legend=False, **kwargs):
+                                    reverse_legend=False, plot_over='population', **kwargs):
     """For all algorithms present in the out_parser data, plot mean runtime vs input size.
 
     NOTE: We fix the dimension to be equal for all runs. Only works if only one dimension specified in config.
     """
     plot_types = ['performance', 'mean_runtime']
+    plot_over_choices = ['population', 'dimension']
+
+    assert plot_type in plot_types, f'plot_type argument needs to be one of {plot_types}.'
+    assert plot_over in plot_over_choices, f'plot_over argument needs to be one of {plot_over_choices}.'
 
     config = out_parser.config
     sub_configs = out_parser.sub_configs
 
-    if len(config['dimension']) != 1:
-        raise ValueError(f'We fix the dimension and vary population size. Only one dimension allowed. '
-                         f'Given: {config["dimension"]}')
-
-    assert plot_type in plot_types, f'Plot type argument needs to be one of {plot_types}.'
+    if plot_over == 'population':
+        if len(config['dimension']) != 1:
+            raise ValueError(f'When plotting over population, fix dimension and vary population size. '
+                             f'Only one dimension allowed. '
+                             f'Given dimensions: {config["dimension"]}')
 
     algos = config['algorithm']
     obj_funcs = config['obj_func']
@@ -131,11 +137,15 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
                     elif plot_type == 'mean_runtime':
                         algo_quantity_vs_size[algo][obj_func][plot_type].append(mean_timings[run])
 
-                    algo_quantity_vs_size[algo][obj_func]['sizes'].append(sub_config['population'])
+                    algo_quantity_vs_size[algo][obj_func]['sizes'].append(sub_config[plot_over])
 
     if ax is None:
-        _, ax = viz_utils.setup_figure_1ax(x_label='Input size [population]', y_label=y_label,
-                                           title=f'Search space dimension: {config["dimension"][0]}')
+        if plot_over == 'dimension':
+            title = f'Population size: {config["population"][0]}'
+        if plot_over == 'population':
+            title = f'Search space dimension: {config["dimension"][0]}'
+        _, ax = viz_utils.setup_figure_1ax(x_label=f'Input size [{plot_over}]', y_label=y_label,
+                                           title=title)
 
     if 'vmax' in kwargs:
         vmax = kwargs['vmax']
@@ -154,10 +164,18 @@ def plot_mean_runtime_vs_input_size(out_parser: OutputParser, plot_type='perform
             if not label:
                 label = '_'.join([algo, obj_func])
             ax.plot(sizes, times, label=label, color=color, linewidth=1.8)
+            ax.plot(sizes, times, 'o', label='', color=color)
             idx += 1
 
-    if 'y_upper_lim' in kwargs:
-        ax.set_ylim(top=kwargs['y_upper_lim'])
+    if reverse_legend:
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(reversed(handles), reversed(labels), frameon=False)
+    else:
+        ax.legend(frameon=False)
+    if 'log_xaxis' in kwargs:
+        ax.set_xscale("log", nonposx='clip')
+    if 'log_yaxis' in kwargs:
+        ax.set_yscale("log")
 
     return algo_quantity_vs_size
 
